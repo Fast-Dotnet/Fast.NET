@@ -79,7 +79,9 @@ public static class SwaggerDocumentBuilder
     public static bool CheckApiDescriptionInCurrentGroup(string currentGroup, ApiDescription apiDescription)
     {
         if (!apiDescription.TryGetMethodInfo(out MethodInfo method))
+        {
             return false;
+        }
 
         // 处理 Mvc 和 WebAPI 混合项目路由问题
         if (typeof(Controller).IsAssignableFrom(method.DeclaringType)
@@ -91,15 +93,16 @@ public static class SwaggerDocumentBuilder
         // 处理贴有 [ApiExplorerSettings(IgnoreApi = true)] 或者 [ApiDescriptionSettings(false)] 特性的接口
         ApiExplorerSettingsAttribute apiExplorerSettings = method.GetFoundAttribute<ApiExplorerSettingsAttribute>(true);
         if (apiExplorerSettings?.IgnoreApi == true)
+        {
             return false;
+        }
 
         if (currentGroup == AllGroupsKey)
         {
             return true;
         }
 
-        return GetActionGroups(method)
-            .Any(u => u.Group == currentGroup);
+        return GetActionGroups(method).Any(u => u.Group == currentGroup);
     }
 
     /// <summary>
@@ -226,14 +229,18 @@ public static class SwaggerDocumentBuilder
 
         //使得 Swagger 能够正确地显示 Enum 的对应关系
         if (Penetrates.SwaggerSettings.EnableEnumSchemaFilter == true)
+        {
             swaggerGenOptions.SchemaFilter<EnumSchemaFilter>();
+        }
 
         // 修复 editor.swagger.io 生成不能正常处理 C# object 类型问题
         swaggerGenOptions.SchemaFilter<AnySchemaFilter>();
 
         // 支持控制器排序操作
         if (Penetrates.SwaggerSettings.EnableTagsOrderDocumentFilter == true)
+        {
             swaggerGenOptions.DocumentFilter<TagsOrderDocumentFilter>();
+        }
 
         // 添加 Action 操作过滤器
         swaggerGenOptions.OperationFilter<ApiActionFilter>();
@@ -308,18 +315,12 @@ public static class SwaggerDocumentBuilder
     {
         swaggerGenOptions.OrderActionsBy(apiDesc =>
         {
-            ApiDescriptionSettingsAttribute apiDescriptionSettings = apiDesc
-                                                                         .CustomAttributes()
-                                                                         .FirstOrDefault(u =>
-                                                                             u is ApiDescriptionSettingsAttribute) as
-                                                                     ApiDescriptionSettingsAttribute
-                                                                     ?? new ApiDescriptionSettingsAttribute();
+            ApiDescriptionSettingsAttribute apiDescriptionSettings =
+                apiDesc.CustomAttributes().FirstOrDefault(u => u is ApiDescriptionSettingsAttribute) as
+                    ApiDescriptionSettingsAttribute
+                ?? new ApiDescriptionSettingsAttribute();
 
-            return (int.MaxValue - apiDescriptionSettings.Order)
-                .ToString()
-                .PadLeft(int.MaxValue.ToString()
-                        .Length,
-                    '0');
+            return (int.MaxValue - apiDescriptionSettings.Order).ToString().PadLeft(int.MaxValue.ToString().Length, '0');
         });
     }
 
@@ -336,18 +337,12 @@ public static class SwaggerDocumentBuilder
             // 判断是否自定义了 [OperationId] 特性
             if (isMethod && method.IsDefined(typeof(OperationIdAttribute), false))
             {
-                return method.GetCustomAttribute<OperationIdAttribute>(false)
-                    ?.OperationId;
+                return method.GetCustomAttribute<OperationIdAttribute>(false)?.OperationId;
             }
 
-            string operationId = apiDescription
-                                     .RelativePath?.Replace("/", "-")
-                                     .Replace("{", "-")
-                                     .Replace("}", "-")
+            string operationId = apiDescription.RelativePath?.Replace("/", "-").Replace("{", "-").Replace("}", "-")
                                  + "-"
-                                 + apiDescription
-                                     .HttpMethod?.ToLower()
-                                     .FirstCharToUpper();
+                                 + apiDescription.HttpMethod?.ToLower().FirstCharToUpper();
 
             return operationId.Replace("--", "-");
         });
@@ -366,17 +361,12 @@ public static class SwaggerDocumentBuilder
             // 处理泛型类型问题
             if (modelType.IsConstructedGenericType)
             {
-                string prefix = modelType
-                    .GetGenericArguments()
+                string prefix = modelType.GetGenericArguments()
                     .Select(DefaultSchemaIdSelector)
                     .Aggregate((previous, current) => previous + current);
 
                 // 通过 _ 拼接多个泛型
-                modelName = modelName
-                                .Split('`')
-                                .First()
-                            + "_"
-                            + prefix;
+                modelName = modelName.Split('`').First() + "_" + prefix;
             }
 
             // 判断是否自定义了 [SchemaId] 特性，解决模块化多个程序集命名冲突
@@ -385,7 +375,10 @@ public static class SwaggerDocumentBuilder
             {
                 SchemaIdAttribute schemaIdAttribute = modelType.GetCustomAttribute<SchemaIdAttribute>();
                 if (schemaIdAttribute is {Replace: false})
+                {
                     return schemaIdAttribute.SchemaId + modelName;
+                }
+
                 return schemaIdAttribute?.SchemaId;
             }
 
@@ -455,8 +448,7 @@ public static class SwaggerDocumentBuilder
                         // 处理逻辑：匹配出不带参数的部分，然后获取类型命名空间，最后调用 GenerateInheritdocCref 进行生成
                         else if (memberName.Contains('('))
                         {
-                            string noParamsClassName = regex.Match(memberName)
-                                .Value;
+                            string noParamsClassName = regex.Match(memberName).Value;
                             string className =
                                 noParamsClassName[
                                     noParamsClassName.IndexOf(":", StringComparison.Ordinal)..noParamsClassName.LastIndexOf(".",
@@ -470,14 +462,17 @@ public static class SwaggerDocumentBuilder
                         else
                         {
                             string className =
-                                memberName[memberName.IndexOf(":", StringComparison.Ordinal)..memberName.LastIndexOf(".",
-                                    StringComparison.Ordinal)];
+                                memberName[
+                                    memberName.IndexOf(":", StringComparison.Ordinal)..memberName.LastIndexOf(".",
+                                        StringComparison.Ordinal)];
                             value = GenerateInheritdocCref(xmlDoc, memberName, className);
                         }
                     }
 
                     if (string.IsNullOrWhiteSpace(value))
+                    {
                         continue;
+                    }
 
                     // 处理带 cref 的 inheritdoc 注释
                     if (members.TryGetValue(value, out XElement realDocMember))
@@ -501,16 +496,18 @@ public static class SwaggerDocumentBuilder
     /// <returns>生成的 Inheritdoc cref 属性</returns>
     private static string GenerateInheritdocCref(XDocument xmlDoc, string memberName, string className)
     {
-        XElement classElement = xmlDoc
-            .XPathSelectElements($"/doc/members/member[@name='{"T" + className}' and @_ref_]")
+        XElement classElement = xmlDoc.XPathSelectElements($"/doc/members/member[@name='{"T" + className}' and @_ref_]")
             .FirstOrDefault();
         if (classElement == null)
+        {
             return null;
+        }
 
-        string _ref_value = classElement.Attribute("_ref_")
-            ?.Value;
+        string _ref_value = classElement.Attribute("_ref_")?.Value;
         if (_ref_value == null)
+        {
             return null;
+        }
 
         string classCrefValue = _ref_value[_ref_value.IndexOf(":", StringComparison.Ordinal)..];
         return memberName.Replace(className, classCrefValue);
@@ -524,7 +521,9 @@ public static class SwaggerDocumentBuilder
     {
         // 判断是否启用了授权
         if (Penetrates.SwaggerSettings.EnableAuthorized != true || Penetrates.SwaggerSettings.SecurityDefinitions.Length == 0)
+        {
             return;
+        }
 
         var openApiSecurityRequirement = new OpenApiSecurityRequirement();
 
@@ -533,7 +532,9 @@ public static class SwaggerDocumentBuilder
         {
             // 必须定义Id
             if (string.IsNullOrWhiteSpace(securityDefinition.Id))
+            {
                 continue;
+            }
 
             // 添加安全定义
             var openApiSecurityScheme = securityDefinition as OpenApiSecurityScheme;
@@ -622,9 +623,7 @@ public static class SwaggerDocumentBuilder
     private static IEnumerable<string> ReadGroups()
     {
         // 获取所有的控制器和动作方法
-        var controllers = MAppContext
-            .EffectiveTypes.Where(DynamicApplicationContext.IsApiController)
-            .ToList();
+        var controllers = MAppContext.EffectiveTypes.Where(DynamicApplicationContext.IsApiController).ToList();
         if (!controllers.Any())
         {
             var defaultGroups = new List<string> {Penetrates.SwaggerSettings.DefaultGroupName};
@@ -637,13 +636,10 @@ public static class SwaggerDocumentBuilder
             return defaultGroups;
         }
 
-        IEnumerable<MethodInfo> actions = controllers.SelectMany(c => c
-            .GetMethods()
-            .Where(u => IsApiAction(u, c)));
+        IEnumerable<MethodInfo> actions = controllers.SelectMany(c => c.GetMethods().Where(u => IsApiAction(u, c)));
 
         // 合并所有分组
-        IEnumerable<GroupExtraInfo> groupOrders = controllers
-            .SelectMany(GetControllerGroups)
+        IEnumerable<GroupExtraInfo> groupOrders = controllers.SelectMany(GetControllerGroups)
             .Union(actions.SelectMany(GetActionGroups))
             .Where(u => u is {Visible: true})
             // 分组后取最大排序
@@ -651,8 +647,7 @@ public static class SwaggerDocumentBuilder
             .Select(u => new GroupExtraInfo {Group = u.Key, Order = u.Max(x => x.Order), Visible = true});
 
         // 分组排序
-        IEnumerable<string> groups = groupOrders
-            .OrderByDescending(u => u.Order)
+        IEnumerable<string> groups = groupOrders.OrderByDescending(u => u.Order)
             .ThenBy(u => u.Group)
             .Select(u => u.Group)
             .Union(Penetrates.SwaggerSettings.PackagesGroups);
@@ -683,12 +678,16 @@ public static class SwaggerDocumentBuilder
         {
             // 如果控制器没有定义 [ApiDescriptionSettings] 特性，则返回默认分组
             if (!type.IsDefined(typeof(ApiDescriptionSettingsAttribute), true))
+            {
                 return DocumentGroupExtras;
+            }
 
             ApiDescriptionSettingsAttribute apiDescriptionSettings =
                 type.GetCustomAttribute<ApiDescriptionSettingsAttribute>(true);
             if (apiDescriptionSettings?.Groups == null || apiDescriptionSettings.Groups.Length == 0)
+            {
                 return DocumentGroupExtras;
+            }
 
             // 处理分组额外信息
             var groupExtras = new List<GroupExtraInfo>();
@@ -719,12 +718,16 @@ public static class SwaggerDocumentBuilder
         {
             // 如果动作方法没有定义 [ApiDescriptionSettings] 特性，则返回所在控制器分组
             if (!method.IsDefined(typeof(ApiDescriptionSettingsAttribute), true))
+            {
                 return GetControllerGroups(method.ReflectedType);
+            }
 
             ApiDescriptionSettingsAttribute apiDescriptionSettings =
                 method.GetCustomAttribute<ApiDescriptionSettingsAttribute>(true);
             if (apiDescriptionSettings?.Groups == null || apiDescriptionSettings.Groups.Length == 0)
+            {
                 return GetControllerGroups(method.ReflectedType);
+            }
 
             // 处理排序
             var groupExtras = new List<GroupExtraInfo>();
@@ -756,7 +759,9 @@ public static class SwaggerDocumentBuilder
             TypeInfo type = controllerActionDescriptor.ControllerTypeInfo;
             // 如果动作方法没有定义 [ApiDescriptionSettings] 特性，则返回所在控制器名
             if (!type.IsDefined(typeof(ApiDescriptionSettingsAttribute), true))
+            {
                 return controllerActionDescriptor.ControllerName;
+            }
 
             return controllerActionDescriptor.ControllerName;
         }
@@ -780,14 +785,15 @@ public static class SwaggerDocumentBuilder
         {
             if (!apiDescription.TryGetMethodInfo(out MethodInfo method)
                 || apiDescription.ActionDescriptor is not ControllerActionDescriptor controllerActionDescriptor)
-                return Assembly
-                    .GetEntryAssembly()
-                    ?.GetName()
-                    .Name;
+            {
+                return Assembly.GetEntryAssembly()?.GetName().Name;
+            }
 
             // 如果动作方法没有定义 [ApiDescriptionSettings] 特性，则返回所在控制器名
             if (!method.IsDefined(typeof(ApiDescriptionSettingsAttribute), true))
+            {
                 return GetControllerTag(controllerActionDescriptor);
+            }
 
             return GetControllerTag(controllerActionDescriptor);
         }
@@ -803,11 +809,15 @@ public static class SwaggerDocumentBuilder
     {
         // 不是非公开、抽象、静态、泛型方法
         if (!method.IsPublic || method.IsAbstract || method.IsStatic || method.IsGenericMethod)
+        {
             return false;
+        }
 
         // 如果所在类型不是控制器，则该行为也被忽略
         if (method.ReflectedType != ReflectedType || method.DeclaringType == typeof(object))
+        {
             return false;
+        }
 
         return true;
     }
@@ -823,13 +833,13 @@ public static class SwaggerDocumentBuilder
         int order = 0;
 
         if (!_groupOrderRegex.IsMatch(group))
+        {
             realGroup = group;
+        }
         else
         {
             realGroup = _groupOrderRegex.Replace(group, "");
-            order = int.Parse(_groupOrderRegex
-                .Match(group)
-                .Groups["order"].Value);
+            order = int.Parse(_groupOrderRegex.Match(group).Groups["order"].Value);
         }
 
         SwaggerOpenApiInfo groupOpenApiInfo = GetGroupOpenApiInfo(realGroup);

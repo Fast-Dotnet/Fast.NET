@@ -45,14 +45,10 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
     internal const string _nullValue = "×Null×";
 
     /// <inheritdoc />
-    public string Prefix =>
-        GetSnapshot()
-            .Prefix;
+    public string Prefix => GetSnapshot().Prefix;
 
     /// <inheritdoc />
-    public CSRedisClient Client =>
-        GetSnapshot()
-            .Client;
+    public CSRedisClient Client => GetSnapshot().Client;
 
     /// <inheritdoc />
     public CacheContextLocator ContextLocator { get; }
@@ -118,7 +114,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
         lock (_reloadLock)
         {
             if (_disposed || _snapshot?.ConnectionString == connectionStr)
+            {
                 return;
+            }
 
             // 先成功构造再发布，构造失败时继续使用当前快照。
             var replacement = new CacheSnapshot(new CSRedisClient(connectionStr), prefix, connectionStr);
@@ -145,7 +143,10 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
         lock (_reloadLock)
         {
             if (_disposed)
+            {
                 return;
+            }
+
             Volatile.Write(ref _disposed, true);
             client = _snapshot?.Client;
         }
@@ -181,7 +182,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
     {
         CacheSnapshot snapshot = GetSnapshot();
         if (string.IsNullOrWhiteSpace(pattern))
+        {
             return 0;
+        }
 
         // 判断是否已 * 结尾
         if (!pattern.EndsWith('*'))
@@ -215,9 +218,7 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 // 处理前缀，这里 Del 删除又会默认带前缀
                 if (!string.IsNullOrWhiteSpace(snapshot.Prefix))
                 {
-                    keyItems = keys
-                        .Items.Select(sl => sl[snapshot.Prefix.Length..])
-                        .ToArray();
+                    keyItems = keys.Items.Select(sl => sl[snapshot.Prefix.Length..]).ToArray();
                 }
 
                 totalDeleted += snapshot.Client.Del(keyItems);
@@ -232,7 +233,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
     {
         CacheSnapshot snapshot = GetSnapshot();
         if (string.IsNullOrWhiteSpace(pattern))
+        {
             return 0;
+        }
 
         // 判断是否已 * 结尾
         if (!pattern.EndsWith("*"))
@@ -266,9 +269,7 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 // 处理前缀，这里 DelAsync 删除又会默认带前缀
                 if (!string.IsNullOrWhiteSpace(snapshot.Prefix))
                 {
-                    keyItems = keys
-                        .Items.Select(sl => sl[snapshot.Prefix.Length..])
-                        .ToArray();
+                    keyItems = keys.Items.Select(sl => sl[snapshot.Prefix.Length..]).ToArray();
                 }
 
                 totalDeleted += await snapshot.Client.DelAsync(keyItems);
@@ -398,7 +399,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -458,7 +461,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, string Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -518,7 +523,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -585,7 +592,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, T Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -643,7 +652,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -703,7 +714,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, string Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -763,7 +776,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -825,7 +840,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, T Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -883,7 +900,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -943,7 +962,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, string Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -1003,7 +1024,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                 {
                     // 等待锁期间其他实例可能已经回填缓存，进入临界区后必须再次检查
                     if (TryGetCachedValue(snapshot.Client, key, out result))
+                    {
                         return result;
+                    }
 
                     result = func.Invoke();
 
@@ -1065,7 +1088,9 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
                     (bool Found, T Value) cachedValue = await TryGetCachedValueAsync(snapshot.Client, key, result)
                         .ConfigureAwait(false);
                     if (cachedValue.Found)
+                    {
                         return cachedValue.Value;
+                    }
 
                     result = await func.Invoke();
 
@@ -1134,17 +1159,13 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
     /// <returns>表示异步尝试读取缓存，并区分“缓存未命中”和“已缓存空值”的任务，任务结果为尝试读取缓存，并区分“缓存未命中”和“已缓存空值”</returns>
     private async Task<(bool Found, T Value)> TryGetCachedValueAsync<T>(CSRedisClient client, string key, T _)
     {
-        string rawValue = await client
-            .GetAsync(key)
-            .ConfigureAwait(false);
+        string rawValue = await client.GetAsync(key).ConfigureAwait(false);
         if (string.Equals(rawValue, _nullValue, StringComparison.Ordinal))
+        {
             return (true, default);
+        }
 
-        T result = typeof(T) == typeof(string)
-            ? (T)(object)rawValue
-            : await client
-                .GetAsync<T>(key)
-                .ConfigureAwait(false);
+        T result = typeof(T) == typeof(string) ? (T)(object)rawValue : await client.GetAsync<T>(key).ConfigureAwait(false);
         return (!IsEmpty(result), result);
     }
 
@@ -1157,13 +1178,19 @@ internal class Cache<CacheContextLocator> : ICache<CacheContextLocator>, IDispos
     private static bool IsEmpty<T>(T value)
     {
         if (value == null)
+        {
             return true;
+        }
 
         if (value is string text)
+        {
             return string.IsNullOrWhiteSpace(text);
+        }
 
         if (value is ICollection collection)
+        {
             return collection.Count == 0;
+        }
 
         if (value is IEnumerable enumerable)
         {

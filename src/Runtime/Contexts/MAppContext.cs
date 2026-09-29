@@ -76,9 +76,7 @@ public static class MAppContext
         var entryAssembly = Assembly.GetEntryAssembly();
 
         // 获取入口程序集版本号
-        AssemblyVersion = entryAssembly
-            ?.GetName()
-            .Version?.ToString();
+        AssemblyVersion = entryAssembly?.GetName().Version?.ToString();
 
         // 获取应用运行库
         List<DependencyLibrary> runtimeLibraries = entryAssembly.GetEntryRuntimeLibraries();
@@ -93,9 +91,7 @@ public static class MAppContext
             .ToList());
 
         // 获取有效的类型集合
-        Types = Assemblies
-            .SelectMany(assembly => assembly.GetAssemblyTypes())
-            .ToList();
+        Types = Assemblies.SelectMany(assembly => assembly.GetAssemblyTypes()).ToList();
 
         // 获取排除使用了 SuppressSnifferAttribute 特性的类型
         Type suppressSnifferAttributeType = typeof(SuppressSnifferAttribute);
@@ -182,28 +178,35 @@ public static class MAppContext
     /// <returns>请求所属的服务提供器，或已确认单例服务的根提供器</returns>
     /// <exception cref="InvalidOperationException">没有可用容器，或在非请求环境未提供非单例服务的显式作用域</exception>
     /// <remarks>不再创建隐式作用域；后台任务应持有并释放自己创建的作用域。</remarks>
-    public static IServiceProvider GetServiceProvider(Type serviceType,
-        IServiceProvider rootServices,
-        IServiceCollection internalServices,
-        HttpContext httpContext)
+    public static IServiceProvider GetServiceProvider(Type serviceType, IServiceProvider rootServices,
+        IServiceCollection internalServices, HttpContext httpContext)
     {
         ArgumentNullException.ThrowIfNull(serviceType);
 
         // 优先获取 HttpContext 对象的 RequestServices
         if (httpContext?.RequestServices != null)
+        {
             return httpContext.RequestServices;
+        }
 
         if (rootServices == null)
+        {
             throw new InvalidOperationException("根服务容器尚未初始化，不能临时构造第二个服务容器。");
+        }
 
         // 与 DI 的最后注册、闭合类型优先语义保持一致，不能因较早的 singleton 注册绕过当前 scoped 合同。
         ServiceDescriptor descriptor =
             internalServices?.LastOrDefault(item => !item.IsKeyedService && item.ServiceType == serviceType);
         if (descriptor == null && serviceType.IsConstructedGenericType)
+        {
             descriptor = internalServices?.LastOrDefault(item => !item.IsKeyedService
                                                                  && item.ServiceType == serviceType.GetGenericTypeDefinition());
+        }
+
         if (descriptor?.Lifetime == ServiceLifetime.Singleton)
+        {
             return rootServices;
+        }
 
         throw new InvalidOperationException(
             "非请求环境解析非单例服务时，请由调用方创建并释放作用域，通过 scope.ServiceProvider 直接解析，或传给 FastContext.GetService 的 serviceProvider 参数。");
@@ -217,9 +220,7 @@ public static class MAppContext
     /// <returns>获取到的当前程序启动 Uri 信息</returns>
     public static Uri GetCurrentStartupUri(IServer server)
     {
-        string addresses = server
-            ?.Features.Get<IServerAddressesFeature>()
-            ?.Addresses.FirstOrDefault();
+        string addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault();
 
         if (string.IsNullOrEmpty(addresses))
         {
@@ -257,7 +258,9 @@ public static class MAppContext
     public static long GetExecutionTime(Action action)
     {
         if (action == null)
+        {
             throw new ArgumentNullException(nameof(action));
+        }
 
         // 计算接口执行时间
         var timeOperation = Stopwatch.StartNew();

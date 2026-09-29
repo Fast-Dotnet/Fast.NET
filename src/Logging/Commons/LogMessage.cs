@@ -29,17 +29,8 @@ public struct LogMessage
     /// <param name="threadId">thread 的唯一标识</param>
     /// <param name="useUtcTimestamp">是否使用 UTC 时间记录日志</param>
     /// <param name="traceId">trace 的唯一标识</param>
-    public LogMessage(string logName,
-        LogLevel logLevel,
-        EventId? eventId,
-        string message,
-        Exception exception,
-        LogContext context,
-        object state,
-        DateTime logDateTime,
-        int threadId,
-        bool useUtcTimestamp,
-        string traceId)
+    public LogMessage(string logName, LogLevel logLevel, EventId? eventId, string message, Exception exception,
+        LogContext context, object state, DateTime logDateTime, int threadId, bool useUtcTimestamp, string traceId)
     {
         LogName = logName;
         Message = message;
@@ -111,7 +102,7 @@ public struct LogMessage
     public LogContext Context { get; set; }
 
     /// <inheritdoc />
-    public readonly override string ToString()
+    public override readonly string ToString()
     {
         return LoggingContext.OutputStandardMessage(this);
     }

@@ -39,7 +39,9 @@ internal sealed class ChannelEventPublisher : IEventPublisher
     {
         ArgumentNullException.ThrowIfNull(eventSource);
         if (delay < 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(delay), "延迟时间不能为负数。");
+        }
 
         // 必须等待延迟与入队完成，确保取消和写入异常能够由调用方观察到
         await Task.Delay(TimeSpan.FromMilliseconds(delay), eventSource.CancellationToken);
@@ -60,18 +62,14 @@ internal sealed class ChannelEventPublisher : IEventPublisher
     }
 
     /// <inheritdoc />
-    public async Task PublishDelayAsync(string eventId,
-        long delay,
-        object payload = null,
+    public async Task PublishDelayAsync(string eventId, long delay, object payload = null,
         CancellationToken cancellationToken = default)
     {
         await PublishDelayAsync(new ChannelEventSource(eventId, payload, cancellationToken), delay);
     }
 
     /// <inheritdoc />
-    public async Task PublishDelayAsync(Enum eventId,
-        long delay,
-        object payload = null,
+    public async Task PublishDelayAsync(Enum eventId, long delay, object payload = null,
         CancellationToken cancellationToken = default)
     {
         await PublishDelayAsync(new ChannelEventSource(eventId, payload, cancellationToken), delay);

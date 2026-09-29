@@ -32,23 +32,19 @@ public static class IServiceCollectionExtension
         // 获取配置选项名称
         path ??= MAppContext.GetOptionName<TOptions>();
 
-        OptionsBuilder<TOptions> optionsConfigure = services
-            .AddOptions<TOptions>()
-            .BindConfiguration(path,
-                options =>
-                {
-                    // 绑定私有变量
-                    options.BindNonPublicProperties = true;
-                })
+        OptionsBuilder<TOptions> optionsConfigure = services.AddOptions<TOptions>()
+            .BindConfiguration(path, options =>
+            {
+                // 绑定私有变量
+                options.BindNonPublicProperties = true;
+            })
             .ValidateDataAnnotations();
 
         // 获取类型
         Type optionsType = typeof(TOptions);
 
         // 复杂后期配置
-        Type postConfigureInterface = optionsType
-            .GetInterfaces()
-            .FirstOrDefault(f => typeof(IPostConfigure).IsAssignableFrom(f));
+        Type postConfigureInterface = optionsType.GetInterfaces().FirstOrDefault(f => typeof(IPostConfigure).IsAssignableFrom(f));
 
         if (postConfigureInterface != null)
         {
@@ -90,8 +86,7 @@ public static class IServiceCollectionExtension
     /// <param name="filter">要注册的 MVC 过滤器实例</param>
     /// <param name="configure">额外的 MVC 配置操作</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddMvcFilter(this IServiceCollection services,
-        IFilterMetadata filter,
+    public static IServiceCollection AddMvcFilter(this IServiceCollection services, IFilterMetadata filter,
         Action<MvcOptions> configure = null)
     {
         services.Configure<MvcOptions>(options =>

@@ -33,15 +33,13 @@ public static class LoggingContext
     /// <param name="withTraceId">with Trace 的唯一标识</param>
     /// <param name="withStackFrame">是否在日志中包含调用堆栈位置</param>
     /// <returns>输出标准日志消息</returns>
-    public static string OutputStandardMessage(LogMessage logMsg,
-        string dateFormat = "yyyy-MM-dd HH:mm:ss.fffffff zzz dddd",
-        bool isConsole = false,
-        bool disableColors = true,
-        bool withTraceId = false,
-        bool withStackFrame = false)
+    public static string OutputStandardMessage(LogMessage logMsg, string dateFormat = "yyyy-MM-dd HH:mm:ss.fffffff zzz dddd",
+        bool isConsole = false, bool disableColors = true, bool withTraceId = false, bool withStackFrame = false)
     {
         if (logMsg.Message is null)
+        {
             return null;
+        }
 
         // 创建默认日志格式化模板
         var formatString = new StringBuilder();
@@ -57,8 +55,7 @@ public static class LoggingContext
         formatString.Append(' ');
         formatString.Append(logMsg.UseUtcTimestamp ? "U" : "L");
         formatString.Append(' ');
-        _ = AppendWithColor(formatString,
-            logMsg.LogName,
+        _ = AppendWithColor(formatString, logMsg.LogName,
             disableConsoleColor ? new ConsoleColors(null, null) : new ConsoleColors(ConsoleColor.Cyan, ConsoleColor.DarkCyan));
 
         if (logMsg.EventId != null)
@@ -73,8 +70,7 @@ public static class LoggingContext
         if (withTraceId && !string.IsNullOrWhiteSpace(logMsg.TraceId))
         {
             formatString.Append(' ');
-            _ = AppendWithColor(formatString,
-                $"'{logMsg.TraceId}'",
+            _ = AppendWithColor(formatString, $"'{logMsg.TraceId}'",
                 disableConsoleColor ? new ConsoleColors(null, null) : new ConsoleColors(ConsoleColor.Gray, ConsoleColor.Black));
         }
 
@@ -88,10 +84,7 @@ public static class LoggingContext
             int pos = isConsole ? 6 : 5;
             if (stackFrames.Length > pos)
             {
-                MethodBase targetMethod = stackFrames
-                    .Where((_, i) => i == pos)
-                    .First()
-                    .GetMethod();
+                MethodBase targetMethod = stackFrames.Where((_, i) => i == pos).First().GetMethod();
                 Type declaringType = targetMethod?.DeclaringType;
                 Assembly targetAssembly = declaringType?.Assembly;
 
@@ -101,15 +94,13 @@ public static class LoggingContext
         }
 
         // 消息颜色和前缀对齐在同一步完成，避免 ANSI 控制符影响缩进计算
-        _ = AppendWithColor(formatString,
-            PadLeftAlign(logMsg.Message),
+        _ = AppendWithColor(formatString, PadLeftAlign(logMsg.Message),
             disableConsoleColor ? new ConsoleColors(null, null) : logLevelMessageColors);
 
         // 如果包含异常信息，则创建新一行写入
         if (logMsg.Exception != null)
         {
-            string EXCEPTION_SEPARATOR_WITH_COLOR = AppendWithColor(null, EXCEPTION_SEPARATOR, logLevelMessageColors)
-                .ToString();
+            string EXCEPTION_SEPARATOR_WITH_COLOR = AppendWithColor(null, EXCEPTION_SEPARATOR, logLevelMessageColors).ToString();
             string exceptionMessage =
                 $"{Environment.NewLine}{EXCEPTION_SEPARATOR_WITH_COLOR}{Environment.NewLine}{AppendWithColor(null, logMsg.Exception.ToString(), logLevelMessageColors)}{Environment.NewLine}{EXCEPTION_SEPARATOR_WITH_COLOR}";
 
@@ -128,8 +119,7 @@ public static class LoggingContext
     private static string PadLeftAlign(string message)
     {
         string newMessage = string.Join(Environment.NewLine,
-            message
-                .Split(new[] {Environment.NewLine, "\n"}, StringSplitOptions.None)
+            message.Split(new[] {Environment.NewLine, "\n"}, StringSplitOptions.None)
                 .Select(line => string.Empty.PadLeft(6, ' ') + line));
 
         return newMessage;
@@ -166,16 +156,26 @@ public static class LoggingContext
         formatString ??= new StringBuilder();
 
         if (colors.Background.HasValue)
+        {
             formatString.Append(GetBackgroundColorEscapeCode(colors.Background.Value));
+        }
+
         if (colors.Foreground.HasValue)
+        {
             formatString.Append(GetForegroundColorEscapeCode(colors.Foreground.Value));
+        }
 
         formatString.Append(message);
 
         if (colors.Foreground.HasValue)
+        {
             formatString.Append("\u001b[39m\u001b[22m");
+        }
+
         if (colors.Background.HasValue)
+        {
             formatString.Append("\u001b[49m");
+        }
 
         return formatString;
     }

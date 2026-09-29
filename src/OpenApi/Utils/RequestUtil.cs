@@ -41,23 +41,26 @@ public static partial class OpenApiUtil
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(documentUrl))
+        {
             throw new ArgumentException("OpenAPI 文档地址不能为空。", nameof(documentUrl));
+        }
+
         if (!Uri.TryCreate(documentUrl, UriKind.Absolute, out Uri documentUri))
+        {
             throw new ArgumentException("OpenAPI 文档地址必须是有效的绝对地址。", nameof(documentUrl));
+        }
 
         try
         {
-            using HttpResponseMessage response = await _httpClient
-                .GetAsync(documentUri, cancellationToken)
-                .ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.GetAsync(documentUri, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            string jsonContent = await response
-                .Content.ReadAsStringAsync(cancellationToken)
-                .ConfigureAwait(false);
+            string jsonContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             OpenApiDocumentDto result = JsonSerializer.Deserialize<OpenApiDocumentDto>(jsonContent, _openApiSerializerOptions);
 
             if (result == null)
+            {
                 throw new JsonException($"OpenAPI 文档“{documentUrl}”的内容为空或格式无效。");
+            }
 
             result.Url = documentUrl;
 

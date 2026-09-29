@@ -41,15 +41,12 @@ public static class WebApplicationBuilderExtension
         return builder;
     }
 
-    static void UseDefault(IWebHostEnvironment environment)
+    private static void UseDefault(IWebHostEnvironment environment)
     {
         var appAssembly = Assembly.GetEntryAssembly();
 
         // 获取应用程序集版本
-        string appVersion = appAssembly
-                                ?.GetName()
-                                .Version?.ToString()
-                            ?? "Unknown";
+        string appVersion = appAssembly?.GetName().Version?.ToString() ?? "Unknown";
 
         MAppContext.ConsoleWrite(console =>
         {
@@ -59,9 +56,7 @@ public static class WebApplicationBuilderExtension
             console.ForegroundColor = ConsoleColor.DarkGray;
             console.Write("应用名称          ：");
             console.ForegroundColor = ConsoleColor.Gray;
-            console.WriteLine(appAssembly?.GetName()
-                                  .Name
-                              ?? "Unknown");
+            console.WriteLine(appAssembly?.GetName().Name ?? "Unknown");
 
             console.ForegroundColor = ConsoleColor.DarkGray;
             console.Write("运行框架          ：");
@@ -282,22 +277,21 @@ public static class WebApplicationBuilderExtension
         string executeDirectory = AppContext.BaseDirectory;
 
         // 获取自定义配置扫描目录
-        IEnumerable<string> configurationScanDirectories = (configuration
-                                                                .GetSection("ConfigurationScanDirectories")
-                                                                .Get<string[]>()
-                                                            ?? Array.Empty<string>()).Select(u =>
-            Path.Combine(executeDirectory, u));
+        IEnumerable<string> configurationScanDirectories =
+            (configuration.GetSection("ConfigurationScanDirectories").Get<string[]>() ?? Array.Empty<string>()).Select(u =>
+                Path.Combine(executeDirectory, u));
 
         // 扫描执行目录及自定义配置目录下的 *.json 文件
-        var jsonFiles = new[] {executeDirectory}
-            .Concat(configurationScanDirectories)
+        var jsonFiles = new[] {executeDirectory}.Concat(configurationScanDirectories)
             .Concat(InternalConfigurationScanDirectories.Where(Directory.Exists))
             .SelectMany(u => Directory.GetFiles(u, "*.json", SearchOption.TopDirectoryOnly))
             .ToList();
 
         // 如果没有配置文件，中止执行
         if (!jsonFiles.Any())
+        {
             return;
+        }
 
         // 获取环境变量名，如果没找到，则读取 NETCORE_ENVIRONMENT 环境变量信息识别（用于非 Web 环境）
         string envName = hostEnvironment?.EnvironmentName
@@ -322,8 +316,7 @@ public static class WebApplicationBuilderExtension
             // 查找默认配置和环境配置
             IOrderedEnumerable<string> files = group
                 .Where(u => limitFileNames.Contains(Path.GetFileName(u), StringComparer.OrdinalIgnoreCase))
-                .OrderBy(u => Path.GetFileName(u)
-                    .Length);
+                .OrderBy(u => Path.GetFileName(u).Length);
 
             // 循环加载
             foreach (string jsonFile in files)
@@ -346,11 +339,11 @@ public static class WebApplicationBuilderExtension
         static string Function(string file)
         {
             // 根据 . 分隔
-            string[] fileNameParts = Path
-                .GetFileName(file)
-                .Split('.', StringSplitOptions.RemoveEmptyEntries);
+            string[] fileNameParts = Path.GetFileName(file).Split('.', StringSplitOptions.RemoveEmptyEntries);
             if (fileNameParts.Length == 2)
+            {
                 return fileNameParts[0];
+            }
 
             return string.Join('.', fileNameParts.Take(fileNameParts.Length - 2));
         }

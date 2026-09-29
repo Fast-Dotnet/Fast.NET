@@ -53,17 +53,17 @@ public static class IServiceCollectionExtension
     public static IServiceCollection AddCache(this IServiceCollection services, Action<RedisSettingsOptions> optionAction)
     {
         ArgumentNullException.ThrowIfNull(optionAction);
-        services
-            .AddOptions<RedisSettingsOptions>()
+        services.AddOptions<RedisSettingsOptions>()
             .Configure(options =>
             {
                 optionAction(options);
                 options.Services ??= [];
                 if (options.Services.Any(item => item == null || string.IsNullOrWhiteSpace(item.ServiceName))
-                    || options
-                        .Services.GroupBy(item => item.ServiceName, StringComparer.Ordinal)
-                        .Any(group => group.Count() > 1))
+                    || options.Services.GroupBy(item => item.ServiceName, StringComparer.Ordinal).Any(group => group.Count() > 1))
+                {
                     throw new InvalidOperationException("Redis 命名连接不能为空或重名。");
+                }
+
                 options.PostConfigure();
             });
 

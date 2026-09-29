@@ -118,8 +118,7 @@ public partial interface ISqlSugarRepository<TEntity>
     /// <param name="orderByExpression">用于指定排序字段的表达式</param>
     /// <param name="orderByType">排序方向</param>
     /// <returns>获取到的列表集合</returns>
-    List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression,
-        Expression<Func<TEntity, object>> orderByExpression,
+    List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression, Expression<Func<TEntity, object>> orderByExpression,
         OrderByType orderByType = OrderByType.Asc);
 
     /// <summary>
@@ -130,6 +129,5 @@ public partial interface ISqlSugarRepository<TEntity>
     /// <param name="orderByType">排序方向</param>
     /// <returns>表示异步获取列表的任务，任务结果为获取到的列表集合</returns>
     Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> whereExpression,
-        Expression<Func<TEntity, object>> orderByExpression,
-        OrderByType orderByType = OrderByType.Asc);
+        Expression<Func<TEntity, object>> orderByExpression, OrderByType orderByType = OrderByType.Asc);
 }

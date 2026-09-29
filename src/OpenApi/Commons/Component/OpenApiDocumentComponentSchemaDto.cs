@@ -75,7 +75,9 @@ public class OpenApiDocumentComponentSchemaDto
         get
         {
             if (_additionalPropertiesSchema.ValueKind != JsonValueKind.Undefined)
+            {
                 return _additionalPropertiesSchema;
+            }
 
             return JsonSerializer.SerializeToElement(AdditionalProperties);
         }

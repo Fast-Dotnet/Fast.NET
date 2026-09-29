@@ -76,9 +76,7 @@ public sealed class ChannelEventSource : IEventSource
     /// <param name="payload">要写入令牌的载荷</param>
     /// <param name="cancellationToken">用于取消异步操作的令牌</param>
     public ChannelEventSource(Enum eventId, object payload, CancellationToken cancellationToken) : this(
-        eventId.EventBusToString(),
-        payload,
-        cancellationToken)
+        eventId.EventBusToString(), payload, cancellationToken)
     {
     }
 

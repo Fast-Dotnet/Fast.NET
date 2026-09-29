@@ -27,12 +27,11 @@ public static class LogMessageExtension
     public static string Write(this LogMessage _, Action<Utf8JsonWriter> writeAction, bool writeIndented = false)
     {
         using var stream = new MemoryStream();
-        using var writer = new Utf8JsonWriter(stream,
-            new JsonWriterOptions
-            {
-                // 解决中文乱码问题
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, Indented = writeIndented
-            });
+        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions
+        {
+            // 解决中文乱码问题
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, Indented = writeIndented
+        });
 
         writeAction?.Invoke(writer);
 
@@ -51,13 +50,12 @@ public static class LogMessageExtension
     public static string WriteArray(this LogMessage logMsg, Action<Utf8JsonWriter> writeAction, bool writeIndented = false)
     {
         return logMsg.Write(writer =>
-            {
-                writer.WriteStartArray();
+        {
+            writer.WriteStartArray();
 
-                writeAction?.Invoke(writer);
+            writeAction?.Invoke(writer);
 
-                writer.WriteEndArray();
-            },
-            writeIndented);
+            writer.WriteEndArray();
+        }, writeIndented);
     }
 }

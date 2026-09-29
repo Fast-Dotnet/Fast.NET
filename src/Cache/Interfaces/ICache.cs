@@ -25,7 +25,7 @@ public interface ICache<out CacheContextLocator> where CacheContextLocator : ICa
     /// <summary>
     /// 前缀
     /// </summary>
-    public string Prefix { get; }
+    string Prefix { get; }
 
     /// <summary>
     /// 当前 CSRedis 缓存客户端

@@ -24,23 +24,21 @@ public static class ConsulServiceCollectionExtensions
     /// <param name="configuration">应用配置</param>
     /// <param name="section">配置节点名称</param>
     /// <returns>返回当前服务注册集合，便于链式调用</returns>
-    public static IServiceCollection AddFastConsul(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddFastConsul(this IServiceCollection services, IConfiguration configuration,
         string section = "ConsulSettings")
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
         if (string.IsNullOrWhiteSpace(section))
+        {
             throw new ArgumentException("配置节点名称不能为空。", nameof(section));
+        }
 
         Debugging.Info("Registering consul......");
 
         services.AddConfigurableOptions<ConsulSettingsOptions>(section);
 
-        Penetrates.ConsulSettings = configuration
-            .GetSection(section)
-            .Get<ConsulSettingsOptions>()
-            .LoadPostConfigure();
+        Penetrates.ConsulSettings = configuration.GetSection(section).Get<ConsulSettingsOptions>().LoadPostConfigure();
 
         services.AddTransient<IConsulRegister, ConsulRegister>();
         services.AddTransient<IKeyValueService, KeyValueService>();

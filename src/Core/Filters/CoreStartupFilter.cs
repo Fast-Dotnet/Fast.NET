@@ -31,8 +31,7 @@ internal sealed class CoreStartupFilter : IStartupFilter
             FastContext.RootServices = app.ApplicationServices;
 
             // 兼容显式登记的应用级资源，只在应用停止时释放，不再由任意请求提前释放。
-            app
-                .ApplicationServices.GetRequiredService<IHostApplicationLifetime>()
+            app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>()
                 .ApplicationStopped.Register(MAppContext.DisposeUnmanagedObjects);
 
             // 解决 IIS 或者 Nginx 反向代理获取不到真实客户端 IP 的问题

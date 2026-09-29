@@ -29,9 +29,7 @@ public static class GuidUtil
     /// <returns>生成的一个 Guid</returns>
     public static string GetGuid(string format = "N")
     {
-        return Guid
-            .NewGuid()
-            .ToString(format);
+        return Guid.NewGuid().ToString(format);
     }
 
     /// <summary>
@@ -40,10 +38,7 @@ public static class GuidUtil
     /// <returns>生成的一个短的 Guid</returns>
     public static string GetShortGuid()
     {
-        long i = Guid
-            .NewGuid()
-            .ToByteArray()
-            .Aggregate<byte, long>(1, (current, b) => current * (b + 1));
+        long i = Guid.NewGuid().ToByteArray().Aggregate<byte, long>(1, (current, b) => current * (b + 1));
 
         return $"{i - DateTime.Now.Ticks:x}";
     }

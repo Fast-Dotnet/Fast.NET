@@ -97,8 +97,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
         IList<ActionModel> actions = controller.Actions;
 
         // 查找所有重复的方法签名
-        var repeats = actions
-            .GroupBy(u => new {u.ActionMethod.ReflectedType?.Name, Signature = u.ActionMethod.ToString()})
+        var repeats = actions.GroupBy(u => new {u.ActionMethod.ReflectedType?.Name, Signature = u.ActionMethod.ToString()})
             .Where(u => u.Count() > 1)
             .SelectMany(u => u.Where(i => i.ActionMethod.ReflectedType?.Name != i.ActionMethod.DeclaringType?.Name))
             .ToList();
@@ -144,10 +143,8 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     /// <param name="apiDescriptionSettings">接口描述配置</param>
     /// <param name="controllerApiDescriptionSettings">控制器接口描述配置</param>
     /// <param name="hasApiControllerAttribute">是否贴有 ApiController 特性</param>
-    private void ConfigureAction(ActionModel action,
-        ApiDescriptionSettingsAttribute apiDescriptionSettings,
-        ApiDescriptionSettingsAttribute controllerApiDescriptionSettings,
-        bool hasApiControllerAttribute)
+    private void ConfigureAction(ActionModel action, ApiDescriptionSettingsAttribute apiDescriptionSettings,
+        ApiDescriptionSettingsAttribute controllerApiDescriptionSettings, bool hasApiControllerAttribute)
     {
         // 配置动作方法接口可见性
         ConfigureActionApiExplorer(action);
@@ -159,9 +156,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
         ConfigureClassTypeParameter(action);
 
         // 配置动作方法路由特性
-        ConfigureActionRouteAttribute(action,
-            apiDescriptionSettings,
-            controllerApiDescriptionSettings,
+        ConfigureActionRouteAttribute(action, apiDescriptionSettings, controllerApiDescriptionSettings,
             hasApiControllerAttribute);
 
         ConfigureActionUnifyResultAttribute(action);
@@ -208,23 +203,31 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     {
         // 没有参数无需处理
         if (action.Parameters.Count == 0)
+        {
             return;
+        }
 
         IList<ParameterModel> parameters = action.Parameters;
         foreach (ParameterModel parameterModel in parameters)
         {
             // 如果参数已有绑定特性，则跳过
             if (parameterModel.BindingInfo != null)
+            {
                 continue;
+            }
 
             Type parameterType = parameterModel.ParameterType;
             // 如果是基元类型，则跳过
             if (parameterType.IsRichPrimitive())
+            {
                 continue;
+            }
 
             // 如果是文件类型，则跳过
             if (typeof(IFormFile).IsAssignableFrom(parameterType) || typeof(IFormFileCollection).IsAssignableFrom(parameterType))
+            {
                 continue;
+            }
 
             // 未显式标注绑定来源的已注册接口应从 DI 解析，而不是误判为请求正文模型
             if (parameterType.IsInterface
@@ -246,10 +249,8 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     /// <param name="apiDescriptionSettings">接口描述配置</param>
     /// <param name="controllerApiDescriptionSettings">控制器接口描述配置</param>
     /// <param name="hasApiControllerAttribute">控制器是否标记 <see cref="ApiControllerAttribute"/></param>
-    private static void ConfigureActionRouteAttribute(ActionModel action,
-        ApiDescriptionSettingsAttribute apiDescriptionSettings,
-        ApiDescriptionSettingsAttribute controllerApiDescriptionSettings,
-        bool hasApiControllerAttribute)
+    private static void ConfigureActionRouteAttribute(ActionModel action, ApiDescriptionSettingsAttribute apiDescriptionSettings,
+        ApiDescriptionSettingsAttribute controllerApiDescriptionSettings, bool hasApiControllerAttribute)
     {
         foreach (SelectorModel selectorModel in action.Selectors)
         {
@@ -280,7 +281,9 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
                 // 2. 如果方法自定义路由模板且以 `/` 开头，则跳过
                 if (!string.IsNullOrWhiteSpace(selectorModel.AttributeRouteModel.Template)
                     && selectorModel.AttributeRouteModel.Template.StartsWith("/"))
+                {
                     continue;
+                }
             }
 
             string template;
@@ -308,13 +311,11 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
                     : null;
 
                 // 判断是否定义了控制器路由，如果定义，则不拼接控制器路由
-                string actionRouteTemplate = string.IsNullOrWhiteSpace(action.ActionName)
-                                             || (action
-                                                     .Controller.Selectors[0]
-                                                     .AttributeRouteModel?.Template?.Contains("[action]")
-                                                 ?? false)
-                    ? null
-                    : selectorModel?.AttributeRouteModel?.Template ?? selectorModel?.AttributeRouteModel?.Name ?? "[action]";
+                string actionRouteTemplate =
+                    string.IsNullOrWhiteSpace(action.ActionName)
+                    || (action.Controller.Selectors[0].AttributeRouteModel?.Template?.Contains("[action]") ?? false)
+                        ? null
+                        : selectorModel?.AttributeRouteModel?.Template ?? selectorModel?.AttributeRouteModel?.Name ?? "[action]";
 
                 if (actionRouteTemplate == null && !string.IsNullOrWhiteSpace(selectorModel.AttributeRouteModel?.Template))
                 {
@@ -361,7 +362,9 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
         SelectorModel selectorModel = controller.Selectors[0];
         // 跳过已配置路由特性的配置
         if (selectorModel.AttributeRouteModel != null)
+        {
             return null;
+        }
 
         string module = apiDescriptionSettings?.Module;
 
@@ -382,7 +385,9 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     {
         // 如果没有参数，则跳过
         if (action.Parameters.Count == 0)
+        {
             return null;
+        }
 
         var result = new List<string>();
         IEnumerable<ParameterModel> parameters = action.Parameters.Where(u =>
@@ -394,7 +399,10 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
             Type parameterType = parameterModel.ParameterType;
             // 如果非基元类型，则跳过
             if (!parameterType.IsRichPrimitive())
+            {
                 continue;
+            }
+
             IReadOnlyList<object> parameterAttributes = parameterModel.Attributes;
 
             // 判断是否贴有任何 [FromXXX] 特性了
@@ -410,7 +418,9 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
             // 如果没有贴 [FromRoute] 特性且不是基元类型，则跳过
             // 如果没有贴 [FromRoute] 特性且有任何绑定特性，则跳过
             if (!parameterAttributes.Any(u => u is FromRouteAttribute) && !parameterType.IsRichPrimitive())
+            {
                 continue;
+            }
 
             // 处理基元数组数组类型，还有全局配置参数问题
             if (parameterType.IsArray)
@@ -421,7 +431,8 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
 
             // 启用 [ApiController] 时由 MVC 的绑定源推断规则处理，无需再次把参数写入路由模板
             if (hasApiControllerAttribute)
-                continue;
+            {
+            }
         }
 
         return result;
@@ -434,8 +445,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     /// <param name="originalName">控制器或动作方法的原始名称</param>
     /// <param name="actionName">针对 [ActionName] 特性和 [HttpMethod] 特性处理</param>
     /// <returns>配置控制器和动作方法名称</returns>
-    private string ConfigureControllerAndActionName(ApiDescriptionSettingsAttribute apiDescriptionSettings,
-        string originalName,
+    private string ConfigureControllerAndActionName(ApiDescriptionSettingsAttribute apiDescriptionSettings, string originalName,
         string actionName = null)
     {
         // 获取版本号
@@ -468,12 +478,16 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     {
         // 判断是否手动添加了标注或跳过规范化处理
         if (UnifyContext.CheckSucceededNonUnify(null, action.ActionMethod, out _, false))
+        {
             return;
+        }
 
         // 获取真实类型
         Type returnType = action.ActionMethod.GetRealReturnType();
         if (returnType == typeof(void))
+        {
             return;
+        }
 
         // 判断是否启用规范化结果处理
         if (returnType != null && UnifyContext.EnabledUnifyHandler)
@@ -493,12 +507,11 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
     private (string name, string version) ResolveNameVersion(string name)
     {
         if (!_nameVersionRegex.IsMatch(name))
+        {
             return (name, null);
+        }
 
-        string version = _nameVersionRegex
-            .Match(name)
-            .Groups["version"]
-            .Value.Replace("_", ".");
+        string version = _nameVersionRegex.Match(name).Groups["version"].Value.Replace("_", ".");
         return (_nameVersionRegex.Replace(name, ""), version);
     }
 
@@ -524,9 +537,7 @@ internal sealed class DynamicApiControllerApplicationModelConvention : IApplicat
                 continue;
             }
 
-            IEnumerable<string> templates = Regex
-                .Matches(part, commonTemplatePattern)
-                .Select(t => t.Value);
+            IEnumerable<string> templates = Regex.Matches(part, commonTemplatePattern).Select(t => t.Value);
             foreach (string temp in templates)
             {
                 // 处理带路由约束的路由参数模板 https://gitee.com/zuohuaijun/Admin.NET/issues/I736XJ

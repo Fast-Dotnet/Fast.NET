@@ -116,12 +116,17 @@ internal sealed class DateTimeOffsetJsonConverter : JsonConverter<DateTimeOffset
         if (Localized)
         {
             if (value.Offset.Equals(TimeSpan.Zero))
+            {
                 formatDateTime = value.UtcDateTime;
+            }
             else if (value.Offset.Equals(TimeZoneInfo.Local.GetUtcOffset(value.Date)))
-                formatDateTime = value.ToLocalTime()
-                    .DateTime;
+            {
+                formatDateTime = value.ToLocalTime().DateTime;
+            }
             else
+            {
                 formatDateTime = value.DateTime;
+            }
         }
 
         writer.WriteStringValue(formatDateTime.ToString(Format, CultureInfo.InvariantCulture));
@@ -239,12 +244,17 @@ internal sealed class NullableDateTimeOffsetJsonConverter : JsonConverter<DateTi
             if (Localized)
             {
                 if (value.Value.Offset.Equals(TimeSpan.Zero))
+                {
                     formatDateTime = value.Value.UtcDateTime;
+                }
                 else if (value.Value.Offset.Equals(TimeZoneInfo.Local.GetUtcOffset(value.Value.Date)))
-                    formatDateTime = value.Value.ToLocalTime()
-                        .DateTime;
+                {
+                    formatDateTime = value.Value.ToLocalTime().DateTime;
+                }
                 else
+                {
                     formatDateTime = value.Value.DateTime;
+                }
             }
 
             writer.WriteStringValue(formatDateTime.ToString(Format, CultureInfo.InvariantCulture));

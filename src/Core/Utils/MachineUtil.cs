@@ -85,8 +85,7 @@ public static class MachineUtil
         if (IsUnix())
         {
             // 使用 awk 命令来获取 Linux 系统的 uptime 信息
-            string output = ShellUtil
-                .Bash("date -d \"$(awk -F. '{print $1}' /proc/uptime) second ago\" +\"%Y-%m-%d %H:%M:%S\"")
+            string output = ShellUtil.Bash("date -d \"$(awk -F. '{print $1}' /proc/uptime) second ago\" +\"%Y-%m-%d %H:%M:%S\"")
                 .Trim();
             return DateTime.Parse(output, CultureInfo.InvariantCulture);
         }
@@ -106,8 +105,7 @@ public static class MachineUtil
                     "-NoProfile -Command (Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToString('yyyyMMddHHmmss')");
             }
 
-            string timeValue = output
-                .Replace("LastBootUpTime=", string.Empty)
+            string timeValue = output.Replace("LastBootUpTime=", string.Empty)
                 .Trim()
                 .Split('.', StringSplitOptions.RemoveEmptyEntries)[0];
 
@@ -139,8 +137,7 @@ public static class MachineUtil
     {
         try
         {
-            return Process.GetCurrentProcess()
-                .StartTime;
+            return Process.GetCurrentProcess().StartTime;
         }
         catch (NotSupportedException)
         {
@@ -202,8 +199,7 @@ public static class MachineUtil
                     "-NoProfile -Command Get-CimInstance Win32_Processor | ForEach-Object { $_.LoadPercentage }");
             }
 
-            rates.AddRange(output
-                .Replace("LoadPercentage", string.Empty)
+            rates.AddRange(output.Replace("LoadPercentage", string.Empty)
                 .Trim()
                 .Split(["\r", "\n"], StringSplitOptions.RemoveEmptyEntries)
                 .Select(sl =>
@@ -327,15 +323,11 @@ public static class MachineUtil
                     "-NoProfile -Command (Get-CimInstance Win32_OperatingSystem | Select-Object -ExpandProperty FreePhysicalMemory).ToString() + ',' + (Get-CimInstance Win32_OperatingSystem | Select-Object -ExpandProperty TotalVisibleMemorySize).ToString()");
             }
 
-            string[] lines = output
-                .Trim()
-                .Split([",", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = output.Trim().Split([",", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries);
 
             // 提取并解析内存信息：总内存和可用内存（单位：KB）
-            string[] freeMemoryParts = lines[0]
-                .Split("=", StringSplitOptions.RemoveEmptyEntries);
-            string[] totalMemoryParts = lines[1]
-                .Split("=", StringSplitOptions.RemoveEmptyEntries);
+            string[] freeMemoryParts = lines[0].Split("=", StringSplitOptions.RemoveEmptyEntries);
+            string[] totalMemoryParts = lines[1].Split("=", StringSplitOptions.RemoveEmptyEntries);
 
             total = decimal.Parse(totalMemoryParts.Length > 1 ? totalMemoryParts[1] : totalMemoryParts[0],
                         CultureInfo.InvariantCulture)
@@ -384,8 +376,7 @@ public static class MachineUtil
                 }
 
                 decimal value = Convert.ToDecimal(parts[1]);
-                string unit = parts[2]
-                    .ToLower();
+                string unit = parts[2].ToLower();
 
                 return unit switch
                 {
@@ -460,7 +451,10 @@ public static class MachineUtil
             string output = ShellUtil.Bash(@"df -m | awk '/^\/dev\/disk/ {print $1,$2,$3,$4,$5}'");
             string[] disks = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
             if (disks.Length < 1)
+            {
                 return diskInfos;
+            }
+
             foreach (string item in disks)
             {
                 string[] disk = item.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -469,15 +463,13 @@ public static class MachineUtil
                     var diskInfo = new DiskInfo
                     {
                         DiskName = disk[0],
-                        TypeName = ShellUtil
-                            .Bash("diskutil info " + disk[0] + " | awk '/File System Personality/ {print $4}'")
-                            .Replace("\n", string.Empty),
+                        TypeName =
+                            ShellUtil.Bash("diskutil info " + disk[0] + " | awk '/File System Personality/ {print $4}'")
+                                .Replace("\n", string.Empty),
                         TotalSize = Math.Round(long.Parse(disk[1]) / 1024M, 2, MidpointRounding.AwayFromZero),
                         Used = Math.Round(long.Parse(disk[2]) / 1024M, 2, MidpointRounding.AwayFromZero),
                         AvailableFreeSpace = Math.Round(long.Parse(disk[3]) / 1024M, 2, MidpointRounding.AwayFromZero),
-                        AvailablePercent = decimal.Parse(disk[4]
-                                .Replace("%", ""),
-                            CultureInfo.InvariantCulture)
+                        AvailablePercent = decimal.Parse(disk[4].Replace("%", ""), CultureInfo.InvariantCulture)
                     };
                     diskInfos.Add(diskInfo);
                 }
@@ -493,7 +485,9 @@ public static class MachineUtil
                 {
                     string[] disk = item.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     if (disk.Length < 6)
+                    {
                         continue;
+                    }
 
                     var diskInfo = new DiskInfo
                     {
@@ -502,9 +496,7 @@ public static class MachineUtil
                         TotalSize = Math.Round(long.Parse(disk[2]) / 1024M, 2, MidpointRounding.AwayFromZero),
                         Used = Math.Round(long.Parse(disk[3]) / 1024M, 2, MidpointRounding.AwayFromZero),
                         AvailableFreeSpace = Math.Round(long.Parse(disk[4]) / 1024M, 2, MidpointRounding.AwayFromZero),
-                        AvailablePercent = decimal.Parse(disk[5]
-                                .Replace("%", ""),
-                            CultureInfo.InvariantCulture)
+                        AvailablePercent = decimal.Parse(disk[5].Replace("%", ""), CultureInfo.InvariantCulture)
                     };
                     diskInfos.Add(diskInfo);
                 }
@@ -513,16 +505,17 @@ public static class MachineUtil
         // Windows
         else
         {
-            IEnumerable<DriveInfo> driveList = DriveInfo
-                .GetDrives()
-                .Where(u => u.IsReady);
+            IEnumerable<DriveInfo> driveList = DriveInfo.GetDrives().Where(u => u.IsReady);
 
             const decimal relation = 1024 * 1024 * 1024;
 
             foreach (DriveInfo item in driveList)
             {
                 if (item.DriveType == DriveType.CDRom)
+                {
                     continue;
+                }
+
                 var diskInfo = new DiskInfo
                 {
                     DiskName = item.Name,

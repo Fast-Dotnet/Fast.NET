@@ -22,13 +22,18 @@ public static partial class OpenApiUtil
     /// <param name="groupList">文档分组集合</param>
     /// <returns>表示异步“生成 OpenAPI 文档资源”操作的任务</returns>
     public static async Task GenerateOpenApi(string address,
-        IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider,
-        List<string> groupList = null)
+        IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider, List<string> groupList = null)
     {
         if (string.IsNullOrWhiteSpace(address))
+        {
             throw new ArgumentException("OpenAPI 服务地址不能为空。", nameof(address));
+        }
+
         if (!Uri.TryCreate(address, UriKind.Absolute, out Uri uri))
+        {
             throw new ArgumentException("OpenAPI 服务地址必须是有效的绝对地址。", nameof(address));
+        }
+
         ArgumentNullException.ThrowIfNull(apiDescriptionGroupCollectionProvider);
 
         try
@@ -49,7 +54,9 @@ public static partial class OpenApiUtil
             List<string> groups = groupList?.ToList() ?? ["All Groups"];
             // 增加默认分组
             if (!groups.Contains("Default", StringComparer.Ordinal))
+            {
                 groups.Add("Default");
+            }
 
             // 根目录
             string rootDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Fast.OpenApi");
@@ -67,44 +74,25 @@ public static partial class OpenApiUtil
                 string url = $"{address.TrimEnd('/')}/swagger/{group}/swagger.json";
 
                 // 获取文档信息
-                OpenApiDocumentDto openApiDocument = await GetOpenApiDocument(url)
-                    .ConfigureAwait(false);
+                OpenApiDocumentDto openApiDocument = await GetOpenApiDocument(url).ConfigureAwait(false);
                 if (openApiDocument == null)
+                {
                     continue;
+                }
 
                 // JavaScript
-                await GenerateOpenApi(apiDescriptionGroupCollectionProvider,
-                        openApiDocument,
-                        rootDir,
-                        group,
-                        uri,
-                        true,
+                await GenerateOpenApi(apiDescriptionGroupCollectionProvider, openApiDocument, rootDir, group, uri, true,
                         ScriptLanguageEnum.JavaScript)
                     .ConfigureAwait(false);
-                await GenerateOpenApi(apiDescriptionGroupCollectionProvider,
-                        openApiDocument,
-                        rootDir,
-                        group,
-                        uri,
-                        false,
+                await GenerateOpenApi(apiDescriptionGroupCollectionProvider, openApiDocument, rootDir, group, uri, false,
                         ScriptLanguageEnum.JavaScript)
                     .ConfigureAwait(false);
 
                 // TypeScript
-                await GenerateOpenApi(apiDescriptionGroupCollectionProvider,
-                        openApiDocument,
-                        rootDir,
-                        group,
-                        uri,
-                        true,
+                await GenerateOpenApi(apiDescriptionGroupCollectionProvider, openApiDocument, rootDir, group, uri, true,
                         ScriptLanguageEnum.TypeScript)
                     .ConfigureAwait(false);
-                await GenerateOpenApi(apiDescriptionGroupCollectionProvider,
-                        openApiDocument,
-                        rootDir,
-                        group,
-                        uri,
-                        false,
+                await GenerateOpenApi(apiDescriptionGroupCollectionProvider, openApiDocument, rootDir, group, uri, false,
                         ScriptLanguageEnum.TypeScript)
                     .ConfigureAwait(false);
             }
@@ -151,16 +139,13 @@ public static partial class OpenApiUtil
     /// <param name="scriptLanguage">脚本语言</param>
     /// <returns>表示异步生成 OpenAPI 文档资源的任务</returns>
     internal static async Task GenerateOpenApi(IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider,
-        OpenApiDocumentDto openApiDocument,
-        string rootDir,
-        string group,
-        Uri uri,
-        bool hasWeb,
-        ScriptLanguageEnum scriptLanguage)
+        OpenApiDocumentDto openApiDocument, string rootDir, string group, Uri uri, bool hasWeb, ScriptLanguageEnum scriptLanguage)
     {
         // 判断是否存在路由
         if (openApiDocument.Paths.Count == 0)
+        {
             return;
+        }
 
         // 当前文档地址
         string curRootDir = Path.Combine(rootDir,
@@ -186,13 +171,8 @@ public static partial class OpenApiUtil
             .ConfigureAwait(false);
 
         // 写入 API
-        await WriteOpenApiDocumentApiFile(apiRootDir,
-                hasWeb,
-                apiDescriptionGroupCollectionProvider,
-                openApiDocument,
-                dtoSchemas,
-                enumSchemas,
-                scriptLanguage)
+        await WriteOpenApiDocumentApiFile(apiRootDir, hasWeb, apiDescriptionGroupCollectionProvider, openApiDocument, dtoSchemas,
+                enumSchemas, scriptLanguage)
             .ConfigureAwait(false);
     }
 }

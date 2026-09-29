@@ -25,19 +25,40 @@ public static class DateTimeExtension
     {
         int hour = dateTime.Hour;
         if (hour < 6)
+        {
             return "凌晨好！";
+        }
+
         if (hour < 9)
+        {
             return "早上好！";
+        }
+
         if (hour < 12)
+        {
             return "上午好！";
+        }
+
         if (hour < 14)
+        {
             return "中午好！";
+        }
+
         if (hour < 17)
+        {
             return "下午好！";
+        }
+
         if (hour < 19)
+        {
             return "傍晚好！";
+        }
+
         if (hour < 22)
+        {
             return "晚上好！";
+        }
+
         return "夜里好！";
     }
 
@@ -184,7 +205,10 @@ public static class DateTimeExtension
         {
             if (string.Compare(atomBound[i], monthDay, StringComparison.Ordinal) > 1
                 || string.Compare(atomBound[i + 1], monthDay, StringComparison.Ordinal) <= 0)
+            {
                 continue;
+            }
+
             result = atoms[i];
             break;
         }
@@ -216,9 +240,7 @@ public static class DateTimeExtension
 
     private static int GetSum(int num)
     {
-        char[] b = num
-            .ToString()
-            .ToCharArray();
+        char[] b = num.ToString().ToCharArray();
         return b.Sum(t => Convert.ToInt32(t.ToString()));
     }
 }

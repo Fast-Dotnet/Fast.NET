@@ -31,15 +31,12 @@ public static class AssemblyExtension
             string depsJsonContent = File.ReadAllText(depsJsonFilePath);
 
             // 解析 JSON 字符串
-            JsonElement depsJsonRoot = JsonDocument.Parse(depsJsonContent)
-                .RootElement;
+            JsonElement depsJsonRoot = JsonDocument.Parse(depsJsonContent).RootElement;
 
             var targetsMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             // 获取 "targets" 节点的值
-            JsonElement.ObjectEnumerator targetsContent = depsJsonRoot
-                .GetProperty("targets")
-                .EnumerateObject();
+            JsonElement.ObjectEnumerator targetsContent = depsJsonRoot.GetProperty("targets").EnumerateObject();
             foreach (JsonProperty targetsArr in targetsContent)
             {
                 // "targets" 节点下通常有一个节点，例如 ".NETCoreApp,Version=v8.0"
@@ -48,9 +45,7 @@ public static class AssemblyExtension
                     if (targets.Value.TryGetProperty("runtime", out JsonElement runtimeElement))
                     {
                         // 直接默认获取第一个（大多数包只有一个主程序集）
-                        JsonProperty runtimeObj = runtimeElement
-                            .EnumerateObject()
-                            .FirstOrDefault();
+                        JsonProperty runtimeObj = runtimeElement.EnumerateObject().FirstOrDefault();
                         if (!string.IsNullOrWhiteSpace(runtimeObj.Name))
                         {
                             string fileName = Path.GetFileNameWithoutExtension(runtimeObj.Name);
@@ -64,9 +59,7 @@ public static class AssemblyExtension
             }
 
             // 获取 "libraries" 节点的值
-            JsonElement.ObjectEnumerator librariesContent = depsJsonRoot
-                .GetProperty("libraries")
-                .EnumerateObject();
+            JsonElement.ObjectEnumerator librariesContent = depsJsonRoot.GetProperty("libraries").EnumerateObject();
 
             var dependencyLibraryList = new List<DependencyLibrary>();
 
@@ -116,31 +109,33 @@ public static class AssemblyExtension
         {
             string assemblyDepsFile = Path.ChangeExtension(assembly.Location, ".deps.json");
             if (File.Exists(assemblyDepsFile))
+            {
                 return assemblyDepsFile;
+            }
         }
 
         // 测试宿主和插件宿主的入口程序集可能位于 SDK 目录，实际应用的 deps 文件由宿主上下文提供
         string contextDepsFiles = AppContext.GetData("APP_CONTEXT_DEPS_FILES") as string;
         if (!string.IsNullOrWhiteSpace(contextDepsFiles))
         {
-            string baseDirectory = Path
-                .GetFullPath(AppContext.BaseDirectory)
+            string baseDirectory = Path.GetFullPath(AppContext.BaseDirectory)
                 .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             string applicationDepsFile = contextDepsFiles
                 .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Where(File.Exists)
-                .FirstOrDefault(file => string.Equals(Path
-                        .GetDirectoryName(Path.GetFullPath(file))
-                        ?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
-                    baseDirectory,
-                    StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(file =>
+                    string.Equals(
+                        Path.GetDirectoryName(Path.GetFullPath(file))
+                            ?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar), baseDirectory,
+                        StringComparison.OrdinalIgnoreCase));
             if (applicationDepsFile != null)
+            {
                 return applicationDepsFile;
+            }
         }
 
         return Directory.Exists(AppContext.BaseDirectory)
-            ? Directory
-                .EnumerateFiles(AppContext.BaseDirectory, "*.deps.json", SearchOption.TopDirectoryOnly)
+            ? Directory.EnumerateFiles(AppContext.BaseDirectory, "*.deps.json", SearchOption.TopDirectoryOnly)
                 .OrderBy(file => file, StringComparer.OrdinalIgnoreCase)
                 .FirstOrDefault()
             : null;
@@ -157,7 +152,9 @@ public static class AssemblyExtension
         List<DependencyLibrary> dependencyLibraryList = null)
     {
         if (assembly == null)
+        {
             return [];
+        }
 
         dependencyLibraryList ??= assembly.GetEntryRuntimeLibraries();
 

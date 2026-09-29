@@ -26,20 +26,15 @@ public static class IServiceCollectionExtension
     /// <param name="section">配置节名称</param>
     /// <param name="configure">Swagger 生成配置操作</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services,
-        IConfiguration configuration,
-        string section = "SwaggerSettings",
-        Action<SwaggerGenOptions> configure = null)
+    public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services, IConfiguration configuration,
+        string section = "SwaggerSettings", Action<SwaggerGenOptions> configure = null)
     {
         Debugging.Info("Registering swagger......");
 
         services.AddConfigurableOptions<SwaggerSettingsOptions>(section);
 
         // 获取 Swagger 文档配置选项
-        Penetrates.SwaggerSettings = configuration
-            .GetSection(section)
-            .Get<SwaggerSettingsOptions>()
-            .LoadPostConfigure();
+        Penetrates.SwaggerSettings = configuration.GetSection(section).Get<SwaggerSettingsOptions>().LoadPostConfigure();
 
         services.AddEndpointsApiExplorer();
 
@@ -59,8 +54,7 @@ public static class IServiceCollectionExtension
     /// <param name="configure">Swagger 生成配置操作</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
     public static IServiceCollection AddSwaggerDocuments(this IServiceCollection services,
-        Action<SwaggerSettingsOptions> optionAction,
-        Action<SwaggerGenOptions> configure = null)
+        Action<SwaggerSettingsOptions> optionAction, Action<SwaggerGenOptions> configure = null)
     {
         Debugging.Info("Registering swagger......");
 

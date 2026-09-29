@@ -36,29 +36,20 @@ internal static class TP
     public static string Wrapper(string title, string description, params string[] items)
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder
-            .Append($"┏━━━━━━━━━━━  {title} ━━━━━━━━━━━")
-            .AppendLine();
+        stringBuilder.Append($"┏━━━━━━━━━━━  {title} ━━━━━━━━━━━").AppendLine();
 
         // 添加描述
         if (!string.IsNullOrWhiteSpace(description))
         {
-            stringBuilder
-                .Append($"┣ {description}")
-                .AppendLine()
-                .Append("┣ ")
-                .AppendLine();
+            stringBuilder.Append($"┣ {description}").AppendLine().Append("┣ ").AppendLine();
         }
 
         // 添加项
         if (items != null && items.Length > 0)
         {
-            int propMaxLength = items
-                .Where(u => _lazyRegex.Value.IsMatch(u))
+            int propMaxLength = items.Where(u => _lazyRegex.Value.IsMatch(u))
                 .DefaultIfEmpty(string.Empty)
-                .Max(u => _lazyRegex
-                    .Value.Match(u)
-                    .Groups["prop"].Value.Length);
+                .Max(u => _lazyRegex.Value.Match(u).Groups["prop"].Value.Length);
 
             // 控制项名称对齐空白占位数
             propMaxLength += propMaxLength >= 5 ? 10 : 5;
@@ -76,22 +67,16 @@ internal static class TP
                     string content = match.Groups["content"].Value;
 
                     string propTitle = $"{prop}：";
-                    stringBuilder
-                        .Append($"┣ {PadRight(propTitle, propMaxLength)}{content}")
-                        .AppendLine();
+                    stringBuilder.Append($"┣ {PadRight(propTitle, propMaxLength)}{content}").AppendLine();
                 }
                 else
                 {
-                    stringBuilder
-                        .Append($"┣ {item}")
-                        .AppendLine();
+                    stringBuilder.Append($"┣ {item}").AppendLine();
                 }
             }
         }
 
-        stringBuilder
-            .Append($"┗━━━━━━━━━━━  {title} ━━━━━━━━━━━")
-            .AppendLine();
+        stringBuilder.Append($"┗━━━━━━━━━━━  {title} ━━━━━━━━━━━").AppendLine();
         return stringBuilder.ToString();
     }
 
@@ -162,7 +147,9 @@ internal static class TP
         foreach (char character in str)
         {
             if (coding.GetByteCount(character.ToString()) == 2)
+            {
                 dcount++;
+            }
         }
 
         string w = str.PadRight(totalByteCount - dcount);

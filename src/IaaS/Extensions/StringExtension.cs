@@ -64,17 +64,21 @@ public static class StringExtension
     public static string[] SplitCamelCase(this string str)
     {
         if (str == null)
+        {
             return Array.Empty<string>();
+        }
 
         if (string.IsNullOrWhiteSpace(str))
+        {
             return new[] {str};
-        if (str.Length == 1)
-            return new[] {str};
+        }
 
-        return Regex
-            .Split(str, @"(?=\p{Lu}\p{Ll})|(?<=\p{Ll})(?=\p{Lu})")
-            .Where(u => u.Length > 0)
-            .ToArray();
+        if (str.Length == 1)
+        {
+            return new[] {str};
+        }
+
+        return Regex.Split(str, @"(?=\p{Lu}\p{Ll})|(?<=\p{Ll})(?=\p{Lu})").Where(u => u.Length > 0).ToArray();
     }
 
     /// <summary>
@@ -110,11 +114,15 @@ public static class StringExtension
     {
         // 空字符串直接返回
         if (string.IsNullOrWhiteSpace(str))
+        {
             return str;
+        }
 
         // 空前后缀集合直接返回
         if (affixes == null || affixes.Length == 0)
+        {
             return str;
+        }
 
         bool startCleared = false;
         bool endCleared = false;
@@ -123,7 +131,9 @@ public static class StringExtension
         foreach (string affix in affixes)
         {
             if (string.IsNullOrWhiteSpace(affix))
+            {
                 continue;
+            }
 
             if (pos != 1 && !startCleared && str.StartsWith(affix, StringComparison.OrdinalIgnoreCase))
             {
@@ -139,7 +149,9 @@ public static class StringExtension
             }
 
             if (startCleared && endCleared)
+            {
                 break;
+            }
         }
 
         return !string.IsNullOrWhiteSpace(tempStr) ? tempStr : str;
@@ -163,9 +175,7 @@ public static class StringExtension
     /// <returns>获取到的字符长度</returns>
     public static int GetCharLength(this string str)
     {
-        return Encoding
-            .GetEncoding("GB18030")
-            .GetByteCount(str);
+        return Encoding.GetEncoding("GB18030").GetByteCount(str);
     }
 
     /// <summary>
@@ -261,7 +271,10 @@ public static class StringExtension
         }
 
         if (value.Length <= length)
+        {
             return value;
+        }
+
         value = value[..length];
         if (ellipsis)
         {
@@ -282,8 +295,7 @@ public static class StringExtension
     {
         // NVARCHAR 每个字符占用 2 个字节
         int maxByteLen = maxLen * 2;
-        int byteLen = Encoding.Unicode.GetBytes(str)
-            .Length;
+        int byteLen = Encoding.Unicode.GetBytes(str).Length;
 
         if (byteLen <= maxLen)
         {

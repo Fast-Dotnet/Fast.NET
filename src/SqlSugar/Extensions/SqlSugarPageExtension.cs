@@ -31,9 +31,7 @@ public static class SqlSugarPageExtension
         {
             PageIndex = pagedResult.PageIndex,
             PageSize = pagedResult.PageSize,
-            Rows = pagedResult
-                .Rows.Select(selectExpression)
-                .ToList(),
+            Rows = pagedResult.Rows.Select(selectExpression).ToList(),
             TotalRows = pagedResult.TotalRows,
             TotalPage = pagedResult.TotalPage,
             HasNextPages = pagedResult.HasNextPages,
@@ -61,9 +59,7 @@ public static class SqlSugarPageExtension
     /// <returns>查询记录与分页信息；禁用分页时恰好达到上限仍允许返回，超过上限抛出异常。</returns>
     public static PagedResult<TEntity> ToPagedList<TEntity>(this ISugarQueryable<TEntity> queryable, PagedInput input)
     {
-        return queryable
-            .SugarPaged(input)
-            .ToPagedList(input.PageIndex, input.PageSize, input.EnablePaged);
+        return queryable.SugarPaged(input).ToPagedList(input.PageIndex, input.PageSize, input.EnablePaged);
     }
 
 
@@ -88,9 +84,7 @@ public static class SqlSugarPageExtension
     public static async Task<PagedResult<TEntity>> ToPagedListAsync<TEntity>(this ISugarQueryable<TEntity> queryable,
         PagedInput input)
     {
-        return await queryable
-            .SugarPaged(input)
-            .ToPagedListAsync(input.PageIndex, input.PageSize, input.EnablePaged);
+        return await queryable.SugarPaged(input).ToPagedListAsync(input.PageIndex, input.PageSize, input.EnablePaged);
     }
 
     /// <summary>
@@ -102,10 +96,8 @@ public static class SqlSugarPageExtension
     /// <param name="enablePaged">是否启用分页查询</param>
     /// <typeparam name="TEntity">实体类型</typeparam>
     /// <returns>查询记录与分页信息；禁用分页时恰好达到上限仍允许返回，超过上限抛出异常。</returns>
-    public static PagedResult<TEntity> ToPagedList<TEntity>(this ISugarQueryable<TEntity> queryable,
-        int pageIndex,
-        int pageSize = 20,
-        bool enablePaged = true)
+    public static PagedResult<TEntity> ToPagedList<TEntity>(this ISugarQueryable<TEntity> queryable, int pageIndex,
+        int pageSize = 20, bool enablePaged = true)
     {
         if (enablePaged)
         {
@@ -128,10 +120,11 @@ public static class SqlSugarPageExtension
         {
             int limit = SqlSugarContext.MaxNotPageSize;
             if (limit < 1 || limit == int.MaxValue)
+            {
                 throw new InvalidOperationException("MaxNotPageSize 必须是 1 至 int.MaxValue - 1 的整数。");
-            var rows = queryable
-                .Take(limit + 1)
-                .ToList();
+            }
+
+            var rows = queryable.Take(limit + 1).ToList();
             if (rows.Count > limit)
             {
                 throw new SqlSugarException($"当前查询数据量超过 {limit} 条，请使用分页查询或缩小查询范围。");
@@ -160,9 +153,7 @@ public static class SqlSugarPageExtension
     /// <typeparam name="TEntity">实体类型</typeparam>
     /// <returns>包含查询记录与分页信息的任务；非分页查询超过配置上限时抛出异常。</returns>
     public static async Task<PagedResult<TEntity>> ToPagedListAsync<TEntity>(this ISugarQueryable<TEntity> queryable,
-        int pageIndex,
-        int pageSize = 20,
-        bool enablePaged = true)
+        int pageIndex, int pageSize = 20, bool enablePaged = true)
     {
         if (enablePaged)
         {
@@ -185,10 +176,11 @@ public static class SqlSugarPageExtension
         {
             int limit = SqlSugarContext.MaxNotPageSize;
             if (limit < 1 || limit == int.MaxValue)
+            {
                 throw new InvalidOperationException("MaxNotPageSize 必须是 1 至 int.MaxValue - 1 的整数。");
-            List<TEntity> rows = await queryable
-                .Take(limit + 1)
-                .ToListAsync();
+            }
+
+            List<TEntity> rows = await queryable.Take(limit + 1).ToListAsync();
             if (rows.Count > limit)
             {
                 throw new SqlSugarException($"当前查询数据量超过 {limit} 条，请使用分页查询或缩小查询范围。");
@@ -220,8 +212,7 @@ public static class SqlSugarPageExtension
         // 这里必须要判断，字段是否存在于 TEntity 中，不然会执行到 Db 层面的报错
         Type type = typeof(TEntity);
 
-        var properties = type
-            .GetProperties()
+        var properties = type.GetProperties()
             .Select(sl => new
             {
                 propertyInfo = sl,
@@ -241,9 +232,7 @@ public static class SqlSugarPageExtension
 
             int index = 0;
 
-            foreach (var item in properties
-                         .Where(wh => wh.sugarSearchValueAttribute != null)
-                         .ToList())
+            foreach (var item in properties.Where(wh => wh.sugarSearchValueAttribute != null).ToList())
             {
                 WhereType whereType = WhereType.Or;
                 if (index == 0)
@@ -290,9 +279,7 @@ public static class SqlSugarPageExtension
             // 如果两个时间都存在，则使用范围搜索，如果只存在一个，则使用 >= 或者 <=
             var searchList = new List<KeyValuePair<WhereType, ConditionalModel>>();
 
-            foreach (var item in properties
-                         .Where(wh => wh.sugarSearchTimeAttribute != null)
-                         .ToList())
+            foreach (var item in properties.Where(wh => wh.sugarSearchTimeAttribute != null).ToList())
             {
                 if (time1 != null && time2 != null)
                 {

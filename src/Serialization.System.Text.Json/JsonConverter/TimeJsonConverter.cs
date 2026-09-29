@@ -159,8 +159,12 @@ public class NullableTimeJsonConverter : JsonConverter<DateTime?>
     public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
     {
         if (value == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteStringValue(value.Value.ToString(Format, CultureInfo.InvariantCulture));
+        }
     }
 }

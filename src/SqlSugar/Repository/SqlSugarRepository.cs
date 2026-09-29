@@ -65,12 +65,8 @@ internal sealed partial class SqlSugarRepository<TEntity> : SqlSugarClient, ISql
 
         Context.Ado.CommandTimeOut = DatabaseInfo.CommandTimeOut!.Value;
 
-        SugarEntityFilter.LoadSugarAop(hostEnvironment.IsDevelopment(),
-            Context,
-            DatabaseInfo.SugarSqlExecMaxSeconds!.Value,
-            DatabaseInfo.DiffLog!.Value,
-            DatabaseInfo.DisableAop!.Value,
-            sqlSugarEntityHandler);
+        SugarEntityFilter.LoadSugarAop(hostEnvironment.IsDevelopment(), Context, DatabaseInfo.SugarSqlExecMaxSeconds!.Value,
+            DatabaseInfo.DiffLog!.Value, DatabaseInfo.DisableAop!.Value, sqlSugarEntityHandler);
 
         SugarEntityFilter.LoadSugarFilter(Context, sqlSugarEntityHandler);
     }

@@ -20,26 +20,31 @@ internal static class TypeExtension
     public static bool IsRichPrimitive(this Type type)
     {
         if (type == null)
+        {
             return false;
+        }
 
         if (type.IsValueTuple())
+        {
             return false;
+        }
 
         // 数组需要按元素类型生成架构，不能仅按数组对象本身判断
         if (type.IsArray)
-            return type
-                       .GetElementType()
-                       ?.IsRichPrimitive()
-                   == true;
+        {
+            return type.GetElementType()?.IsRichPrimitive() == true;
+        }
 
         // 基元、值类型和字符串可直接映射，无需展开成员
         if (type.IsPrimitive || type.IsValueType || type == typeof(string))
+        {
             return true;
+        }
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            return type
-                .GenericTypeArguments[0]
-                .IsRichPrimitive();
+        {
+            return type.GenericTypeArguments[0].IsRichPrimitive();
+        }
 
         return false;
     }

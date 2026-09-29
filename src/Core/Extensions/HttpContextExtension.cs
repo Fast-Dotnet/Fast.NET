@@ -23,7 +23,9 @@ public static class HttpContextExtension
     public static HttpRequestMethodEnum GetRequestMethod(this HttpContext httpContext)
     {
         if (httpContext == null)
+        {
             return HttpRequestMethodEnum.Unknown;
+        }
 
         return httpContext.Request.Method switch
         {

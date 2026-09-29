@@ -121,9 +121,13 @@ public sealed class JWTSettingsOptions : IPostConfigure
 
         // 禁止继续使用框架内置的公共默认密钥，否则任何知道源码的人都能伪造令牌
         if (string.IsNullOrWhiteSpace(IssuerSigningKey))
+        {
             throw new InvalidOperationException("JWTSettings:IssuerSigningKey 必须显式配置，且至少包含 32 个 UTF-8 字节。");
+        }
 
         if (System.Text.Encoding.UTF8.GetByteCount(IssuerSigningKey) < 32)
+        {
             throw new InvalidOperationException("JWTSettings:IssuerSigningKey 至少需要 32 个 UTF-8 字节。");
+        }
     }
 }

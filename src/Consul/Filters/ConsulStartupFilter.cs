@@ -27,15 +27,14 @@ internal sealed class ConsulStartupFilter : IStartupFilter
             if (Penetrates.ConsulSettings.Enable == true)
             {
                 // 注册心跳响应
-                app.Map(Penetrates.ConsulSettings.HealthCheck,
-                    options =>
+                app.Map(Penetrates.ConsulSettings.HealthCheck, options =>
+                {
+                    options.Run(async context =>
                     {
-                        options.Run(async context =>
-                        {
-                            context.Response.StatusCode = (int)HttpStatusCode.OK;
-                            await context.Response.WriteAsync("OK");
-                        });
+                        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                        await context.Response.WriteAsync("OK");
                     });
+                });
 
                 // 获取 IHostApplicationLifetime 实例
                 IHostApplicationLifetime hostApplicationLifetime =
@@ -44,11 +43,11 @@ internal sealed class ConsulStartupFilter : IStartupFilter
                 // IServerAddressesFeature 仅在应用启动完成后可用；同时必须观察注册任务的异常
                 hostApplicationLifetime.ApplicationStarted.Register(() =>
                 {
-                    Task registerTask = app
-                        .ApplicationServices.GetService<IConsulRegister>()
-                        ?.ConsulRegisterAsync();
+                    Task registerTask = app.ApplicationServices.GetService<IConsulRegister>()?.ConsulRegisterAsync();
                     if (registerTask == null)
+                    {
                         return;
+                    }
 
                     _ = registerTask.ContinueWith(
                         task => { Console.Error.WriteLine($"[Fast.Consul] Service registration failed: {task.Exception}"); },

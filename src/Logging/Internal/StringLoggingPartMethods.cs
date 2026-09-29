@@ -20,8 +20,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogInformation()
     {
-        SetLevel(LogLevel.Information)
-            .Log();
+        SetLevel(LogLevel.Information).Log();
     }
 
     /// <summary>
@@ -29,8 +28,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogWarning()
     {
-        SetLevel(LogLevel.Warning)
-            .Log();
+        SetLevel(LogLevel.Warning).Log();
     }
 
     /// <summary>
@@ -38,8 +36,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogError()
     {
-        SetLevel(LogLevel.Error)
-            .Log();
+        SetLevel(LogLevel.Error).Log();
     }
 
     /// <summary>
@@ -47,8 +44,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogDebug()
     {
-        SetLevel(LogLevel.Debug)
-            .Log();
+        SetLevel(LogLevel.Debug).Log();
     }
 
     /// <summary>
@@ -56,8 +52,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogTrace()
     {
-        SetLevel(LogLevel.Trace)
-            .Log();
+        SetLevel(LogLevel.Trace).Log();
     }
 
     /// <summary>
@@ -65,8 +60,7 @@ public sealed partial class StringLoggingPart
     /// </summary>
     public void LogCritical()
     {
-        SetLevel(LogLevel.Critical)
-            .Log();
+        SetLevel(LogLevel.Critical).Log();
     }
 
     /// <summary>
@@ -75,11 +69,15 @@ public sealed partial class StringLoggingPart
     public void Log()
     {
         if (Message == null)
+        {
             return;
+        }
 
         (ILogger logger, ILoggerFactory loggerFactory, bool hasException) = GetLogger();
         if (logger == null)
+        {
             throw new ArgumentNullException(nameof(logger));
+        }
 
         using IDisposable scope = logger.BeginScope(LogContext);
 
@@ -135,9 +133,7 @@ public sealed partial class StringLoggingPart
             try
             {
                 logger = MAppContext
-                    .GetServiceProvider(typeof(ILogger<>),
-                        Penetrates.RootServices,
-                        Penetrates.InternalServices,
+                    .GetServiceProvider(typeof(ILogger<>), Penetrates.RootServices, Penetrates.InternalServices,
                         Penetrates.HttpContext)
                     .GetRequiredService(typeof(ILogger<>).MakeGenericType(categoryType)) as ILogger;
             }

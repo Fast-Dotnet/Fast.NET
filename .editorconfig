@@ -206,16 +206,16 @@ resharper_csharp_keep_existing_embedded_arrangement = false
 resharper_csharp_keep_existing_expr_member_arrangement = false
 resharper_csharp_keep_existing_initializer_arrangement = false
 
-# 链式方法逐项换行，点号位于新行；属性与后续方法之间不额外断行。
-resharper_csharp_wrap_chained_method_calls = chop_always
-resharper_csharp_wrap_before_first_method_call = true
+# 短链式调用保持紧凑；超长或多行调用按步骤展开；不优先在首个方法调用前换行。
+resharper_csharp_wrap_chained_method_calls = chop_if_long
+resharper_csharp_wrap_before_first_method_call = false
 resharper_csharp_wrap_after_dot_in_method_calls = false
 resharper_csharp_wrap_after_property_in_chained_method_calls = false
 resharper_csharp_wrap_linq_expressions = chop_always
 
-# 长参数列表和长表达式分项换行；二元运算符位于新行开头。
-resharper_csharp_wrap_parameters_style = chop_if_long
-resharper_csharp_wrap_arguments_style = chop_if_long
+# 参数列表按长度换行，不要求所有参数逐项独占一行。
+resharper_csharp_wrap_parameters_style = wrap_if_long
+resharper_csharp_wrap_arguments_style = wrap_if_long
 resharper_csharp_wrap_before_binary_opsign = true
 resharper_csharp_wrap_chained_binary_expressions = chop_if_long
 resharper_csharp_wrap_before_binary_pattern_op = true

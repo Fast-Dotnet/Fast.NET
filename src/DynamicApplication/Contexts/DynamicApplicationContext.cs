@@ -49,10 +49,7 @@ public static class DynamicApplicationContext
             }
 
             // 排除 OData 控制器
-            if (type
-                    .Assembly.GetName()
-                    .Name?.StartsWith("Microsoft.AspNetCore.OData")
-                == true)
+            if (type.Assembly.GetName().Name?.StartsWith("Microsoft.AspNetCore.OData") == true)
             {
                 return false;
             }

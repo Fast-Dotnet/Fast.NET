@@ -38,10 +38,7 @@ internal sealed class DateTimeJsonConverter : JsonConverter<DateTime>
     }
 
     /// <inheritdoc />
-    public override DateTime ReadJson(JsonReader reader,
-        Type objectType,
-        DateTime existingValue,
-        bool hasExistingValue,
+    public override DateTime ReadJson(JsonReader reader, Type objectType, DateTime existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         var jToken = JToken.ReadFrom(reader);
@@ -125,20 +122,23 @@ internal sealed class NullableDateTimeJsonConverter : JsonConverter<DateTime?>
     public override void WriteJson(JsonWriter writer, DateTime? value, JsonSerializer serializer)
     {
         if (value == null)
+        {
             writer.WriteNull();
+        }
         else
+        {
             writer.WriteValue(value.Value.ToString(Format, CultureInfo.InvariantCulture));
+        }
     }
 
     /// <inheritdoc />
-    public override DateTime? ReadJson(JsonReader reader,
-        Type objectType,
-        DateTime? existingValue,
-        bool hasExistingValue,
+    public override DateTime? ReadJson(JsonReader reader, Type objectType, DateTime? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null)
+        {
             return null;
+        }
 
         var jToken = JToken.ReadFrom(reader);
         string value = jToken.Value<string>();

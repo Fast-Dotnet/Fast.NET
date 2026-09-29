@@ -38,16 +38,13 @@ internal sealed class EnumSchemaFilter : ISchemaFilter
             bool convertToNumber = Penetrates.SwaggerSettings.EnumToNumber!.Value;
 
             // 包含中文情况
-            if (Enum
-                .GetNames(type)
-                .Any(v => Regex.IsMatch(v, CHINESE_PATTERN)))
+            if (Enum.GetNames(type).Any(v => Regex.IsMatch(v, CHINESE_PATTERN)))
             {
                 convertToNumber = true;
             }
 
             // 获取枚举实际值类型
-            Type enumValueType = type.GetField("value__")
-                ?.FieldType;
+            Type enumValueType = type.GetField("value__")?.FieldType;
 
             foreach (object value in enumValues)
             {

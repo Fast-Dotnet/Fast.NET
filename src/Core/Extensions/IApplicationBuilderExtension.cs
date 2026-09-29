@@ -43,25 +43,14 @@ public static class IApplicationBuilderExtension
     {
         Type hubTypes = typeof(Hub);
 
-        var hubsTypes = MAppContext
-            .EffectiveTypes.Where(wh => hubTypes.IsAssignableFrom(wh))
-            .Select(sl => new
-            {
-                Type = sl,
-                HubRoutes = sl
-                    .GetCustomAttributes<MapHubAttribute>()
-                    .Select(p => p.Pattern)
-                    .ToList()
-            })
+        var hubsTypes = MAppContext.EffectiveTypes.Where(wh => hubTypes.IsAssignableFrom(wh))
+            .Select(sl => new {Type = sl, HubRoutes = sl.GetCustomAttributes<MapHubAttribute>().Select(p => p.Pattern).ToList()})
             .ToList();
 
-        MethodInfo mapHub = typeof(HubEndpointRouteBuilderExtensions)
-            .GetMethods()
+        MethodInfo mapHub = typeof(HubEndpointRouteBuilderExtensions).GetMethods()
             .Where(wh => wh.Name == nameof(HubEndpointRouteBuilderExtensions.MapHub))
             .Where(wh => wh.IsGenericMethodDefinition)
-            .First(wh => wh.GetParameters()
-                             .Length
-                         == 2);
+            .First(wh => wh.GetParameters().Length == 2);
 
         app.UseEndpoints(endpoints =>
         {
@@ -69,9 +58,7 @@ public static class IApplicationBuilderExtension
             {
                 foreach (string hubRoute in hubsType.HubRoutes)
                 {
-                    mapHub
-                        .MakeGenericMethod(hubsType.Type)
-                        .Invoke(null, [endpoints, hubRoute]);
+                    mapHub.MakeGenericMethod(hubsType.Type).Invoke(null, [endpoints, hubRoute]);
                 }
             }
         });

@@ -67,10 +67,7 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
             || method?.IsDefined(nonValidationAttributeType, true) == true
             || method?.DeclaringType?.IsDefined(nonValidationAttributeType, true) == true
             || modelState.IsValid
-            || method
-                ?.DeclaringType?.Assembly.GetName()
-                .Name?.StartsWith("Microsoft.AspNetCore.OData")
-            == true
+            || method?.DeclaringType?.Assembly.GetName().Name?.StartsWith("Microsoft.AspNetCore.OData") == true
             || context.Result != null)
         {
             await CallUnHandleResult(context, next, actionDescriptor);
@@ -94,8 +91,7 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
     /// <param name="next">处理管道中的下一个委托</param>
     /// <param name="actionDescriptor">当前控制器操作的描述信息</param>
     /// <returns>表示异步调用未处理的结果类型的任务</returns>
-    private async Task CallUnHandleResult(ActionExecutingContext context,
-        ActionExecutionDelegate next,
+    private async Task CallUnHandleResult(ActionExecutingContext context, ActionExecutionDelegate next,
         ControllerActionDescriptor actionDescriptor)
     {
         // 处理执行后验证信息
@@ -110,10 +106,7 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
             context.HttpContext.Items[nameof(DataValidationFilter) + nameof(UserFriendlyException)] = resultContext;
 
             // 处理验证信息
-            _ = await HandleValidation(context,
-                actionDescriptor,
-                userFriendlyException.ErrorMessage,
-                resultContext,
+            _ = await HandleValidation(context, actionDescriptor, userFriendlyException.ErrorMessage, resultContext,
                 userFriendlyException);
         }
     }
@@ -127,11 +120,8 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
     /// <param name="resultContext">用于写入验证失败结果的过滤器上下文</param>
     /// <param name="userFriendlyException">根据验证错误构造的用户友好异常</param>
     /// <returns>返回 <see langword="false"/> 表示结果没有处理</returns>
-    private async Task<bool> HandleValidation(ActionExecutingContext context,
-        ControllerActionDescriptor actionDescriptor,
-        object errors,
-        ActionExecutedContext resultContext = null,
-        UserFriendlyException userFriendlyException = null)
+    private async Task<bool> HandleValidation(ActionExecutingContext context, ControllerActionDescriptor actionDescriptor,
+        object errors, ActionExecutedContext resultContext = null, UserFriendlyException userFriendlyException = null)
     {
         dynamic finalContext = resultContext != null ? resultContext : context;
 
@@ -146,8 +136,7 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
         context.HttpContext.Items[nameof(DataValidationFilter) + nameof(ValidationMetadata)] = validationMetadata;
 
         // 判断是否跳过规范化结果，如果跳过，返回 400 BadRequestResult
-        if (UnifyContext.CheckFailedNonUnify(context.HttpContext,
-                actionDescriptor.MethodInfo,
+        if (UnifyContext.CheckFailedNonUnify(context.HttpContext, actionDescriptor.MethodInfo,
                 out IUnifyResultProvider unifyResult))
         {
             // 如果不启用 SuppressModelStateInvalidFilter，则跳过，理应手动验证
@@ -166,8 +155,7 @@ internal sealed class DataValidationFilter : IAsyncActionFilter, IOrderedFilter
         }
         else
         {
-            if (!UnifyContext.CheckResponseNonUnify(context.HttpContext,
-                    actionDescriptor.MethodInfo,
+            if (!UnifyContext.CheckResponseNonUnify(context.HttpContext, actionDescriptor.MethodInfo,
                     out IUnifyResponseProvider unifyResponse))
             {
                 await unifyResponse.ResponseValidationExceptionAsync(context, validationMetadata, context.HttpContext);

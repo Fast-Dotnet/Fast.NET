@@ -22,7 +22,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart SetMessage(string message)
     {
         if (message != null)
+        {
             Message = message;
+        }
+
         return this;
     }
 
@@ -45,7 +48,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart SetArgs(params object[] args)
     {
         if (args != null && args.Length > 0)
+        {
             Args = args;
+        }
+
         return this;
     }
 
@@ -79,7 +85,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart SetException(Exception exception)
     {
         if (exception != null)
+        {
             Exception = exception;
+        }
+
         return this;
     }
 
@@ -91,7 +100,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart SetLoggerScoped(IServiceProvider serviceProvider)
     {
         if (serviceProvider != null)
+        {
             LoggerScoped = serviceProvider;
+        }
+
         return this;
     }
 
@@ -103,7 +115,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart ScopeContext(IDictionary<object, object> properties)
     {
         if (properties == null)
+        {
             return this;
+        }
+
         LogContext = new LogContext {Properties = properties};
 
         return this;
@@ -132,7 +147,10 @@ public sealed partial class StringLoggingPart
     public StringLoggingPart ScopeContext(LogContext context)
     {
         if (context == null)
+        {
             return this;
+        }
+
         LogContext = context;
 
         return this;

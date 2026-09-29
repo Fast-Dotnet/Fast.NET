@@ -35,7 +35,10 @@ public static class AssemblyUtil
     public static Assembly LoadAssembly(string path)
     {
         if (!File.Exists(path))
+        {
             return null;
+        }
+
         return Assembly.LoadFrom(path);
     }
 
@@ -57,8 +60,7 @@ public static class AssemblyUtil
     /// <returns>根据程序集名称、类型完整限定名获取运行时类型</returns>
     public static Type GetType(string assemblyName, string typeFullName)
     {
-        return GetAssembly(assemblyName)
-            .GetType(typeFullName);
+        return GetAssembly(assemblyName).GetType(typeFullName);
     }
 
     /// <summary>
@@ -69,7 +71,6 @@ public static class AssemblyUtil
     /// <returns>根据程序集和类型完全限定名获取运行时类型</returns>
     public static Type GetType(MemoryStream assembly, string typeFullName)
     {
-        return LoadAssembly(assembly)
-            .GetType(typeFullName);
+        return LoadAssembly(assembly).GetType(typeFullName);
     }
 }

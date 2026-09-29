@@ -36,8 +36,7 @@ public static class GroupByExtension
             InvocationExpression memberExpression = Expression.Invoke(property, parameter);
             UnaryExpression conversionExpression = Expression.Convert(memberExpression, typeof(object));
             ConditionalExpression nullCheckExpression = Expression.Condition(
-                Expression.Equal(memberExpression, Expression.Constant(null)),
-                Expression.Constant(""),
+                Expression.Equal(memberExpression, Expression.Constant(null)), Expression.Constant(""),
                 Expression.Call(conversionExpression, "ToString", null));
 
             if (keySelector == null)
@@ -47,17 +46,13 @@ public static class GroupByExtension
             else
             {
                 keySelector = Expression.Call(typeof(string).GetMethod("Concat", new[] {typeof(string), typeof(string)}),
-                    keySelector,
-                    nullCheckExpression);
+                    keySelector, nullCheckExpression);
             }
         }
 
         var lambda = Expression.Lambda<Func<TKey, string>>(keySelector, parameter);
-        MethodCallExpression groupByExpression = Expression.Call(typeof(Queryable),
-            "GroupBy",
-            new[] {typeof(TKey), typeof(string)},
-            query.Expression,
-            lambda);
+        MethodCallExpression groupByExpression = Expression.Call(typeof(Queryable), "GroupBy",
+            new[] {typeof(TKey), typeof(string)}, query.Expression, lambda);
         IQueryable<IGrouping<string, TKey>> result = query.Provider.CreateQuery<IGrouping<string, TKey>>(groupByExpression);
 
         return result;

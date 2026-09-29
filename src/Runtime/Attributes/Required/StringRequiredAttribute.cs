@@ -40,9 +40,7 @@ public class StringRequiredAttribute : ValidationAttribute
         if (!AllowWhitespace)
         {
             int sourceLength = valueParse.Length;
-            valueParse = valueParse
-                .TrimStart()
-                .TrimEnd();
+            valueParse = valueParse.TrimStart().TrimEnd();
             if (valueParse.Length != sourceLength)
             {
                 throw new ValidationException($"\"{ErrorMessageResourceName}\" 值的前后不能包含空字符串。");

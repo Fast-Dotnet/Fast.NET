@@ -31,16 +31,12 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="section">JSON 配置文件节点的 Key 默认值：JWTSettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddJwtBearerSetting(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddJwtBearerSetting(this IServiceCollection services, IConfiguration configuration,
         string section = "JWTSettings")
     {
         services.AddConfigurableOptions<JWTSettingsOptions>(section);
 
-        Penetrates.JWTSettings = configuration
-            .GetSection(section)
-            .Get<JWTSettingsOptions>()
-            .LoadPostConfigure();
+        Penetrates.JWTSettings = configuration.GetSection(section).Get<JWTSettingsOptions>().LoadPostConfigure();
 
         // 未配置 Redis 等 IDistributedCache 实现时提供进程内回退
         // AddDistributedMemoryCache 使用 TryAdd 注册，不会覆盖用户已经配置的缓存实现
@@ -80,16 +76,14 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="section">JSON 配置文件节点的 Key 默认值：JWTSettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddJwtBearerAuthentication(this IServiceCollection services, IConfiguration configuration,
         string section = "JWTSettings")
     {
         Debugging.Info("Registering jwt bearer......");
 
         services.AddJwtBearerSetting(configuration, section);
 
-        services
-            .AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -105,18 +99,13 @@ public static class IServiceCollectionExtension
                     await onMessageReceived(context);
 
                     if (!string.IsNullOrEmpty(context.Token)
-                        || context
-                            .HttpContext.GetEndpoint()
-                            ?.Metadata.GetMetadata<HubMetadata>()
-                        == null)
+                        || context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<HubMetadata>() == null)
                     {
                         return;
                     }
 
                     // 仅补充从标准 access_token 查询参数提取 Token，不改变 Hub 端点的授权要求
-                    string accessToken = context
-                        .Request.Query["access_token"]
-                        .ToString();
+                    string accessToken = context.Request.Query["access_token"].ToString();
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         context.Token = accessToken;
@@ -141,8 +130,7 @@ public static class IServiceCollectionExtension
 
         services.AddJwtBearerSetting(optionAction);
 
-        services
-            .AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -158,18 +146,13 @@ public static class IServiceCollectionExtension
                     await onMessageReceived(context);
 
                     if (!string.IsNullOrEmpty(context.Token)
-                        || context
-                            .HttpContext.GetEndpoint()
-                            ?.Metadata.GetMetadata<HubMetadata>()
-                        == null)
+                        || context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<HubMetadata>() == null)
                     {
                         return;
                     }
 
                     // 仅补充从标准 access_token 查询参数提取 Token，不改变 Hub 端点的授权要求
-                    string accessToken = context
-                        .Request.Query["access_token"]
-                        .ToString();
+                    string accessToken = context.Request.Query["access_token"].ToString();
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         context.Token = accessToken;
@@ -187,8 +170,7 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="section">JSON 配置文件节点的 Key 默认值：JWTSettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddJwtBearer(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddJwtBearer(this IServiceCollection services, IConfiguration configuration,
         string section = "JWTSettings")
     {
         Debugging.Info("Registering jwt bearer......");
@@ -203,8 +185,7 @@ public static class IServiceCollectionExtension
             services.Configure<MvcOptions>(options => { options.Filters.Add(new AuthorizeFilter()); });
         }
 
-        services
-            .AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -220,18 +201,13 @@ public static class IServiceCollectionExtension
                     await onMessageReceived(context);
 
                     if (!string.IsNullOrEmpty(context.Token)
-                        || context
-                            .HttpContext.GetEndpoint()
-                            ?.Metadata.GetMetadata<HubMetadata>()
-                        == null)
+                        || context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<HubMetadata>() == null)
                     {
                         return;
                     }
 
                     // 仅补充从标准 access_token 查询参数提取 Token，不改变 Hub 端点的授权要求
-                    string accessToken = context
-                        .Request.Query["access_token"]
-                        .ToString();
+                    string accessToken = context.Request.Query["access_token"].ToString();
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         context.Token = accessToken;
@@ -260,8 +236,7 @@ public static class IServiceCollectionExtension
             services.Configure<MvcOptions>(options => { options.Filters.Add(new AuthorizeFilter()); });
         }
 
-        services
-            .AddAuthentication(options =>
+        services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -277,18 +252,13 @@ public static class IServiceCollectionExtension
                     await onMessageReceived(context);
 
                     if (!string.IsNullOrEmpty(context.Token)
-                        || context
-                            .HttpContext.GetEndpoint()
-                            ?.Metadata.GetMetadata<HubMetadata>()
-                        == null)
+                        || context.HttpContext.GetEndpoint()?.Metadata.GetMetadata<HubMetadata>() == null)
                     {
                         return;
                     }
 
                     // 仅补充从标准 access_token 查询参数提取 Token，不改变 Hub 端点的授权要求
-                    string accessToken = context
-                        .Request.Query["access_token"]
-                        .ToString();
+                    string accessToken = context.Request.Query["access_token"].ToString();
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         context.Token = accessToken;
@@ -305,17 +275,21 @@ public static class IServiceCollectionExtension
         // 显式注册优先；扫描只接受闭合、可实例化的类型，多个候选不依赖程序集枚举顺序。
         if (!services.Any(descriptor => !descriptor.IsKeyedService && descriptor.ServiceType == typeof(IJwtBearerHandle)))
         {
-            Type[] handles = MAppContext
-                .EffectiveTypes.Where(type =>
+            Type[] handles = MAppContext.EffectiveTypes.Where(type =>
                     typeof(IJwtBearerHandle).IsAssignableFrom(type)
                     && type.IsClass
                     && !type.IsAbstract
                     && !type.ContainsGenericParameters)
                 .ToArray();
             if (handles.Length > 1)
+            {
                 throw new InvalidOperationException("发现多个 IJwtBearerHandle 实现，请显式注册所需处理器。");
+            }
+
             if (handles.Length == 1)
+            {
                 services.AddScoped(typeof(IJwtBearerHandle), handles[0]);
+            }
         }
 
         services.AddAuthorization();
@@ -327,24 +301,29 @@ public static class IServiceCollectionExtension
             string key = AppAuthorizationPolicyProvider.FallbackServiceKey;
             ServiceDescriptor fallback;
             if (current.ImplementationInstance != null)
+            {
                 fallback = new ServiceDescriptor(typeof(IAuthorizationPolicyProvider), key, current.ImplementationInstance);
+            }
             else if (current.ImplementationFactory != null)
-                fallback = new ServiceDescriptor(typeof(IAuthorizationPolicyProvider),
-                    key,
-                    (provider, _) => current.ImplementationFactory(provider),
-                    current.Lifetime);
+            {
+                fallback = new ServiceDescriptor(typeof(IAuthorizationPolicyProvider), key,
+                    (provider, _) => current.ImplementationFactory(provider), current.Lifetime);
+            }
             else
-                fallback = new ServiceDescriptor(typeof(IAuthorizationPolicyProvider),
-                    key,
-                    current.ImplementationType,
+            {
+                fallback = new ServiceDescriptor(typeof(IAuthorizationPolicyProvider), key, current.ImplementationType,
                     current.Lifetime);
+            }
+
             foreach (ServiceDescriptor descriptor in services
                          .Where(item => item.ServiceType == typeof(IAuthorizationPolicyProvider) && !item.IsKeyedService)
                          .ToArray())
+            {
                 services.Remove(descriptor);
+            }
+
             services.Add(fallback);
-            services.Add(ServiceDescriptor.Describe(typeof(IAuthorizationPolicyProvider),
-                typeof(AppAuthorizationPolicyProvider),
+            services.Add(ServiceDescriptor.Describe(typeof(IAuthorizationPolicyProvider), typeof(AppAuthorizationPolicyProvider),
                 current.Lifetime));
         }
 

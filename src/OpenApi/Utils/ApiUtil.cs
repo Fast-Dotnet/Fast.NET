@@ -68,26 +68,17 @@ public static partial class OpenApiUtil
     /// <param name="enumSchemas">枚举声明</param>
     /// <param name="scriptLanguage">脚本语言</param>
     /// <returns>表示异步写入 OpenAPI 文档 API 文件的任务</returns>
-    internal static async Task WriteOpenApiDocumentApiFile(string rootDir,
-        bool hasWeb,
-        IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider,
-        OpenApiDocumentDto openApiDocument,
-        List<ComponentSchemaDto> dtoSchemas,
-        List<ComponentSchemaDto> enumSchemas,
-        ScriptLanguageEnum scriptLanguage)
+    internal static async Task WriteOpenApiDocumentApiFile(string rootDir, bool hasWeb,
+        IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider, OpenApiDocumentDto openApiDocument,
+        List<ComponentSchemaDto> dtoSchemas, List<ComponentSchemaDto> enumSchemas, ScriptLanguageEnum scriptLanguage)
     {
         try
         {
             // 获取所有 Tag
-            var tagList = openApiDocument
-                .Paths.Where(wh => wh.Value.Tag != null)
-                .Select(sl => sl.Value.Tag)
-                .Distinct()
-                .ToList();
+            var tagList = openApiDocument.Paths.Where(wh => wh.Value.Tag != null).Select(sl => sl.Value.Tag).Distinct().ToList();
 
             // 获取所有接口描述
-            var apiDescriptions = apiDescriptionGroupCollectionProvider
-                .ApiDescriptionGroups.Items.SelectMany(sl => sl.Items)
+            var apiDescriptions = apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items.SelectMany(sl => sl.Items)
                 .ToList();
 
             foreach (string tag in tagList)
@@ -97,10 +88,7 @@ public static partial class OpenApiUtil
                 string[] tagSplit = tag.Split("/", StringSplitOptions.RemoveEmptyEntries);
                 if (tagSplit.Length > 1)
                 {
-                    tagName = tagSplit[0]
-                              + string.Concat(tagSplit
-                                  .Skip(1)
-                                  .Select(s => char.ToUpperInvariant(s[0]) + s[1..]));
+                    tagName = tagSplit[0] + string.Concat(tagSplit.Skip(1).Select(s => char.ToUpperInvariant(s[0]) + s[1..]));
                 }
 
                 // 创建 api 文件夹
@@ -108,13 +96,10 @@ public static partial class OpenApiUtil
                 Directory.CreateDirectory(apiFileDir);
 
                 // 获取当前 tag 下所有的接口
-                var curPaths = openApiDocument
-                    .Paths.Where(wh => wh.Value.Tag == tag)
-                    .ToList();
+                var curPaths = openApiDocument.Paths.Where(wh => wh.Value.Tag == tag).ToList();
 
                 // 模块描述
-                string tagDescription = openApiDocument.Tags?.SingleOrDefault(s => s.Name == tag)
-                    ?.Description;
+                string tagDescription = openApiDocument.Tags?.SingleOrDefault(s => s.Name == tag)?.Description;
 
                 var contentSb = new StringBuilder();
                 // 引用声明
@@ -134,16 +119,14 @@ public static partial class OpenApiUtil
                         continue;
                     }
 
-                    string apiFuncName = apiName
-                        .Split("/")
-                        .LastOrDefault();
+                    string apiFuncName = apiName.Split("/").LastOrDefault();
 
                     // 获取接口描述
                     ApiDescription apiDescription = apiDescriptions.Single(s => $"/{s.RelativePath}" == apiName);
 
                     // 获取请求特性
-                    ApiInfoAttribute apiInfoAttribute = apiDescription
-                        .ActionDescriptor.EndpointMetadata.OfType<ApiInfoAttribute>()
+                    ApiInfoAttribute apiInfoAttribute = apiDescription.ActionDescriptor.EndpointMetadata
+                        .OfType<ApiInfoAttribute>()
                         .FirstOrDefault();
 
                     // 获取请求类型
@@ -230,9 +213,7 @@ public static partial class OpenApiUtil
                         // 处理可能存在 URL 参数和 Body 参数的情况
                         if (string.IsNullOrWhiteSpace(requestDataType))
                         {
-                            requestParam = requestParam
-                                .TrimEnd(' ')
-                                .TrimEnd(',');
+                            requestParam = requestParam.TrimEnd(' ').TrimEnd(',');
                         }
 
                         contentSb.Append(requestParam);
@@ -394,18 +375,17 @@ public static partial class OpenApiUtil
                 switch (scriptLanguage)
                 {
                     case ScriptLanguageEnum.JavaScript:
-                        await File.WriteAllTextAsync(Path.Combine(apiFileDir, "index.js"),
-                            FormatScriptContent($$"""
-                                                  import { axiosUtil } from "@fast-china/axios";
+                        await File.WriteAllTextAsync(Path.Combine(apiFileDir, "index.js"), FormatScriptContent($$"""
+                              import { axiosUtil } from "@fast-china/axios";
 
-                                                  /**
-                                                   * {{tagDescription}}Api
-                                                   */
-                                                  export const {{tagName}}Api = {
-                                                  {{contentSb}}
-                                                  };
+                              /**
+                               * {{tagDescription}}Api
+                               */
+                              export const {{tagName}}Api = {
+                              {{contentSb}}
+                              };
 
-                                                  """));
+                              """));
                         break;
                     case ScriptLanguageEnum.TypeScript:
                         // 生成 import
@@ -417,18 +397,12 @@ public static partial class OpenApiUtil
                             string importFileDir = Path.Combine(apiFileDir, "models");
                             Directory.CreateDirectory(importFileDir);
 
-                            foreach (ComponentSchemaDto dtoSchema in dtoSchemas
-                                         .Where(wh => newRefSchemas.Contains(wh.Name))
+                            foreach (ComponentSchemaDto dtoSchema in dtoSchemas.Where(wh => newRefSchemas.Contains(wh.Name))
                                          .ToList())
                             {
                                 // 写入 import 文件
-                                await WriteOpenApiDocumentSchemaFile(hasWeb,
-                                    importFileDir,
-                                    openApiDocument,
-                                    dtoSchema,
-                                    dtoSchemas,
-                                    enumSchemas,
-                                    ScriptLanguageEnum.TypeScript);
+                                await WriteOpenApiDocumentSchemaFile(hasWeb, importFileDir, openApiDocument, dtoSchema,
+                                    dtoSchemas, enumSchemas, ScriptLanguageEnum.TypeScript);
                             }
                         }
 
@@ -451,18 +425,17 @@ public static partial class OpenApiUtil
 
                         imports.AddRange(externalImports);
                         imports.AddRange(schemaImports);
-                        await File.WriteAllTextAsync(Path.Combine(apiFileDir, "index.ts"),
-                            FormatScriptContent($$"""
-                                                  {{string.Join(Environment.NewLine, imports)}}
+                        await File.WriteAllTextAsync(Path.Combine(apiFileDir, "index.ts"), FormatScriptContent($$"""
+                              {{string.Join(Environment.NewLine, imports)}}
 
-                                                  /**
-                                                   * {{tagDescription}}Api
-                                                   */
-                                                  export const {{tagName}}Api = {
-                                                  {{contentSb}}
-                                                  };
+                              /**
+                               * {{tagDescription}}Api
+                               */
+                              export const {{tagName}}Api = {
+                              {{contentSb}}
+                              };
 
-                                                  """));
+                              """));
 
                         break;
                     default:
@@ -494,9 +467,7 @@ public static partial class OpenApiUtil
     /// <returns>使用 Tab 缩进和 LF 换行符的脚本内容</returns>
     internal static string FormatScriptContent(string content)
     {
-        string normalizedContent = content
-            .Replace("\r\n", "\n")
-            .Replace('\r', '\n');
+        string normalizedContent = content.Replace("\r\n", "\n").Replace('\r', '\n');
         return Regex.Replace(normalizedContent, @"(?m)^(?: {2})+", match => new string('\t', match.Value.Length / 2));
     }
 }

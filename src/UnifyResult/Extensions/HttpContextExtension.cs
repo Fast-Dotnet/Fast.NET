@@ -55,8 +55,7 @@ internal static class HttpContextExtension
     /// <returns>匹配的特性实例；不存在时返回 <see langword="null"/></returns>
     public static object GetMetadata(this EndpointMetadataCollection metadata, Type attributeType)
     {
-        return metadata
-            ?.GetType()
+        return metadata?.GetType()
             .GetMethod(nameof(EndpointMetadataCollection.GetMetadata))
             ?.MakeGenericMethod(attributeType)
             .Invoke(metadata, null);
@@ -70,8 +69,6 @@ internal static class HttpContextExtension
     /// <returns>当前终结点上匹配的特性实例；不存在时返回 <see langword="null"/></returns>
     public static object GetMetadata(this HttpContext httpContext, Type attributeType)
     {
-        return httpContext
-            ?.GetEndpoint()
-            ?.Metadata.GetMetadata(attributeType);
+        return httpContext?.GetEndpoint()?.Metadata.GetMetadata(attributeType);
     }
 }

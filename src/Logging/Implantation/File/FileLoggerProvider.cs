@@ -68,20 +68,15 @@ internal sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScop
     {
         // 支持文件名嵌入系统环境变量，格式为：%SystemDrive%，%SystemRoot%，处理 Windows 和 Linux 路径分隔符不一致问题
         // 使用 Path.GetFullPath 将相对路径转换为绝对路径，避免在 Linux 下因工作目录与应用程序目录不一致导致日志文件无法写入
-        FileName = Path.GetFullPath(Environment
-            .ExpandEnvironmentVariables(fileName)
-            .Replace('\\', '/'));
+        FileName = Path.GetFullPath(Environment.ExpandEnvironmentVariables(fileName).Replace('\\', '/'));
         LoggerOptions = fileLoggerOptions;
 
         // 创建文件日志写入器
         _fileLoggingWriter = new FileLoggingWriter(this);
 
         // 创建长时间运行的后台任务，并将日志消息队列中数据写入文件中
-        _processQueueTask = Task.Factory.StartNew(state => ((FileLoggerProvider)state).ProcessQueue(),
-            this,
-            CancellationToken.None,
-            TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach,
-            TaskScheduler.Default);
+        _processQueueTask = Task.Factory.StartNew(state => ((FileLoggerProvider)state).ProcessQueue(), this,
+            CancellationToken.None, TaskCreationOptions.LongRunning | TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
     }
 
     /// <summary>
@@ -122,7 +117,9 @@ internal sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScop
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
             return;
+        }
 
         // 标记日志消息队列停止写入
         _logMessageQueue.CompleteAdding();
@@ -130,9 +127,7 @@ internal sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScop
         try
         {
             // CompleteAdding 会让消费循环在排空队列后自然结束；等待完成可避免关闭文件时仍有后台写入
-            _processQueueTask
-                .GetAwaiter()
-                .GetResult();
+            _processQueueTask.GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
@@ -159,13 +154,17 @@ internal sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScop
     internal void WriteToQueue(LogMessage logMsg)
     {
         if (Volatile.Read(ref _disposed) != 0)
+        {
             return;
+        }
 
         try
         {
             // 只有队列可持续入队才写入
             if (_logMessageQueue.IsAddingCompleted)
+            {
                 return;
+            }
 
             // 使用 TryAdd 非阻塞写入，避免后台任务异常退出时队列满导致调用方线程永久阻塞
             if (_logMessageQueue.TryAdd(logMsg))
@@ -176,7 +175,9 @@ internal sealed class FileLoggerProvider : ILoggerProvider, ISupportExternalScop
 
             // 每个连续饱和周期只输出一次，既暴露日志丢弃，又避免持续写满标准错误流
             if (Interlocked.Exchange(ref _queueFullWarningEmitted, 1) == 0)
+            {
                 Console.Error.WriteLine("[Fast.Logging] Log queue is full; new log messages are being dropped.");
+            }
         }
         catch (ObjectDisposedException)
         {

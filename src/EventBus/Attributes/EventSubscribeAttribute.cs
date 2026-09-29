@@ -34,7 +34,9 @@ public sealed class EventSubscribeAttribute : Attribute
             EventId = eventIdEnum.EventBusToString();
         }
         else
+        {
             throw new ArgumentException("Only support string or Enum data type.");
+        }
     }
 
     /// <summary>

@@ -42,9 +42,15 @@ public static class CoordinateUtil
     public static bool IsInChina(double lat, double lng)
     {
         if (lng < 72.004 || lng > 137.8347)
+        {
             return false;
+        }
+
         if (lat < 0.8293 || lat > 55.8271)
+        {
             return false;
+        }
+
         return true;
     }
 
@@ -90,7 +96,9 @@ public static class CoordinateUtil
     public static (double lat, double lng) WGS84ToGCJ02(double wgLat, double wgLng)
     {
         if (!IsInChina(wgLat, wgLng))
+        {
             return (wgLat, wgLng);
+        }
 
         // 偏移量计算
         double dLat = TransformLat(wgLng - 105.0, wgLat - 35.0);
@@ -124,7 +132,9 @@ public static class CoordinateUtil
     public static (double lat, double lng) GCJ02ToWGS84(double mgLat, double mgLng)
     {
         if (!IsInChina(mgLat, mgLng))
+        {
             return (mgLat, mgLng);
+        }
 
         // 先将 GCJ-02 坐标正向转换到 WGS-84 坐标
         (double lat1, double lng1) = WGS84ToGCJ02(mgLat, mgLng);

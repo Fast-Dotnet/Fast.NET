@@ -22,8 +22,7 @@ internal static class ILoggingBuilderExtension
     /// <returns>添加控制台默认格式化器</returns>
     internal static ILoggingBuilder AddConsoleFormatter(this ILoggingBuilder builder)
     {
-        builder
-            .AddConsole(options => { options.FormatterName = Penetrates.ConsoleFormatterName; })
+        builder.AddConsole(options => { options.FormatterName = Penetrates.ConsoleFormatterName; })
             .AddConsoleFormatter<ConsoleFormatterExtend, ConsoleFormatterExtendOptions>(options =>
             {
                 options.DateFormat = "yyyy-MM-dd HH:mm:ss.fffffff zzz dddd";

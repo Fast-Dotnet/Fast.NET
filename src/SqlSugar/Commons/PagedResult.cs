@@ -60,8 +60,7 @@ public class PagedResult<TResult>
         {
             if (string.IsNullOrEmpty(_assemblyName))
             {
-                _assemblyName = typeof(TResult).Assembly.GetName()
-                    .Name;
+                _assemblyName = typeof(TResult).Assembly.GetName().Name;
             }
 
             return _assemblyName;

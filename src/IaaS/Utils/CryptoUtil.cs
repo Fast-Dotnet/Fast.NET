@@ -124,16 +124,13 @@ public static class CryptoUtil
     {
         string encoded = Convert.ToBase64String(value);
         var builder = new StringBuilder(encoded.Length + 64);
-        builder
-            .Append("-----BEGIN ")
-            .Append(label)
-            .AppendLine("-----");
+        builder.Append("-----BEGIN ").Append(label).AppendLine("-----");
         for (int index = 0; index < encoded.Length; index += 64)
+        {
             builder.AppendLine(encoded.Substring(index, Math.Min(64, encoded.Length - index)));
-        builder
-            .Append("-----END ")
-            .Append(label)
-            .Append("-----");
+        }
+
+        builder.Append("-----END ").Append(label).Append("-----");
         return builder.ToString();
     }
 
@@ -147,20 +144,26 @@ public static class CryptoUtil
     private static byte[] FromPem(string value, string label)
     {
         if (value == null)
+        {
             throw new ArgumentNullException(nameof(value));
+        }
 
         string header = $"-----BEGIN {label}-----";
         string footer = $"-----END {label}-----";
         string trimmed = value.Trim();
         if (!trimmed.StartsWith(header, StringComparison.Ordinal) || !trimmed.EndsWith(footer, StringComparison.Ordinal))
+        {
             throw new CryptographicException($"需要 {label} PEM 格式的密钥。");
+        }
 
         string content = trimmed.Substring(header.Length, trimmed.Length - header.Length - footer.Length);
         var encoded = new StringBuilder(content.Length);
         foreach (char character in content)
         {
             if (!char.IsWhiteSpace(character))
+            {
                 encoded.Append(character);
+            }
         }
 
         try
@@ -183,14 +186,9 @@ public static class CryptoUtil
         // PrivateKeyInfo = version || rsaEncryption AlgorithmIdentifier || OCTET STRING(RSAPrivateKey)
         byte[] algorithm = EncodeDerSequence(EncodeDer(0x06, RSA_ENCRYPTION_OID), EncodeDer(0x05, Array.Empty<byte>()));
         // RSAPrivateKey 使用 PKCS#1 规定的 CRT 参数顺序，version=0 表示双素数 RSA
-        byte[] privateKey = EncodeDerSequence(EncodeDerInteger(0),
-            EncodeDerInteger(parameters.Modulus),
-            EncodeDerInteger(parameters.Exponent),
-            EncodeDerInteger(parameters.D),
-            EncodeDerInteger(parameters.P),
-            EncodeDerInteger(parameters.Q),
-            EncodeDerInteger(parameters.DP),
-            EncodeDerInteger(parameters.DQ),
+        byte[] privateKey = EncodeDerSequence(EncodeDerInteger(0), EncodeDerInteger(parameters.Modulus),
+            EncodeDerInteger(parameters.Exponent), EncodeDerInteger(parameters.D), EncodeDerInteger(parameters.P),
+            EncodeDerInteger(parameters.Q), EncodeDerInteger(parameters.DP), EncodeDerInteger(parameters.DQ),
             EncodeDerInteger(parameters.InverseQ));
         return EncodeDerSequence(EncodeDerInteger(0), algorithm, EncodeDer(0x04, privateKey));
     }
@@ -263,8 +261,7 @@ public static class CryptoUtil
     {
         byte[] point = EncodeEcPoint(parameters.Q, curve.CoordinateLength);
         // ECPrivateKey 同时保存私钥标量 D 和显式公钥点，确保 .NET 与 Web Crypto 均可导入
-        byte[] privateKey = EncodeDerSequence(EncodeDerInteger(1),
-            EncodeDer(0x04, PadLeft(parameters.D, curve.CoordinateLength)),
+        byte[] privateKey = EncodeDerSequence(EncodeDerInteger(1), EncodeDer(0x04, PadLeft(parameters.D, curve.CoordinateLength)),
             EncodeDer(0xA1, EncodeDerBitString(point)));
         byte[] algorithm = EncodeDerSequence(EncodeDer(0x06, EC_PUBLIC_KEY_OID), EncodeDer(0x06, curve.ObjectIdentifier));
         return EncodeDerSequence(EncodeDerInteger(0), algorithm, EncodeDer(0x04, privateKey));
@@ -309,7 +306,9 @@ public static class CryptoUtil
             }
 
             if (tag != 0xA1)
+            {
                 throw new CryptographicException("EC PKCS#8 私钥包含不支持的字段。");
+            }
 
             // [1] EXPLICIT BIT STRING 保存未压缩公钥点，导入 ECParameters 时 Q 和 D 必须属于同一曲线
             var publicKey = new DerReader(privateKey.ReadValue(0xA1));
@@ -320,7 +319,10 @@ public static class CryptoUtil
 
         outer.EnsureEmpty();
         if (!hasPublicKey)
+        {
             throw new CryptographicException("EC PKCS#8 私钥缺少互操作所需的公钥点。");
+        }
+
         return new ECParameters {Curve = curve.Curve, D = d, Q = point};
     }
 
@@ -362,16 +364,18 @@ public static class CryptoUtil
     {
         DerReader algorithm = outer.ReadSequence();
         if (!CryptographicOperations.FixedTimeEquals(algorithm.ReadValue(0x06), expectedAlgorithm))
+        {
             throw new CryptographicException("密钥算法标识与请求的算法不匹配。");
+        }
 
         if (expectedParameter == null)
         {
             if (algorithm.HasData)
             {
-                if (algorithm.ReadValue(0x05)
-                        .Length
-                    != 0)
+                if (algorithm.ReadValue(0x05).Length != 0)
+                {
                     throw new CryptographicException("DER NULL 参数长度无效。");
+                }
             }
         }
         else if (!CryptographicOperations.FixedTimeEquals(algorithm.ReadValue(0x06), expectedParameter))
@@ -408,7 +412,9 @@ public static class CryptoUtil
     private static ECPoint ReadEcPoint(byte[] value, int coordinateLength)
     {
         if (value.Length != 1 + coordinateLength * 2 || value[0] != 0x04)
+        {
             throw new CryptographicException("仅支持未压缩格式的 NIST EC 公钥点。");
+        }
 
         byte[] x = new byte[coordinateLength];
         byte[] y = new byte[coordinateLength];
@@ -446,7 +452,9 @@ public static class CryptoUtil
     {
         int contentLength = 0;
         foreach (byte[] value in values)
+        {
             contentLength += value.Length;
+        }
 
         byte[] content = new byte[contentLength];
         int offset = 0;
@@ -467,7 +475,10 @@ public static class CryptoUtil
     private static byte[] EncodeDerInteger(int value)
     {
         if (value < 0 || value > 127)
+        {
             throw new ArgumentOutOfRangeException(nameof(value));
+        }
+
         return EncodeDer(0x02, new[] {(byte)value});
     }
 
@@ -479,15 +490,23 @@ public static class CryptoUtil
     private static byte[] EncodeDerInteger(byte[] value)
     {
         if (value == null)
+        {
             throw new CryptographicException("密钥参数不完整。");
+        }
 
         int offset = 0;
         while (offset < value.Length && value[offset] == 0)
+        {
             offset++;
+        }
+
         byte[] normalized = new byte[value.Length - offset];
         Buffer.BlockCopy(value, offset, normalized, 0, normalized.Length);
         if (normalized.Length == 0)
+        {
             normalized = new byte[] {0};
+        }
+
         if ((normalized[0] & 0x80) != 0)
         {
             // DER INTEGER 是有符号数；最高位为 1 时补一个零字节，防止无符号参数被解释为负数
@@ -555,15 +574,23 @@ public static class CryptoUtil
     private static byte[] PadLeft(byte[] value, int length)
     {
         if (value == null)
+        {
             throw new CryptographicException("密钥参数不完整。");
+        }
 
         int offset = 0;
         while (offset < value.Length && value[offset] == 0)
+        {
             offset++;
+        }
+
         byte[] normalized = new byte[value.Length - offset];
         Buffer.BlockCopy(value, offset, normalized, 0, normalized.Length);
         if (normalized.Length > length)
+        {
             throw new CryptographicException("密钥参数长度无效。");
+        }
+
         // EC 坐标和私钥标量是固定字段长度，左侧补零不会改变大端整数值
         byte[] result = new byte[length];
         Buffer.BlockCopy(normalized, 0, result, length - normalized.Length, normalized.Length);
@@ -647,7 +674,10 @@ public static class CryptoUtil
         internal byte PeekTag()
         {
             if (!HasData)
+            {
                 throw new CryptographicException("DER 数据意外结束。");
+            }
+
             return _value[_offset];
         }
 
@@ -668,11 +698,17 @@ public static class CryptoUtil
         {
             byte[] value = ReadValue(0x02);
             if (value.Length == 0 || (value[0] & 0x80) != 0)
+            {
                 throw new CryptographicException("DER INTEGER 必须是非负整数。");
+            }
+
             if (value.Length > 1 && value[0] == 0)
             {
                 if ((value[1] & 0x80) == 0)
+                {
                     throw new CryptographicException("DER INTEGER 不是最短编码。");
+                }
+
                 byte[] result = new byte[value.Length - 1];
                 Buffer.BlockCopy(value, 1, result, 0, result.Length);
                 return result;
@@ -689,7 +725,10 @@ public static class CryptoUtil
         {
             byte[] value = ReadValue(0x03);
             if (value.Length == 0 || value[0] != 0)
+            {
                 throw new CryptographicException("仅支持字节对齐的 DER BIT STRING。");
+            }
+
             byte[] result = new byte[value.Length - 1];
             Buffer.BlockCopy(value, 1, result, 0, result.Length);
             return result;
@@ -703,11 +742,16 @@ public static class CryptoUtil
         internal byte[] ReadValue(int expectedTag)
         {
             if (!HasData || _value[_offset++] != expectedTag)
+            {
                 throw new CryptographicException($"DER 数据缺少预期标签 0x{expectedTag:X2}。");
+            }
 
             int length = ReadLength();
             if (length > _value.Length - _offset)
+            {
                 throw new CryptographicException("DER 字段长度超出输入范围。");
+            }
+
             byte[] result = new byte[length];
             Buffer.BlockCopy(_value, _offset, result, 0, length);
             _offset += length;
@@ -720,7 +764,9 @@ public static class CryptoUtil
         internal void EnsureEmpty()
         {
             if (HasData)
+            {
                 throw new CryptographicException("DER 数据包含未预期的尾随字段。");
+            }
         }
 
         /// <summary>
@@ -730,23 +776,35 @@ public static class CryptoUtil
         private int ReadLength()
         {
             if (!HasData)
+            {
                 throw new CryptographicException("DER 长度字段意外结束。");
+            }
 
             byte first = _value[_offset++];
             if ((first & 0x80) == 0)
+            {
                 return first;
+            }
 
             // DER 禁止 BER 的不定长度；本工具也拒绝超过 Int32 范围的超大字段
             int count = first & 0x7F;
             if (count == 0 || count > 4 || count > _value.Length - _offset)
+            {
                 throw new CryptographicException("DER 长度字段无效。");
+            }
 
             int length = 0;
             for (int index = 0; index < count; index++)
+            {
                 length = checked((length << 8) | _value[_offset++]);
+            }
+
             // 小于 128 的长度必须使用单字节短形式，拒绝存在多种表示的非规范输入
             if (length < 128)
+            {
                 throw new CryptographicException("DER 长度不是最短编码。");
+            }
+
             return length;
         }
     }
@@ -764,7 +822,9 @@ public static class CryptoUtil
     public static byte[] GenerateRandomBytes(int length)
     {
         if (length < 0 || length > 65536)
+        {
             throw new ArgumentOutOfRangeException(nameof(length), "长度必须介于 0 和 65,536 之间。");
+        }
 
         byte[] bytes = new byte[length];
         using var randomNumberGenerator = RandomNumberGenerator.Create();
@@ -781,9 +841,15 @@ public static class CryptoUtil
     public static bool FixedTimeEquals(byte[] left, byte[] right)
     {
         if (left == null)
+        {
             throw new ArgumentNullException(nameof(left));
+        }
+
         if (right == null)
+        {
             throw new ArgumentNullException(nameof(right));
+        }
+
         return CryptographicOperations.FixedTimeEquals(left, right);
     }
 
@@ -800,7 +866,9 @@ public static class CryptoUtil
     public static string MD5Encrypt(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         // 创建 MD5 实例
         using var mi = MD5.Create();
@@ -812,10 +880,7 @@ public static class CryptoUtil
         byte[] hashBytes = mi.ComputeHash(contentBytes);
 
         // BitConverter 生成带连字符的十六进制文本，移除分隔符后统一转换为小写
-        return BitConverter
-            .ToString(hashBytes)
-            .Replace("-", string.Empty)
-            .ToLowerInvariant();
+        return BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLowerInvariant();
     }
 
     #endregion
@@ -831,14 +896,14 @@ public static class CryptoUtil
     public static string SHA1Encrypt(string str)
     {
         if (str == null)
+        {
             throw new ArgumentNullException(nameof(str));
+        }
 
         using var sha1 = SHA1.Create();
         byte[] contentBytes = Encoding.UTF8.GetBytes(str);
         byte[] hashBytes = sha1.ComputeHash(contentBytes);
-        return BitConverter
-            .ToString(hashBytes)
-            .Replace("-", string.Empty);
+        return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
     }
 
     #endregion
@@ -853,13 +918,13 @@ public static class CryptoUtil
     public static string SHA256Encrypt(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha256 = SHA256.Create();
-        return BitConverter
-            .ToString(sha256.ComputeHash(contentBytes))
-            .Replace("-", string.Empty);
+        return BitConverter.ToString(sha256.ComputeHash(contentBytes)).Replace("-", string.Empty);
     }
 
     /// <summary>
@@ -870,7 +935,9 @@ public static class CryptoUtil
     public static byte[] SHA256Bytes(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha256 = SHA256.Create();
@@ -889,13 +956,13 @@ public static class CryptoUtil
     public static string SHA384Encrypt(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha384 = SHA384.Create();
-        return BitConverter
-            .ToString(sha384.ComputeHash(contentBytes))
-            .Replace("-", string.Empty);
+        return BitConverter.ToString(sha384.ComputeHash(contentBytes)).Replace("-", string.Empty);
     }
 
     /// <summary>
@@ -906,7 +973,9 @@ public static class CryptoUtil
     public static byte[] SHA384Bytes(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha384 = SHA384.Create();
@@ -925,13 +994,13 @@ public static class CryptoUtil
     public static string SHA512Encrypt(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha512 = SHA512.Create();
-        return BitConverter
-            .ToString(sha512.ComputeHash(contentBytes))
-            .Replace("-", string.Empty);
+        return BitConverter.ToString(sha512.ComputeHash(contentBytes)).Replace("-", string.Empty);
     }
 
     /// <summary>
@@ -942,7 +1011,9 @@ public static class CryptoUtil
     public static byte[] SHA512Bytes(string content)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
 
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
         using var sha512 = SHA512.Create();
@@ -962,14 +1033,22 @@ public static class CryptoUtil
     public static string HMACSHA256Encrypt(string content, string key)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
+
         if (key == null)
+        {
             throw new ArgumentNullException(nameof(key));
+        }
 
         // HMAC 直接使用调用方密钥的 UTF-8 字节，不再经过额外的密钥派生或截断
         byte[] keyBytes = Encoding.UTF8.GetBytes(key);
         if (keyBytes.Length == 0)
+        {
             throw new ArgumentException("HMAC 密钥不能为空。", nameof(key));
+        }
+
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
 
         try
@@ -979,10 +1058,7 @@ public static class CryptoUtil
             byte[] tagBytes = hmac.ComputeHash(contentBytes);
 
             // BitConverter 默认包含连字符，移除后统一输出小写十六进制
-            return BitConverter
-                .ToString(tagBytes)
-                .Replace("-", string.Empty)
-                .ToLowerInvariant();
+            return BitConverter.ToString(tagBytes).Replace("-", string.Empty).ToLowerInvariant();
         }
         finally
         {
@@ -1000,14 +1076,22 @@ public static class CryptoUtil
     public static string HMACSHA384Encrypt(string content, string key)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
+
         if (key == null)
+        {
             throw new ArgumentNullException(nameof(key));
+        }
 
         // HMAC 直接使用调用方密钥的 UTF-8 字节，不再经过额外的密钥派生或截断
         byte[] keyBytes = Encoding.UTF8.GetBytes(key);
         if (keyBytes.Length == 0)
+        {
             throw new ArgumentException("HMAC 密钥不能为空。", nameof(key));
+        }
+
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
 
         try
@@ -1017,10 +1101,7 @@ public static class CryptoUtil
             byte[] tagBytes = hmac.ComputeHash(contentBytes);
 
             // BitConverter 默认包含连字符，移除后统一输出小写十六进制
-            return BitConverter
-                .ToString(tagBytes)
-                .Replace("-", string.Empty)
-                .ToLowerInvariant();
+            return BitConverter.ToString(tagBytes).Replace("-", string.Empty).ToLowerInvariant();
         }
         finally
         {
@@ -1038,14 +1119,22 @@ public static class CryptoUtil
     public static string HMACSHA512Encrypt(string content, string key)
     {
         if (content == null)
+        {
             throw new ArgumentNullException(nameof(content));
+        }
+
         if (key == null)
+        {
             throw new ArgumentNullException(nameof(key));
+        }
 
         // HMAC 直接使用调用方密钥的 UTF-8 字节，不再经过额外的密钥派生或截断
         byte[] keyBytes = Encoding.UTF8.GetBytes(key);
         if (keyBytes.Length == 0)
+        {
             throw new ArgumentException("HMAC 密钥不能为空。", nameof(key));
+        }
+
         byte[] contentBytes = Encoding.UTF8.GetBytes(content);
 
         try
@@ -1055,10 +1144,7 @@ public static class CryptoUtil
             byte[] tagBytes = hmac.ComputeHash(contentBytes);
 
             // BitConverter 默认包含连字符，移除后统一输出小写十六进制
-            return BitConverter
-                .ToString(tagBytes)
-                .Replace("-", string.Empty)
-                .ToLowerInvariant();
+            return BitConverter.ToString(tagBytes).Replace("-", string.Empty).ToLowerInvariant();
         }
         finally
         {
@@ -1081,29 +1167,46 @@ public static class CryptoUtil
     /// <param name="outputLength">派生密钥长度，范围为 1 至 1,024 字节</param>
     /// <returns>指定长度的派生密钥</returns>
     /// <exception cref="ArgumentOutOfRangeException">密码、盐、迭代次数或输出长度超出允许范围</exception>
-    public static byte[] PBKDF2SHA256(string password,
-        byte[] salt,
-        int iterations = DEFAULT_PBKDF2_ITERATIONS,
+    public static byte[] PBKDF2SHA256(string password, byte[] salt, int iterations = DEFAULT_PBKDF2_ITERATIONS,
         int outputLength = 32)
     {
         if (salt == null)
+        {
             throw new ArgumentNullException(nameof(salt));
+        }
+
         if (salt.Length < 8)
+        {
             throw new ArgumentOutOfRangeException(nameof(salt), "PBKDF2 盐不能少于 8 字节，推荐至少 16 字节。");
+        }
+
         if (password == null)
+        {
             throw new ArgumentNullException(nameof(password));
+        }
 
         // PBKDF2 按 UTF-8 处理密码，并限制输入大小以避免异常参数占用过多内存
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         if (passwordBytes.Length == 0)
+        {
             throw new ArgumentException("密码不能为空。", nameof(password));
+        }
+
         if (passwordBytes.Length > MAXIMUM_PASSWORD_BYTES)
+        {
             throw new ArgumentOutOfRangeException(nameof(password), $"UTF-8 密码不能超过 {MAXIMUM_PASSWORD_BYTES} 字节。");
+        }
+
         if (iterations < MINIMUM_PBKDF2_ITERATIONS || iterations > MAXIMUM_PBKDF2_ITERATIONS)
+        {
             throw new ArgumentOutOfRangeException(nameof(iterations),
                 $"PBKDF2 迭代次数必须介于 {MINIMUM_PBKDF2_ITERATIONS} 和 {MAXIMUM_PBKDF2_ITERATIONS} 之间。");
+        }
+
         if (outputLength < 1 || outputLength > 1024)
+        {
             throw new ArgumentOutOfRangeException(nameof(outputLength), "输出长度必须介于 1 和 1,024 字节之间。");
+        }
 
         try
         {
@@ -1127,17 +1230,27 @@ public static class CryptoUtil
     public static string HashPasswordPBKDF2SHA256(string password, int iterations = DEFAULT_PBKDF2_ITERATIONS)
     {
         if (password == null)
+        {
             throw new ArgumentNullException(nameof(password));
+        }
 
         // 密码哈希独立校验输入，不依赖通用 PBKDF2 入口的实现细节
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         if (passwordBytes.Length == 0)
+        {
             throw new ArgumentException("密码不能为空。", nameof(password));
+        }
+
         if (passwordBytes.Length > MAXIMUM_PASSWORD_BYTES)
+        {
             throw new ArgumentOutOfRangeException(nameof(password), $"UTF-8 密码不能超过 {MAXIMUM_PASSWORD_BYTES} 字节。");
+        }
+
         if (iterations < MINIMUM_PBKDF2_ITERATIONS || iterations > MAXIMUM_PBKDF2_ITERATIONS)
+        {
             throw new ArgumentOutOfRangeException(nameof(iterations),
                 $"PBKDF2 迭代次数必须介于 {MINIMUM_PBKDF2_ITERATIONS} 和 {MAXIMUM_PBKDF2_ITERATIONS} 之间。");
+        }
 
         // 每个密码独立生成盐，防止相同密码产生相同的持久化结果，并提高预计算攻击成本
         byte[] salt = new byte[16];
@@ -1156,23 +1269,17 @@ public static class CryptoUtil
             }
 
             // 协议字段使用无填充 Base64Url，避免持久化文本包含路径或表单敏感字符
-            string encodedSalt = Convert
-                .ToBase64String(salt)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
-            string encodedKey = Convert
-                .ToBase64String(derivedKey)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            string encodedSalt = Convert.ToBase64String(salt).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            string encodedKey = Convert.ToBase64String(derivedKey).TrimEnd('=').Replace('+', '-').Replace('/', '_');
             return string.Join(":", PASSWORD_HASH_PREFIX, iterations.ToString(), encodedSalt, encodedKey);
         }
         finally
         {
             CryptographicOperations.ZeroMemory(passwordBytes);
             if (derivedKey != null)
+            {
                 CryptographicOperations.ZeroMemory(derivedKey);
+            }
         }
     }
 
@@ -1185,7 +1292,9 @@ public static class CryptoUtil
     public static bool VerifyPasswordPBKDF2SHA256(string password, string passwordHash)
     {
         if (passwordHash == null)
+        {
             throw new ArgumentNullException(nameof(passwordHash));
+        }
 
         byte[] passwordBytes = null;
         byte[] expected = null;
@@ -1195,9 +1304,14 @@ public static class CryptoUtil
             // 先验证协议版本和字段数量，再执行高成本 PBKDF2
             string[] parts = passwordHash.Split(':');
             if (parts.Length != 4 || parts[0] != PASSWORD_HASH_PREFIX || !int.TryParse(parts[1], out int iterations))
+            {
                 return false;
+            }
+
             if (iterations < MINIMUM_PBKDF2_ITERATIONS || iterations > MAXIMUM_PBKDF2_ITERATIONS)
+            {
                 return false;
+            }
 
             // 严格解码盐字段，并拒绝填充、标准 Base64 字符和非规范尾部位
             string encodedSalt = parts[2];
@@ -1205,19 +1319,18 @@ public static class CryptoUtil
                 || encodedSalt.IndexOf('+') >= 0
                 || encodedSalt.IndexOf('/') >= 0
                 || encodedSalt.Length % 4 == 1)
+            {
                 return false;
-            string normalizedSalt = encodedSalt
-                .Replace('-', '+')
-                .Replace('_', '/');
+            }
+
+            string normalizedSalt = encodedSalt.Replace('-', '+').Replace('_', '/');
             normalizedSalt = normalizedSalt.PadRight(normalizedSalt.Length + (4 - normalizedSalt.Length % 4) % 4, '=');
             byte[] salt = Convert.FromBase64String(normalizedSalt);
-            string canonicalSalt = Convert
-                .ToBase64String(salt)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            string canonicalSalt = Convert.ToBase64String(salt).TrimEnd('=').Replace('+', '-').Replace('/', '_');
             if (!string.Equals(canonicalSalt, encodedSalt, StringComparison.Ordinal))
+            {
                 return false;
+            }
 
             // 对派生密钥字段执行相同的规范 Base64Url 校验
             string encodedKey = parts[3];
@@ -1225,28 +1338,35 @@ public static class CryptoUtil
                 || encodedKey.IndexOf('+') >= 0
                 || encodedKey.IndexOf('/') >= 0
                 || encodedKey.Length % 4 == 1)
+            {
                 return false;
-            string normalizedKey = encodedKey
-                .Replace('-', '+')
-                .Replace('_', '/');
+            }
+
+            string normalizedKey = encodedKey.Replace('-', '+').Replace('_', '/');
             normalizedKey = normalizedKey.PadRight(normalizedKey.Length + (4 - normalizedKey.Length % 4) % 4, '=');
             expected = Convert.FromBase64String(normalizedKey);
-            string canonicalKey = Convert
-                .ToBase64String(expected)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            string canonicalKey = Convert.ToBase64String(expected).TrimEnd('=').Replace('+', '-').Replace('/', '_');
             if (!string.Equals(canonicalKey, encodedKey, StringComparison.Ordinal))
+            {
                 return false;
+            }
+
             if (salt.Length != 16 || expected.Length != 32)
+            {
                 return false;
+            }
 
             // 验证入口独立完成密码边界校验，避免依赖其他公共 PBKDF2 方法
             if (password == null)
+            {
                 return false;
+            }
+
             passwordBytes = Encoding.UTF8.GetBytes(password);
             if (passwordBytes.Length == 0 || passwordBytes.Length > MAXIMUM_PASSWORD_BYTES)
+            {
                 return false;
+            }
 
             using (var deriveBytes = new Rfc2898DeriveBytes(passwordBytes, salt, iterations, HashAlgorithmName.SHA256))
             {
@@ -1267,11 +1387,19 @@ public static class CryptoUtil
         finally
         {
             if (passwordBytes != null)
+            {
                 CryptographicOperations.ZeroMemory(passwordBytes);
+            }
+
             if (actual != null)
+            {
                 CryptographicOperations.ZeroMemory(actual);
+            }
+
             if (expected != null)
+            {
                 CryptographicOperations.ZeroMemory(expected);
+            }
         }
     }
 
@@ -1291,9 +1419,14 @@ public static class CryptoUtil
     public static byte[] HKDFSHA256(byte[] inputKeyMaterial, byte[] salt = null, byte[] info = null, int outputLength = 32)
     {
         if (inputKeyMaterial == null)
+        {
             throw new ArgumentNullException(nameof(inputKeyMaterial));
+        }
+
         if (outputLength < 1 || outputLength > 255 * 32)
+        {
             throw new ArgumentOutOfRangeException(nameof(outputLength), "输出长度必须介于 1 和 8,160 字节之间。");
+        }
 
         byte[] actualSalt = salt == null || salt.Length == 0 ? new byte[32] : salt;
         byte[] actualInfo = info ?? Array.Empty<byte>();
@@ -1348,10 +1481,7 @@ public static class CryptoUtil
     /// <param name="cipherMode">对称加密使用的密码块模式</param>
     /// <param name="paddingMode">对称加密使用的填充模式</param>
     /// <returns>使用 AES 算法对给定字符串进行加密</returns>
-    public static string AESEncrypt(string dataStr,
-        string key,
-        string vector,
-        CipherMode cipherMode = CipherMode.CBC,
+    public static string AESEncrypt(string dataStr, string key, string vector, CipherMode cipherMode = CipherMode.CBC,
         PaddingMode paddingMode = PaddingMode.PKCS7)
     {
         if (string.IsNullOrWhiteSpace(dataStr))
@@ -1426,10 +1556,7 @@ public static class CryptoUtil
     /// <param name="cipherMode">对称加密使用的密码块模式</param>
     /// <param name="paddingMode">对称加密使用的填充模式</param>
     /// <returns>使用 AES 算法对给定的 Base64 编码字符串进行解密</returns>
-    public static string AESDecrypt(string dataStr,
-        string key,
-        string vector,
-        CipherMode cipherMode = CipherMode.CBC,
+    public static string AESDecrypt(string dataStr, string key, string vector, CipherMode cipherMode = CipherMode.CBC,
         PaddingMode paddingMode = PaddingMode.PKCS7)
     {
         if (string.IsNullOrWhiteSpace(dataStr))
@@ -1501,9 +1628,14 @@ public static class CryptoUtil
     public static string AESEncryptAuthenticated(string dataStr, string key)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
+
         if (string.IsNullOrWhiteSpace(key))
+        {
             throw new ArgumentException("密钥不能为空。", nameof(key));
+        }
 
         const byte formatVersion = 1;
         const int nonceLength = 12;
@@ -1561,9 +1693,14 @@ public static class CryptoUtil
     public static string AESDecryptAuthenticated(string dataStr, string key)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
+
         if (string.IsNullOrWhiteSpace(key))
+        {
             throw new ArgumentException("密钥不能为空。", nameof(key));
+        }
 
         const byte supportedVersion = 1;
         const int nonceLength = 12;
@@ -1571,17 +1708,13 @@ public static class CryptoUtil
 
         byte[] payload = Convert.FromBase64String(dataStr);
         if (payload.Length < 1 + nonceLength + tagLength || payload[0] != supportedVersion)
+        {
             throw new CryptographicException("AES-GCM 密文格式无效或版本不受支持。");
+        }
 
-        byte[] nonce = payload
-            .AsSpan(1, nonceLength)
-            .ToArray();
-        byte[] tag = payload
-            .AsSpan(1 + nonceLength, tagLength)
-            .ToArray();
-        byte[] ciphertext = payload
-            .AsSpan(1 + nonceLength + tagLength)
-            .ToArray();
+        byte[] nonce = payload.AsSpan(1, nonceLength).ToArray();
+        byte[] tag = payload.AsSpan(1 + nonceLength, tagLength).ToArray();
+        byte[] ciphertext = payload.AsSpan(1 + nonceLength + tagLength).ToArray();
         byte[] plaintext = new byte[ciphertext.Length];
         byte[] keyMaterialBytes = Encoding.UTF8.GetBytes(key);
         byte[] keyBytes;
@@ -1623,23 +1756,38 @@ public static class CryptoUtil
     public static string AESEncryptWithPassword(string dataStr, string password, int iterations = DEFAULT_PBKDF2_ITERATIONS)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
+
         if (password == null)
+        {
             throw new ArgumentNullException(nameof(password));
+        }
 
         // 此入口独立校验并编码密码，避免依赖其他 PBKDF2 公共方法的行为
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         if (passwordBytes.Length == 0)
+        {
             throw new ArgumentException("密码不能为空。", nameof(password));
+        }
+
         if (passwordBytes.Length > MAXIMUM_PASSWORD_BYTES)
+        {
             throw new ArgumentOutOfRangeException(nameof(password), $"UTF-8 密码不能超过 {MAXIMUM_PASSWORD_BYTES} 字节。");
+        }
 
         byte[] plaintextBytes = Encoding.UTF8.GetBytes(dataStr);
         if (plaintextBytes.Length > MAXIMUM_PLAINTEXT_BYTES)
+        {
             throw new ArgumentOutOfRangeException(nameof(dataStr), $"UTF-8 明文不能超过 {MAXIMUM_PLAINTEXT_BYTES} 字节。");
+        }
+
         if (iterations < MINIMUM_PBKDF2_ITERATIONS || iterations > MAXIMUM_PBKDF2_ITERATIONS)
+        {
             throw new ArgumentOutOfRangeException(nameof(iterations),
                 $"PBKDF2 迭代次数必须介于 {MINIMUM_PBKDF2_ITERATIONS} 和 {MAXIMUM_PBKDF2_ITERATIONS} 之间。");
+        }
 
         // 盐保证相同密码不会派生相同密钥；nonce 保证同一派生密钥下的每次 GCM 加密都具有唯一输入
         byte[] salt = new byte[16];
@@ -1677,26 +1825,10 @@ public static class CryptoUtil
             Buffer.BlockCopy(tag, 0, ciphertextAndTag, ciphertext.Length, tag.Length);
 
             // 每个二进制字段独立编码为无填充 Base64Url，与 TypeScript 协议保持一致
-            string encodedSalt = Convert
-                .ToBase64String(salt)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
-            string encodedNonce = Convert
-                .ToBase64String(nonce)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
-            string encodedCiphertext = Convert
-                .ToBase64String(ciphertextAndTag)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
-            return string.Join(":",
-                PASSWORD_ENCRYPTION_PREFIX,
-                iterations.ToString(),
-                encodedSalt,
-                encodedNonce,
+            string encodedSalt = Convert.ToBase64String(salt).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            string encodedNonce = Convert.ToBase64String(nonce).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            string encodedCiphertext = Convert.ToBase64String(ciphertextAndTag).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            return string.Join(":", PASSWORD_ENCRYPTION_PREFIX, iterations.ToString(), encodedSalt, encodedNonce,
                 encodedCiphertext);
         }
         finally
@@ -1718,18 +1850,31 @@ public static class CryptoUtil
     public static string AESDecryptWithPassword(string payload, string password)
     {
         if (payload == null)
+        {
             throw new ArgumentNullException(nameof(payload));
+        }
+
         if (payload.Length > MAXIMUM_PAYLOAD_LENGTH)
+        {
             throw new ArgumentOutOfRangeException(nameof(payload), "加密载荷超过支持的大小。");
+        }
+
         if (password == null)
+        {
             throw new ArgumentNullException(nameof(password));
+        }
 
         // 解密入口独立校验密码字节边界，不依赖其他 PBKDF2 或密码哈希方法
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         if (passwordBytes.Length == 0)
+        {
             throw new ArgumentException("密码不能为空。", nameof(password));
+        }
+
         if (passwordBytes.Length > MAXIMUM_PASSWORD_BYTES)
+        {
             throw new ArgumentOutOfRangeException(nameof(password), $"UTF-8 密码不能超过 {MAXIMUM_PASSWORD_BYTES} 字节。");
+        }
 
         byte[] keyBytes = null;
         byte[] plaintext = null;
@@ -1738,11 +1883,15 @@ public static class CryptoUtil
             // 在执行高成本 PBKDF2 前先验证固定字段数、协议版本和迭代次数字段
             string[] parts = payload.Split(':');
             if (parts.Length != 5 || parts[0] != PASSWORD_ENCRYPTION_PREFIX || !int.TryParse(parts[1], out int iterations))
+            {
                 throw new CryptographicException("AES-GCM 密码载荷格式无效或版本不受支持。");
+            }
 
             if (iterations < MINIMUM_PBKDF2_ITERATIONS || iterations > MAXIMUM_PBKDF2_ITERATIONS)
+            {
                 throw new ArgumentOutOfRangeException(nameof(iterations),
                     $"PBKDF2 迭代次数必须介于 {MINIMUM_PBKDF2_ITERATIONS} 和 {MAXIMUM_PBKDF2_ITERATIONS} 之间。");
+            }
 
             // 严格解码盐字段，并校验其无填充 Base64Url 表示是否规范
             string encodedSalt = parts[2];
@@ -1750,19 +1899,18 @@ public static class CryptoUtil
                 || encodedSalt.IndexOf('+') >= 0
                 || encodedSalt.IndexOf('/') >= 0
                 || encodedSalt.Length % 4 == 1)
+            {
                 throw new FormatException("盐字段不是有效的 Base64Url。");
-            string normalizedSalt = encodedSalt
-                .Replace('-', '+')
-                .Replace('_', '/');
+            }
+
+            string normalizedSalt = encodedSalt.Replace('-', '+').Replace('_', '/');
             normalizedSalt = normalizedSalt.PadRight(normalizedSalt.Length + (4 - normalizedSalt.Length % 4) % 4, '=');
             byte[] salt = Convert.FromBase64String(normalizedSalt);
-            string canonicalSalt = Convert
-                .ToBase64String(salt)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            string canonicalSalt = Convert.ToBase64String(salt).TrimEnd('=').Replace('+', '-').Replace('/', '_');
             if (!string.Equals(canonicalSalt, encodedSalt, StringComparison.Ordinal))
+            {
                 throw new FormatException("盐字段不是规范的 Base64Url 编码。");
+            }
 
             // nonce 与盐使用相同的严格 Base64Url 解析规则
             string encodedNonce = parts[3];
@@ -1770,19 +1918,18 @@ public static class CryptoUtil
                 || encodedNonce.IndexOf('+') >= 0
                 || encodedNonce.IndexOf('/') >= 0
                 || encodedNonce.Length % 4 == 1)
+            {
                 throw new FormatException("nonce 字段不是有效的 Base64Url。");
-            string normalizedNonce = encodedNonce
-                .Replace('-', '+')
-                .Replace('_', '/');
+            }
+
+            string normalizedNonce = encodedNonce.Replace('-', '+').Replace('_', '/');
             normalizedNonce = normalizedNonce.PadRight(normalizedNonce.Length + (4 - normalizedNonce.Length % 4) % 4, '=');
             byte[] nonce = Convert.FromBase64String(normalizedNonce);
-            string canonicalNonce = Convert
-                .ToBase64String(nonce)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
+            string canonicalNonce = Convert.ToBase64String(nonce).TrimEnd('=').Replace('+', '-').Replace('/', '_');
             if (!string.Equals(canonicalNonce, encodedNonce, StringComparison.Ordinal))
+            {
                 throw new FormatException("nonce 字段不是规范的 Base64Url 编码。");
+            }
 
             // 密文和认证标签作为一个字段传输，解码后再按固定 16 字节标签拆分
             string encodedCiphertext = parts[4];
@@ -1790,13 +1937,13 @@ public static class CryptoUtil
                 || encodedCiphertext.IndexOf('+') >= 0
                 || encodedCiphertext.IndexOf('/') >= 0
                 || encodedCiphertext.Length % 4 == 1)
+            {
                 throw new FormatException("密文字段不是有效的 Base64Url。");
-            string normalizedCiphertext = encodedCiphertext
-                .Replace('-', '+')
-                .Replace('_', '/');
+            }
+
+            string normalizedCiphertext = encodedCiphertext.Replace('-', '+').Replace('_', '/');
             normalizedCiphertext = normalizedCiphertext.PadRight(
-                normalizedCiphertext.Length + (4 - normalizedCiphertext.Length % 4) % 4,
-                '=');
+                normalizedCiphertext.Length + (4 - normalizedCiphertext.Length % 4) % 4, '=');
             byte[] ciphertextAndTag = Convert.FromBase64String(normalizedCiphertext);
             string canonicalCiphertext = Convert
                 .ToBase64String(ciphertextAndTag)
@@ -1804,10 +1951,14 @@ public static class CryptoUtil
                 .Replace('+', '-')
                 .Replace('/', '_');
             if (!string.Equals(canonicalCiphertext, encodedCiphertext, StringComparison.Ordinal))
+            {
                 throw new FormatException("密文字段不是规范的 Base64Url 编码。");
+            }
 
             if (salt.Length != 16 || nonce.Length != 12 || ciphertextAndTag.Length < 16)
+            {
                 throw new CryptographicException("AES-GCM 密码载荷字段长度无效。");
+            }
 
             int ciphertextLength = ciphertextAndTag.Length - 16;
             byte[] ciphertext = new byte[ciphertextLength];
@@ -1845,9 +1996,14 @@ public static class CryptoUtil
         {
             CryptographicOperations.ZeroMemory(passwordBytes);
             if (keyBytes != null)
+            {
                 CryptographicOperations.ZeroMemory(keyBytes);
+            }
+
             if (plaintext != null)
+            {
                 CryptographicOperations.ZeroMemory(plaintext);
+            }
         }
     }
 
@@ -1864,7 +2020,9 @@ public static class CryptoUtil
     public static PemKeyPair GenerateRSAKeyPair(int modulusLength = 2048)
     {
         if (modulusLength < 2048 || modulusLength % 256 != 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(modulusLength), "RSA 模数必须至少为 2,048 位且是 256 的倍数。");
+        }
 
         using var rsa = RSA.Create();
         rsa.KeySize = modulusLength;
@@ -1884,7 +2042,9 @@ public static class CryptoUtil
     public static string RSAEncryptOAEP(string dataStr, string publicKeyPem)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
 
         byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
         using var rsa = RSA.Create();
@@ -1903,7 +2063,9 @@ public static class CryptoUtil
     public static string RSADecryptOAEP(string dataStr, string privateKeyPem)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
 
         using var rsa = RSA.Create();
         rsa.ImportParameters(ReadRsaPrivateKey(FromPem(privateKeyPem, "PRIVATE KEY")));
@@ -1920,7 +2082,9 @@ public static class CryptoUtil
     public static string RSASignPSS(string dataStr, string privateKeyPem)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
 
         byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
         using var rsa = RSA.Create();
@@ -1940,9 +2104,14 @@ public static class CryptoUtil
     public static bool RSAVerifyPSS(string dataStr, string signature, string publicKeyPem)
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
+
         if (signature == null)
+        {
             throw new ArgumentNullException(nameof(signature));
+        }
 
         byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
         byte[] signatureBytes = Convert.FromBase64String(signature);
@@ -1982,7 +2151,9 @@ public static class CryptoUtil
     public static string ECDSASign(string dataStr, string privateKeyPem, string namedCurve = "P-256")
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
 
         byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
         CurveInfo curve = GetCurveInfo(namedCurve);
@@ -2004,9 +2175,14 @@ public static class CryptoUtil
     public static bool ECDSAVerify(string dataStr, string signature, string publicKeyPem, string namedCurve = "P-256")
     {
         if (dataStr == null)
+        {
             throw new ArgumentNullException(nameof(dataStr));
+        }
+
         if (signature == null)
+        {
             throw new ArgumentNullException(nameof(signature));
+        }
 
         byte[] dataBytes = Encoding.UTF8.GetBytes(dataStr);
         byte[] signatureBytes = Convert.FromBase64String(signature);
@@ -2054,12 +2230,11 @@ public static class CryptoUtil
         publicKey.ImportParameters(ReadEcPublicKey(FromPem(publicKeyPem, "PUBLIC KEY"), curve));
 
         MethodInfo method = typeof(ECDiffieHellman).GetMethod("DeriveRawSecretAgreement",
-            BindingFlags.Instance | BindingFlags.Public,
-            null,
-            new[] {typeof(ECDiffieHellmanPublicKey)},
-            null);
+            BindingFlags.Instance | BindingFlags.Public, null, new[] {typeof(ECDiffieHellmanPublicKey)}, null);
         if (method == null)
+        {
             throw new PlatformNotSupportedException("当前运行时不支持原始 ECDH 共享秘密。");
+        }
 
         try
         {
@@ -2068,9 +2243,7 @@ public static class CryptoUtil
         }
         catch (TargetInvocationException exception) when (exception.InnerException != null)
         {
-            ExceptionDispatchInfo
-                .Capture(exception.InnerException)
-                .Throw();
+            ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
             throw;
         }
     }

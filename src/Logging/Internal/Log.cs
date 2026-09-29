@@ -61,9 +61,7 @@ public static class Log
     /// <returns>日志记录器以及用于结束作用域的释放句柄</returns>
     public static (ILogger logger, IDisposable scope) ScopeContext(IDictionary<object, object> properties)
     {
-        return GetLogger(StringLoggingPart
-            .Default()
-            .ScopeContext(properties));
+        return GetLogger(StringLoggingPart.Default().ScopeContext(properties));
     }
 
     /// <summary>
@@ -73,9 +71,7 @@ public static class Log
     /// <returns>日志记录器以及用于结束作用域的释放句柄</returns>
     public static (ILogger logger, IDisposable scope) ScopeContext(Action<LogContext> configure)
     {
-        return GetLogger(StringLoggingPart
-            .Default()
-            .ScopeContext(configure));
+        return GetLogger(StringLoggingPart.Default().ScopeContext(configure));
     }
 
     /// <summary>
@@ -85,9 +81,7 @@ public static class Log
     /// <returns>日志记录器以及用于结束作用域的释放句柄</returns>
     public static (ILogger logger, IDisposable scope) ScopeContext(LogContext context)
     {
-        return GetLogger(StringLoggingPart
-            .Default()
-            .ScopeContext(context));
+        return GetLogger(StringLoggingPart.Default().ScopeContext(context));
     }
 
     /// <summary>
@@ -97,11 +91,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Information(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogInformation();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogInformation();
     }
 
     /// <summary>
@@ -112,12 +102,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Information(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogInformation();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogInformation();
     }
 
     /// <summary>
@@ -128,12 +113,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Information(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogInformation();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogInformation();
     }
 
     /// <summary>
@@ -145,8 +125,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Information(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetMessage(message)
             .SetArgs(args)
             .SetEventId(eventId)
@@ -162,12 +141,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Information<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogInformation();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogInformation();
     }
 
     /// <summary>
@@ -179,13 +153,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Information<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogInformation();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogInformation();
     }
 
     /// <summary>
@@ -197,8 +165,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Information<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -216,8 +183,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Information<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -233,11 +199,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Warning(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogWarning();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogWarning();
     }
 
     /// <summary>
@@ -248,12 +210,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Warning(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogWarning();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogWarning();
     }
 
     /// <summary>
@@ -264,12 +221,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Warning(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogWarning();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogWarning();
     }
 
     /// <summary>
@@ -281,13 +233,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Warning(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .SetException(exception)
-            .LogWarning();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogWarning();
     }
 
     /// <summary>
@@ -298,12 +244,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Warning<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogWarning();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogWarning();
     }
 
     /// <summary>
@@ -315,13 +256,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Warning<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogWarning();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogWarning();
     }
 
     /// <summary>
@@ -333,13 +268,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Warning<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogWarning();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetException(exception).LogWarning();
     }
 
     /// <summary>
@@ -352,8 +281,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Warning<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -369,11 +297,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Error(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogError();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogError();
     }
 
     /// <summary>
@@ -384,12 +308,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Error(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogError();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogError();
     }
 
     /// <summary>
@@ -400,12 +319,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Error(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogError();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogError();
     }
 
     /// <summary>
@@ -417,13 +331,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Error(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .SetException(exception)
-            .LogError();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogError();
     }
 
     /// <summary>
@@ -434,12 +342,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Error<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogError();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogError();
     }
 
     /// <summary>
@@ -451,13 +354,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Error<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogError();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogError();
     }
 
     /// <summary>
@@ -469,13 +366,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Error<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogError();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetException(exception).LogError();
     }
 
     /// <summary>
@@ -488,8 +379,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Error<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -505,11 +395,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Debug(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogDebug();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogDebug();
     }
 
     /// <summary>
@@ -520,12 +406,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Debug(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogDebug();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogDebug();
     }
 
     /// <summary>
@@ -536,12 +417,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Debug(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogDebug();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogDebug();
     }
 
     /// <summary>
@@ -553,13 +429,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Debug(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .SetException(exception)
-            .LogDebug();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogDebug();
     }
 
     /// <summary>
@@ -570,12 +440,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Debug<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogDebug();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogDebug();
     }
 
     /// <summary>
@@ -587,13 +452,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Debug<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogDebug();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogDebug();
     }
 
     /// <summary>
@@ -605,13 +464,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Debug<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogDebug();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetException(exception).LogDebug();
     }
 
     /// <summary>
@@ -624,8 +477,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Debug<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -641,11 +493,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Trace(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogTrace();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogTrace();
     }
 
     /// <summary>
@@ -656,12 +504,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Trace(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogTrace();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogTrace();
     }
 
     /// <summary>
@@ -672,12 +515,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Trace(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogTrace();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogTrace();
     }
 
     /// <summary>
@@ -689,13 +527,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Trace(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .SetException(exception)
-            .LogTrace();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogTrace();
     }
 
     /// <summary>
@@ -706,12 +538,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Trace<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogTrace();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogTrace();
     }
 
     /// <summary>
@@ -723,13 +550,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Trace<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogTrace();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogTrace();
     }
 
     /// <summary>
@@ -741,13 +562,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Trace<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogTrace();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetException(exception).LogTrace();
     }
 
     /// <summary>
@@ -760,8 +575,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Trace<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -777,11 +591,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Critical(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogCritical();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).LogCritical();
     }
 
     /// <summary>
@@ -792,12 +602,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Critical(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogCritical();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).LogCritical();
     }
 
     /// <summary>
@@ -808,12 +613,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Critical(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogCritical();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetException(exception).LogCritical();
     }
 
     /// <summary>
@@ -825,13 +625,7 @@ public static class Log
     /// <param name="args">格式化消息时使用的参数</param>
     public static void Critical(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .SetException(exception)
-            .LogCritical();
+        StringLoggingPart.Default().SetMessage(message).SetArgs(args).SetEventId(eventId).SetException(exception).LogCritical();
     }
 
     /// <summary>
@@ -842,12 +636,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Critical<TClass>(string message, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .LogCritical();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).LogCritical();
     }
 
     /// <summary>
@@ -859,13 +648,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Critical<TClass>(string message, EventId eventId, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetEventId(eventId)
-            .LogCritical();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetEventId(eventId).LogCritical();
     }
 
     /// <summary>
@@ -877,13 +660,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Critical<TClass>(string message, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
-            .SetCategory<TClass>()
-            .SetMessage(message)
-            .SetArgs(args)
-            .SetException(exception)
-            .LogCritical();
+        StringLoggingPart.Default().SetCategory<TClass>().SetMessage(message).SetArgs(args).SetException(exception).LogCritical();
     }
 
     /// <summary>
@@ -896,8 +673,7 @@ public static class Log
     /// <typeparam name="TClass">要处理的对象类型</typeparam>
     public static void Critical<TClass>(string message, EventId eventId, Exception exception, params object[] args)
     {
-        StringLoggingPart
-            .Default()
+        StringLoggingPart.Default()
             .SetCategory<TClass>()
             .SetMessage(message)
             .SetArgs(args)
@@ -916,7 +692,9 @@ public static class Log
         (ILogger logger, ILoggerFactory loggerFactory, bool hasException) = loggingPart.GetLogger();
 
         if (logger == null)
+        {
             throw new InvalidOperationException("Unable to create a logger instance.");
+        }
 
         IDisposable scope = logger.BeginScope(loggingPart.LogContext);
         if (hasException)

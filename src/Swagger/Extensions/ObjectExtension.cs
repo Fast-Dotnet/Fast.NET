@@ -24,31 +24,49 @@ internal static class ObjectExtension
     public static object ChangeType(this object obj, Type type)
     {
         if (type == null)
+        {
             return obj;
+        }
+
         if (type == typeof(string))
+        {
             return obj?.ToString();
+        }
+
         if (type == typeof(Guid) && obj != null)
+        {
             return Guid.Parse(obj.ToString());
+        }
+
         if (type == typeof(bool) && obj != null && obj is not bool)
         {
-            string objStr = obj
-                .ToString()
-                ?.ToLower();
+            string objStr = obj.ToString()?.ToLower();
             if (objStr == "1" || objStr == "true" || objStr == "yes" || objStr == "on")
+            {
                 return true;
+            }
+
             return false;
         }
 
         if (obj == null)
+        {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
 
         Type underlyingType = Nullable.GetUnderlyingType(type);
         if (type.IsInstanceOfType(obj))
+        {
             return obj;
+        }
+
         if ((underlyingType ?? type).IsEnum)
         {
             if (underlyingType != null && string.IsNullOrWhiteSpace(obj.ToString()))
+            {
                 return null;
+            }
+
             return Enum.Parse(underlyingType ?? type, obj.ToString());
         }
         // 将 DateTime 按配置的时区规则转换为 DateTimeOffset
@@ -78,7 +96,9 @@ internal static class ObjectExtension
 
         TypeConverter converter = TypeDescriptor.GetConverter(type);
         if (converter.CanConvertFrom(obj.GetType()))
+        {
             return converter.ConvertFrom(obj);
+        }
 
         ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
         if (constructor != null)
@@ -92,11 +112,7 @@ internal static class ObjectExtension
                 PropertyInfo p = oldType.GetProperty(property.Name);
                 if (property.CanWrite && p != null && p.CanRead)
                 {
-                    property.SetValue(o,
-                        p
-                            .GetValue(obj, null)
-                            .ChangeType(property.PropertyType),
-                        null);
+                    property.SetValue(o, p.GetValue(obj, null).ChangeType(property.PropertyType), null);
                 }
             }
 

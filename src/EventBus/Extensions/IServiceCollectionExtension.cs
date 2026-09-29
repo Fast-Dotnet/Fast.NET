@@ -52,23 +52,27 @@ public static class IServiceCollectionExtension
 
         if (!services.Any(descriptor => !descriptor.IsKeyedService && descriptor.ServiceType == typeof(IEventHandlerMonitor)))
         {
-            Type[] monitors = entryAssemblyType
-                .Where(type =>
+            Type[] monitors = entryAssemblyType.Where(type =>
                     typeof(IEventHandlerMonitor).IsAssignableFrom(type)
                     && type.IsClass
                     && !type.IsAbstract
                     && !type.ContainsGenericParameters)
                 .ToArray();
             if (monitors.Length > 1)
+            {
                 throw new InvalidOperationException("发现多个 IEventHandlerMonitor 实现，请显式注册所需监视器。");
+            }
+
             if (monitors.Length == 1)
+            {
                 services.AddSingleton(typeof(IEventHandlerMonitor), monitors[0]);
+            }
         }
 
         // 查找继承了 IEventFallbackPolicy 的类
-        var iEventFallbackPolicyTypes = entryAssemblyType
-            .Where(f => typeof(IEventFallbackPolicy).IsAssignableFrom(f)
-                        && f is {IsClass: true, IsAbstract: false, ContainsGenericParameters: false})
+        var iEventFallbackPolicyTypes = entryAssemblyType.Where(f =>
+                typeof(IEventFallbackPolicy).IsAssignableFrom(f)
+                && f is {IsClass: true, IsAbstract: false, ContainsGenericParameters: false})
             .ToList();
 
         // 特性保存的是具体策略类型，因此必须同时按具体类型注册，否则运行时按 Type 解析始终得到 null

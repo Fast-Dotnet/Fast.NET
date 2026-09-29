@@ -24,11 +24,8 @@ public interface IEventBusFactory
     /// <param name="handlerMethod">事件处理器方法</param>
     /// <param name="cancellationToken">用于取消异步操作的令牌</param>
     /// <returns>表示异步“添加事件订阅者”操作的任务</returns>
-    Task Subscribe(string eventId,
-        Func<EventHandlerExecutingContext, Task> handler,
-        EventSubscribeAttribute attribute = null,
-        MethodInfo handlerMethod = null,
-        CancellationToken cancellationToken = default);
+    Task Subscribe(string eventId, Func<EventHandlerExecutingContext, Task> handler, EventSubscribeAttribute attribute = null,
+        MethodInfo handlerMethod = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 删除事件订阅者

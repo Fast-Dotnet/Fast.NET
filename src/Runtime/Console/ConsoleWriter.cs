@@ -36,7 +36,9 @@ public sealed class ConsoleWriter
         set
         {
             if (_useColor)
+            {
                 Console.ForegroundColor = value;
+            }
         }
     }
 
@@ -49,7 +51,9 @@ public sealed class ConsoleWriter
         set
         {
             if (_useColor)
+            {
                 Console.BackgroundColor = value;
+            }
         }
     }
 

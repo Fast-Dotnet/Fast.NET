@@ -25,8 +25,7 @@ internal sealed class ExceptionJsonConverter : JsonConverter<Exception>
             nameof(Exception.InnerException)
         };
         // TargetSite 含有不可安全序列化的反射信息，因此从输出属性中排除
-        var serializableProperties = value
-            .GetType()
+        var serializableProperties = value.GetType()
             .GetProperties()
             .Select(sl => new {sl.Name, Value = sl.GetValue(value)})
             .Where(wh => writeNameArr.Contains(wh.Name))
@@ -51,10 +50,7 @@ internal sealed class ExceptionJsonConverter : JsonConverter<Exception>
     }
 
     /// <inheritdoc />
-    public override Exception ReadJson(JsonReader reader,
-        Type objectType,
-        Exception existingValue,
-        bool hasExistingValue,
+    public override Exception ReadJson(JsonReader reader, Type objectType, Exception existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         // 异常对象只允许序列化输出，不支持从外部数据重建

@@ -32,8 +32,13 @@ internal sealed class EventDispatchScope : IDisposable
     internal static bool IsDispatching(IEventSourceStorer storer)
     {
         for (EventDispatchScope scope = Current.Value; scope != null; scope = scope._parent)
+        {
             if (scope._active && ReferenceEquals(scope._storer, storer))
+            {
                 return true;
+            }
+        }
+
         return false;
     }
 

@@ -34,7 +34,9 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
 
         // 排除 WebSocket 请求处理
         if (actionExecutedContext.HttpContext.WebSockets.IsWebSocketRequest)
+        {
             return;
+        }
 
         // 处理已经含有状态码结果的 Result
         if (actionExecutedContext.Result is IStatusCodeActionResult statusCodeActionResult
@@ -79,8 +81,7 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
         var controllerActionDescriptor = context.ActionDescriptor as ControllerActionDescriptor;
 
         // 判断是否跳过规范化处理
-        if (UnifyContext.CheckSucceededNonUnify(context.HttpContext,
-                controllerActionDescriptor!.MethodInfo,
+        if (UnifyContext.CheckSucceededNonUnify(context.HttpContext, controllerActionDescriptor!.MethodInfo,
                 out IUnifyResultProvider unifyResult))
         {
             return;
@@ -108,8 +109,7 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
             {
                 long timestamp = context.HttpContext.UnifyResponseTimestamp();
 
-                if (!UnifyContext.CheckResponseNonUnify(context.HttpContext,
-                        controllerActionDescriptor!.MethodInfo,
+                if (!UnifyContext.CheckResponseNonUnify(context.HttpContext, controllerActionDescriptor!.MethodInfo,
                         out IUnifyResponseProvider unifyResponse))
                 {
                     data = await unifyResponse.ResponseDataAsync(timestamp, data, context.HttpContext);

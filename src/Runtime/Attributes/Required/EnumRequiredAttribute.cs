@@ -63,7 +63,9 @@ public class EnumRequiredAttribute : ValidationAttribute
 
             long mask = 0L;
             foreach (object item in Enum.GetValues(type))
+            {
                 mask |= Convert.ToInt64(item);
+            }
 
             return (longVal & ~mask) == 0;
         }

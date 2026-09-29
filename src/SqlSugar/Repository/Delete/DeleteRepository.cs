@@ -19,14 +19,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Delete(TEntity entity)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -35,14 +32,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> DeleteAsync(TEntity entity)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -51,15 +45,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Delete(object key)
     {
-        IDeleteable<TEntity> deleteable = Deleteable<TEntity>()
-            .In(key)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable<TEntity>().In(key).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -68,15 +58,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> DeleteAsync(object key)
     {
-        IDeleteable<TEntity> deleteable = Deleteable<TEntity>()
-            .In(key)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable<TEntity>().In(key).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -85,15 +71,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Delete(params object[] keys)
     {
-        IDeleteable<TEntity> deleteable = Deleteable<TEntity>()
-            .In(keys)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable<TEntity>().In(keys).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -102,15 +84,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> DeleteAsync(params object[] keys)
     {
-        IDeleteable<TEntity> deleteable = Deleteable<TEntity>()
-            .In(keys)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable<TEntity>().In(keys).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -119,14 +97,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Delete(params TEntity[] entities)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -135,14 +110,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> DeleteAsync(params TEntity[] entities)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -151,14 +123,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Delete(IEnumerable<TEntity> entities)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -167,14 +136,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> DeleteAsync(IEnumerable<TEntity> entities)
     {
-        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IDeleteable<TEntity> deleteable = Deleteable(entities.ToList()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -189,9 +155,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommand();
+            return deleteable.SplitTable().ExecuteCommand();
         }
 
         return deleteable.ExecuteCommand();
@@ -206,9 +170,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return deleteable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return deleteable.SplitTable().ExecuteCommandAsync();
         }
 
         return deleteable.ExecuteCommandAsync();
@@ -218,8 +180,10 @@ internal sealed partial class SqlSugarRepository<TEntity>
     public int LogicDelete(Expression<Func<TEntity, bool>> whereExpression)
     {
         if (!SupportsLogicDelete)
+        {
             throw new InvalidOperationException(
                 $"{nameof(TEntity)} does not inherit {nameof(IDeletedEntity)} interface, Logical deletion cannot be used.");
+        }
 
         TEntity deletedEntity = Activator.CreateInstance<TEntity>();
 
@@ -234,9 +198,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommand();
+            return updateable.SplitTable().ExecuteCommand();
         }
 
         return updateable.ExecuteCommand();
@@ -246,8 +208,10 @@ internal sealed partial class SqlSugarRepository<TEntity>
     public Task<int> LogicDeleteAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
         if (!SupportsLogicDelete)
+        {
             throw new InvalidOperationException(
                 $"{nameof(TEntity)} does not inherit {nameof(IDeletedEntity)} interface, Logical deletion cannot be used.");
+        }
 
         TEntity deletedEntity = Activator.CreateInstance<TEntity>();
 
@@ -262,9 +226,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return updateable.ExecuteCommandAsync();

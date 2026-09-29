@@ -42,8 +42,7 @@ public static class DataTableExtension
             object[] values = new object[properties.Length];
             for (int i = 0; i < properties.Length; i++)
             {
-                values[i] = properties[i]
-                    .GetValue(item, null);
+                values[i] = properties[i].GetValue(item, null);
             }
 
             dataTable.Rows.Add(values);

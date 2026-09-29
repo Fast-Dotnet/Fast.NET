@@ -46,7 +46,5 @@ public class WanNetIPInfo
     /// <summary>
     /// 运营商
     /// </summary>
-    public string Operator =>
-        Address[(Province.Length + City.Length)..]
-            .Trim();
+    public string Operator => Address[(Province.Length + City.Length)..].Trim();
 }

@@ -33,13 +33,12 @@ internal sealed class AppAuthorizationPolicyProvider : IAuthorizationPolicyProvi
     {
         AuthorizationPolicy policy = await FallbackPolicyProvider.GetDefaultPolicyAsync();
         // 默认授权保留原 requirements，并加入 Fast 权限入口，避免借用其他处理器的要求。
-        if (policy
-            .Requirements.OfType<AppAuthorizeRequirement>()
-            .Any())
+        if (policy.Requirements.OfType<AppAuthorizeRequirement>().Any())
+        {
             return policy;
-        return new AuthorizationPolicyBuilder(policy)
-            .AddRequirements(new AppAuthorizeRequirement())
-            .Build();
+        }
+
+        return new AuthorizationPolicyBuilder(policy).AddRequirements(new AppAuthorizeRequirement()).Build();
     }
 
     /// <inheritdoc />

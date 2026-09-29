@@ -24,8 +24,7 @@ public static class IApplicationBuilderExtension
     /// <param name="configure">Swagger 配置操作</param>
     /// <param name="configureUI">Swagger UI 配置操作</param>
     /// <returns>返回当前应用管道构建器，便于链式调用</returns>
-    public static IApplicationBuilder UseSwaggerDocuments(this IApplicationBuilder app,
-        Action<SwaggerOptions> configure = null,
+    public static IApplicationBuilder UseSwaggerDocuments(this IApplicationBuilder app, Action<SwaggerOptions> configure = null,
         Action<SwaggerUIOptions> configureUI = null)
     {
         if (Penetrates.SwaggerSettings.Enable!.Value)

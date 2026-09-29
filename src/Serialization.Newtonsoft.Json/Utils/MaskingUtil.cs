@@ -20,9 +20,14 @@ internal static class MaskingUtil
     public static string NameMasking(string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length == 1)
+        {
             return name;
+        }
+
         if (name.Length == 2)
+        {
             return $"{name[0]}*";
+        }
 
         return name[0] + new string('*', name.Length - 1);
     }
@@ -35,9 +40,14 @@ internal static class MaskingUtil
     public static string NameKeepLastMasking(string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length == 1)
+        {
             return name;
+        }
+
         if (name.Length == 2)
+        {
             return $"{name[0]}*";
+        }
 
         return name[0] + new string('*', name.Length - 2) + name[^1];
     }
@@ -50,7 +60,9 @@ internal static class MaskingUtil
     public static string AccountMasking(string account)
     {
         if (string.IsNullOrWhiteSpace(account) || account.Length < 6)
+        {
             return account;
+        }
 
         int maskLength = account.Length - 6;
         return account[..3] + new string('*', maskLength) + account[^3..];
@@ -64,7 +76,9 @@ internal static class MaskingUtil
     public static string MobileMasking(string mobile)
     {
         if (string.IsNullOrWhiteSpace(mobile) || mobile.Length < 7)
+        {
             return mobile;
+        }
 
         // 长号码保留前 3 位和第 8 至 11 位，其余字符脱敏
         int tailStart = 7;
@@ -85,7 +99,9 @@ internal static class MaskingUtil
     public static string IdCardMasking(string idCard)
     {
         if (string.IsNullOrWhiteSpace(idCard) || idCard.Length < 8)
+        {
             return idCard;
+        }
 
         return idCard[..4] + new string('*', idCard.Length - 8) + idCard[^4..];
     }
@@ -98,11 +114,15 @@ internal static class MaskingUtil
     public static string EmailMasking(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
+        {
             return email;
+        }
 
         int index = email.IndexOf('@');
         if (index <= 0)
+        {
             return email;
+        }
 
         string user = email[..index];
         string domain = email[index..];
@@ -124,7 +144,9 @@ internal static class MaskingUtil
     public static string BankCardMasking(string cardNo)
     {
         if (string.IsNullOrWhiteSpace(cardNo) || cardNo.Length < 10)
+        {
             return cardNo;
+        }
 
         return cardNo[..6] + new string('*', cardNo.Length - 10) + cardNo[^4..];
     }
@@ -137,7 +159,9 @@ internal static class MaskingUtil
     public static string AddressMasking(string address)
     {
         if (string.IsNullOrWhiteSpace(address))
+        {
             return address;
+        }
 
         string[] keys = ["省", "市", "区", "县", "乡", "镇", "街道", "社区"];
 
@@ -145,12 +169,16 @@ internal static class MaskingUtil
         {
             int index = address.IndexOf(key, StringComparison.Ordinal);
             if (index > 0 && index + 1 < address.Length)
+            {
                 return address[..(index + 1)] + "****";
+            }
         }
 
         // 无法识别地址格式时保留前 6 个字符
         if (address.Length <= 6)
+        {
             return address;
+        }
 
         return address[..6] + "****";
     }
@@ -163,7 +191,9 @@ internal static class MaskingUtil
     public static string CarNumberMasking(string carNumber)
     {
         if (string.IsNullOrWhiteSpace(carNumber) || carNumber.Length <= 2)
+        {
             return carNumber;
+        }
 
         // 支持车牌文本中常见的地区分隔符
         char[] separators = ['·', '•', '.', '-', ' '];
@@ -188,11 +218,15 @@ internal static class MaskingUtil
     public static string IpMasking(string ip)
     {
         if (string.IsNullOrWhiteSpace(ip))
+        {
             return ip;
+        }
 
         string[] parts = ip.Split('.');
         if (parts.Length != 4)
+        {
             return ip;
+        }
 
         return $"{parts[0]}.{parts[1]}.*.*";
     }

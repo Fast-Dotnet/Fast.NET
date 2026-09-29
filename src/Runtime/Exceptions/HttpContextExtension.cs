@@ -89,9 +89,7 @@ public static class HttpContextExtension
     /// <returns>匹配的特性实例；未找到时返回 <see langword="null"/></returns>
     public static TAttribute GetMetadata<TAttribute>(this HttpContext httpContext) where TAttribute : class
     {
-        return httpContext
-            ?.GetEndpoint()
-            ?.Metadata.GetMetadata<TAttribute>();
+        return httpContext?.GetEndpoint()?.Metadata.GetMetadata<TAttribute>();
     }
 
     /// <summary>
@@ -102,8 +100,7 @@ public static class HttpContextExtension
     /// <returns>匹配的特性实例；未找到时返回 <see langword="null"/></returns>
     public static object GetMetadata(this EndpointMetadataCollection metadata, Type attributeType)
     {
-        return metadata
-            ?.GetType()
+        return metadata?.GetType()
             .GetMethod(nameof(EndpointMetadataCollection.GetMetadata))
             ?.MakeGenericMethod(attributeType)
             .Invoke(metadata, null);
@@ -117,9 +114,7 @@ public static class HttpContextExtension
     /// <returns>匹配的特性实例；未找到时返回 <see langword="null"/></returns>
     public static object GetMetadata(this HttpContext httpContext, Type attributeType)
     {
-        return httpContext
-            ?.GetEndpoint()
-            ?.Metadata.GetMetadata(attributeType);
+        return httpContext?.GetEndpoint()?.Metadata.GetMetadata(attributeType);
     }
 
     /// <summary>
@@ -158,12 +153,11 @@ public static class HttpContextExtension
         IPAddress localIpAddress = httpContext?.Connection.LocalIpAddress;
 
         if (localIpAddress != null && IPAddress.IsLoopback(localIpAddress))
+        {
             return IPAddress.Loopback.ToString();
+        }
 
-        return localIpAddress
-                   ?.MapToIPv4()
-                   .ToString()
-               ?? string.Empty;
+        return localIpAddress?.MapToIPv4().ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -173,10 +167,7 @@ public static class HttpContextExtension
     /// <returns>本机 IPv6 地址；当前请求上下文为空时返回空字符串</returns>
     public static string LocalIpv6(this HttpContext httpContext)
     {
-        return httpContext
-                   ?.Connection.LocalIpAddress?.MapToIPv6()
-                   .ToString()
-               ?? string.Empty;
+        return httpContext?.Connection.LocalIpAddress?.MapToIPv6().ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -212,19 +203,25 @@ public static class HttpContextExtension
     private static string FormatIpAddress(IPAddress ipAddress, AddressFamily addressFamily)
     {
         if (ipAddress == null)
+        {
             return string.Empty;
+        }
 
         if (ipAddress.AddressFamily == addressFamily)
+        {
             return ipAddress.ToString();
+        }
 
         // localhost 的 IPv6 回环地址按 IPv4 地址返回
         if (addressFamily == AddressFamily.InterNetwork && IPAddress.IPv6Loopback.Equals(ipAddress))
+        {
             return IPAddress.Loopback.ToString();
+        }
 
         if (addressFamily == AddressFamily.InterNetwork && ipAddress.IsIPv4MappedToIPv6)
-            return ipAddress
-                .MapToIPv4()
-                .ToString();
+        {
+            return ipAddress.MapToIPv4().ToString();
+        }
 
         return string.Empty;
     }
@@ -249,7 +246,9 @@ public static class HttpContextExtension
     public static UserAgentInfo RequestUserAgentInfo(this HttpContext httpContext)
     {
         if (httpContext == null)
+        {
             return null;
+        }
 
         // 同一请求内优先复用 HttpContext.Items 中的解析结果
         object userAgentObj = httpContext.Items[nameof(Fast) + nameof(UserAgentInfo)];
@@ -337,11 +336,7 @@ public static class HttpContextExtension
     /// <returns>远程 IPv4 地址信息；当前请求上下文为空时返回 <see langword="null"/></returns>
     public static WanNetIPInfo RemoteIpv4Info(this HttpContext httpContext, string ip = null)
     {
-        return httpContext
-            .RemoteIpv4InfoAsync(ip)
-            .ConfigureAwait(false)
-            .GetAwaiter()
-            .GetResult();
+        return httpContext.RemoteIpv4InfoAsync(ip).ConfigureAwait(false).GetAwaiter().GetResult();
     }
 
     /// <summary>
@@ -354,7 +349,9 @@ public static class HttpContextExtension
     public static async Task<WanNetIPInfo> RemoteIpv4InfoAsync(this HttpContext httpContext, string ip = null)
     {
         if (httpContext == null)
+        {
             return null;
+        }
 
         // 同一请求内优先复用 HttpContext.Items 中的解析结果
         object wanNetIPInfoObj = httpContext.Items[nameof(Fast) + nameof(WanNetIPInfo)];
@@ -374,8 +371,7 @@ public static class HttpContextExtension
 
         if (_memoryCache == null)
         {
-            result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted)
-                .ConfigureAwait(false);
+            result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted).ConfigureAwait(false);
         }
         else
         {
@@ -384,16 +380,13 @@ public static class HttpContextExtension
             // 同一缓存键始终映射到同一锁分片，避免重复回源和按 IP 永久累积锁对象
             SemaphoreSlim semaphoreSlim = GetIpLookupLock(cacheKey);
 
-            await semaphoreSlim
-                .WaitAsync(httpContext.RequestAborted)
-                .ConfigureAwait(false);
+            await semaphoreSlim.WaitAsync(httpContext.RequestAborted).ConfigureAwait(false);
             try
             {
                 // 从缓存中读取
                 if (!_memoryCache.TryGetValue(cacheKey, out result))
                 {
-                    result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted)
-                        .ConfigureAwait(false);
+                    result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted).ConfigureAwait(false);
                     // 放入内存缓存，设置过期时间为 24 个小时
                     _memoryCache.Set(cacheKey, result, TimeSpan.FromHours(24));
                 }
@@ -452,17 +445,15 @@ public static class HttpContextExtension
                 .ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             // 目标 IP 查询服务固定返回 GBK 字节流，不能依赖响应头推断编码
-            byte[] responseBytes = await response
-                .Content.ReadAsByteArrayAsync(timeoutTokenSource.Token)
-                .ConfigureAwait(false);
-            string responseContent = Encoding
-                .GetEncoding("GBK")
-                .GetString(responseBytes);
+            byte[] responseBytes = await response.Content.ReadAsByteArrayAsync(timeoutTokenSource.Token).ConfigureAwait(false);
+            string responseContent = Encoding.GetEncoding("GBK").GetString(responseBytes);
 
             IDictionary<string, string> ipInfoDictionary =
                 JsonSerializer.Deserialize<IDictionary<string, string>>(responseContent);
             if (ipInfoDictionary == null)
+            {
                 return result;
+            }
 
             if (ipInfoDictionary.TryGetValue("ip", out string resIp))
             {
@@ -540,9 +531,8 @@ public static class HttpContextExtension
     /// <returns>获取到的 控制器/Action 描述器；当前请求上下文为空时返回 <see langword="null"/></returns>
     public static ControllerActionDescriptor GetControllerActionDescriptor(this HttpContext httpContext)
     {
-        return httpContext
-            ?.GetEndpoint()
-            ?.Metadata.FirstOrDefault(u => u is ControllerActionDescriptor) as ControllerActionDescriptor;
+        return httpContext?.GetEndpoint()?.Metadata.FirstOrDefault(u => u is ControllerActionDescriptor) as
+            ControllerActionDescriptor;
     }
 
     /// <summary>
@@ -554,7 +544,10 @@ public static class HttpContextExtension
     public static async Task<string> ReadBodyContentAsync(this HttpContext httpContext)
     {
         if (httpContext == null)
+        {
             return null;
+        }
+
         return await httpContext.Request.ReadBodyContentAsync();
     }
 
@@ -567,7 +560,9 @@ public static class HttpContextExtension
     public static async Task<string> ReadBodyContentAsync(this HttpRequest httpRequest)
     {
         if (httpRequest == null)
+        {
             return null;
+        }
 
         httpRequest.Body.Seek(0, SeekOrigin.Begin);
 
@@ -588,8 +583,7 @@ public static class HttpContextExtension
         HttpRequest request = httpContext?.Request;
         if (request != null)
         {
-            return new StringBuilder()
-                .Append(request.Scheme)
+            return new StringBuilder().Append(request.Scheme)
                 .Append("://")
                 .Append(request.Host)
                 .Append(request.PathBase)
@@ -610,8 +604,7 @@ public static class HttpContextExtension
     {
         if (httpRequest != null)
         {
-            return new StringBuilder()
-                .Append(httpRequest.Scheme)
+            return new StringBuilder().Append(httpRequest.Scheme)
                 .Append("://")
                 .Append(httpRequest.Host)
                 .Append(httpRequest.PathBase)
@@ -634,9 +627,7 @@ public static class HttpContextExtension
         HttpRequest request = httpContext?.Request;
         if (request != null)
         {
-            return request
-                .Headers[refererHeaderKey]
-                .ToString();
+            return request.Headers[refererHeaderKey].ToString();
         }
 
         return string.Empty;
@@ -654,13 +645,13 @@ public static class HttpContextExtension
     /// <param name="statusCode">HTTP 状态码</param>
     /// <param name="return200StatusCodes">设置返回 200 状态码列表。只支持 400+(404 除外) 状态码</param>
     /// <param name="adaptStatusCodes">适配（篡改）状态码。只支持 400+(404 除外) 状态码</param>
-    public static void SetResponseStatusCodes(this HttpContext httpContext,
-        int statusCode,
-        int[] return200StatusCodes = null,
+    public static void SetResponseStatusCodes(this HttpContext httpContext, int statusCode, int[] return200StatusCodes = null,
         int[][] adaptStatusCodes = null)
     {
         if (httpContext == null)
+        {
             return;
+        }
 
         // 篡改响应状态码
         if (adaptStatusCodes is {Length: > 0})

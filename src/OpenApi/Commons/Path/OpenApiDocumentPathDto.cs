@@ -30,9 +30,15 @@ public class OpenApiDocumentPathDto
         get
         {
             if (Get != null)
+            {
                 return Get;
+            }
+
             if (Post != null)
+            {
                 return Post;
+            }
+
             return Get;
         }
     }
@@ -45,9 +51,15 @@ public class OpenApiDocumentPathDto
         get
         {
             if (Get != null)
+            {
                 return HttpRequestMethodEnum.Get;
+            }
+
             if (Post != null)
+            {
                 return HttpRequestMethodEnum.Post;
+            }
+
             return HttpRequestMethodEnum.Get;
         }
     }

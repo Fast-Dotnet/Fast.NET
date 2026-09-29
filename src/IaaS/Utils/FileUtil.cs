@@ -24,14 +24,13 @@ public static class FileUtil
     public static string GetFileSHA256(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
+        {
             throw new ArgumentException("文件路径不能为空。", nameof(filePath));
+        }
 
         using var sha256 = SHA256.Create();
         using FileStream stream = File.OpenRead(filePath);
-        return BitConverter
-            .ToString(sha256.ComputeHash(stream))
-            .Replace("-", string.Empty)
-            .ToLowerInvariant();
+        return BitConverter.ToString(sha256.ComputeHash(stream)).Replace("-", string.Empty).ToLowerInvariant();
     }
 
     /// <summary>
@@ -42,7 +41,9 @@ public static class FileUtil
     public static string GetFileSHA1(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
+        {
             throw new ArgumentException("文件路径不能为空。", nameof(filePath));
+        }
 
         // 创建 SHA1 实例
         using var osha1 = SHA1.Create();
@@ -54,10 +55,7 @@ public static class FileUtil
         byte[] arrBytHashValue = osha1.ComputeHash(oFileStream);
 
         // 将哈希值转换为十六进制字符串，并去掉连字符（"-"），转换为小写
-        return BitConverter
-            .ToString(arrBytHashValue)
-            .Replace("-", string.Empty)
-            .ToLowerInvariant();
+        return BitConverter.ToString(arrBytHashValue).Replace("-", string.Empty).ToLowerInvariant();
     }
 
     /// <summary>
@@ -74,7 +72,9 @@ public static class FileUtil
 
         string destinationDirectory = Path.GetDirectoryName(toPath);
         if (!string.IsNullOrEmpty(destinationDirectory))
+        {
             Directory.CreateDirectory(destinationDirectory);
+        }
 
         // 复制文件
         File.Copy(fromPath, toPath, true);
@@ -88,6 +88,8 @@ public static class FileUtil
     {
         string destinationDirectory = Path.GetDirectoryName(path);
         if (!string.IsNullOrEmpty(destinationDirectory))
+        {
             Directory.CreateDirectory(destinationDirectory);
+        }
     }
 }

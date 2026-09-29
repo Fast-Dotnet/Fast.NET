@@ -46,9 +46,7 @@ public class TreeBuildUtil<TEntity, TProperty> where TEntity : ITreeNode<TProper
         }
 
         // 当前集合中的全部节点Id
-        var nodeIds = nodes
-            .Select(sl => sl.GetId())
-            .ToHashSet();
+        var nodeIds = nodes.Select(sl => sl.GetId()).ToHashSet();
 
         // 按父节点Id建立索引，避免递归过程中重复遍历全部节点
         ILookup<TProperty, TEntity> nodeLookup = nodes.ToLookup(node => node.GetPid());
@@ -58,11 +56,7 @@ public class TreeBuildUtil<TEntity, TProperty> where TEntity : ITreeNode<TProper
          * 1.ParentId 等于指定的根节点父级标识
          * 2.ParentId 对应的父节点不在当前集合中
          */
-        var result = nodes
-            .Where(wh => wh
-                             .GetPid()
-                             .Equals(_rootParentId)
-                         || !nodeIds.Contains(wh.GetPid()))
+        var result = nodes.Where(wh => wh.GetPid().Equals(_rootParentId) || !nodeIds.Contains(wh.GetPid()))
             .OrderBy(ob => ob.GetSort())
             .ToList();
         result.ForEach(u => BuildChildNodes(nodeLookup, u));
@@ -76,9 +70,7 @@ public class TreeBuildUtil<TEntity, TProperty> where TEntity : ITreeNode<TProper
     /// <param name="node">当前正在挂接子节点的树节点</param>
     private void BuildChildNodes(ILookup<TProperty, TEntity> nodeLookup, TEntity node)
     {
-        var nodeSubList = nodeLookup[node.GetId()]
-            .OrderBy(ob => ob.GetSort())
-            .ToList();
+        var nodeSubList = nodeLookup[node.GetId()].OrderBy(ob => ob.GetSort()).ToList();
         nodeSubList.ForEach(u => BuildChildNodes(nodeLookup, u));
         node.SetChildren(nodeSubList);
     }

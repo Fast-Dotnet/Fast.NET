@@ -267,9 +267,7 @@ public static class ValidateExtension
     {
         if (!str.StartsWith("1"))
         {
-            str = str
-                .TrimStart('8', '6')
-                .TrimStart('0');
+            str = str.TrimStart('8', '6').TrimStart('0');
         }
 
         return Regex.IsMatch(str, @"^(13|14|15|16|17|18|19)\d{9}$");
@@ -303,10 +301,7 @@ public static class ValidateExtension
     {
         if (!long.TryParse(str.Remove(17), out long n)
             || n < Math.Pow(10, 16)
-            || !long.TryParse(str
-                    .Replace('x', '0')
-                    .Replace('X', '0'),
-                out _))
+            || !long.TryParse(str.Replace('x', '0').Replace('X', '0'), out _))
         {
             return false; //数字验证
         }
@@ -318,10 +313,7 @@ public static class ValidateExtension
             return false; //省份验证
         }
 
-        string birth = str
-            .Substring(6, 8)
-            .Insert(6, "-")
-            .Insert(4, "-");
+        string birth = str.Substring(6, 8).Insert(6, "-").Insert(4, "-");
         if (!DateTime.TryParse(birth, out _))
         {
             return false; //生日验证
@@ -329,22 +321,15 @@ public static class ValidateExtension
 
         string[] arrVarIfyCode = "1,0,x,9,8,7,6,5,4,3,2".Split(',');
         string[] wi = "7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2".Split(',');
-        char[] ai = str
-            .Remove(17)
-            .ToCharArray();
+        char[] ai = str.Remove(17).ToCharArray();
         int sum = 0;
         for (int i = 0; i < 17; i++)
         {
-            sum += int.Parse(wi[i])
-                   * int.Parse(ai[i]
-                       .ToString());
+            sum += int.Parse(wi[i]) * int.Parse(ai[i].ToString());
         }
 
         Math.DivRem(sum, 11, out int y);
-        return arrVarIfyCode[y]
-               == str
-                   .Substring(17, 1)
-                   .ToLower();
+        return arrVarIfyCode[y] == str.Substring(17, 1).ToLower();
     }
 
     /// <summary>
@@ -366,10 +351,7 @@ public static class ValidateExtension
             return false; //省份验证
         }
 
-        string birth = str
-            .Substring(6, 6)
-            .Insert(4, "-")
-            .Insert(2, "-");
+        string birth = str.Substring(6, 6).Insert(4, "-").Insert(2, "-");
         return DateTime.TryParse(birth, out _);
     }
 
@@ -424,7 +406,10 @@ public static class ValidateExtension
     public static bool IsBadString(this string str)
     {
         if (string.IsNullOrEmpty(str))
+        {
             return false;
+        }
+
         //列举一些特殊字符串
         const string badChars = "@,*,#,$,!,+,',=,--,%,^,&,?,(,), <,>,[,],{,},/,\\,;,:,\",\"\",delete,update,drop,alert,select";
         string[] arrBadChar = badChars.Split(',');
@@ -442,8 +427,7 @@ public static class ValidateExtension
     /// <returns>满足条件时返回 <see langword="true"/>；否则返回 <see langword="false"/></returns>
     public static bool IsNzx(this string str)
     {
-        return Regex.Match(str, "^[0-9a-zA-Z_]+$")
-            .Success;
+        return Regex.Match(str, "^[0-9a-zA-Z_]+$").Success;
     }
 
     #endregion
@@ -457,8 +441,7 @@ public static class ValidateExtension
     /// <returns>满足条件时返回 <see langword="true"/>；否则返回 <see langword="false"/></returns>
     public static bool IsAlphaNumericChinese(this string str)
     {
-        return Regex.Match(str, @"^[0-9a-zA-Z\u4e00-\u9fa5]+$")
-            .Success;
+        return Regex.Match(str, @"^[0-9a-zA-Z\u4e00-\u9fa5]+$").Success;
     }
 
     #endregion
@@ -472,8 +455,7 @@ public static class ValidateExtension
     /// <returns>满足条件时返回 <see langword="true"/>；否则返回 <see langword="false"/></returns>
     public static bool IsAlphaNumeric(this string str)
     {
-        return Regex.Match(str, @"^[0-9a-zA-Z]+$")
-            .Success;
+        return Regex.Match(str, @"^[0-9a-zA-Z]+$").Success;
     }
 
     #endregion
@@ -537,12 +519,12 @@ public static class ValidateExtension
 
         // 使用正则表达式来验证输入字符串是否符合日期格式
         if (!Regex.IsMatch(str, regexDate))
+        {
             return false;
+        }
 
         // 移除所有非数字字符，只保留数字部分
-        string cleanStr = new(str
-            .Where(char.IsDigit)
-            .ToArray());
+        string cleanStr = new(str.Where(char.IsDigit).ToArray());
 
         // 检查日期长度
         if (cleanStr.Length == 4 || cleanStr.Length == 6 || cleanStr.Length == 8)
@@ -557,7 +539,9 @@ public static class ValidateExtension
 
                 // 验证月份是否在合法范围内
                 if (month < 1 || month > 12)
+                {
                     return false;
+                }
 
                 // 如果字符串长度为 8，提取日部分
                 if (cleanStr.Length == 8)
@@ -566,7 +550,9 @@ public static class ValidateExtension
 
                     // 验证日是否在合法范围内，考虑月份的天数
                     if (day < 1 || day > DateTime.DaysInMonth(year, month))
+                    {
                         return false;
+                    }
                 }
             }
 

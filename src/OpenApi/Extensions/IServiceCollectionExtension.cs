@@ -25,16 +25,12 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="section">JSON 配置文件节点的 Key 默认值：OpenAPISettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddOpenApi(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddOpenApi(this IServiceCollection services, IConfiguration configuration,
         string section = "OpenApiSettings")
     {
         services.AddConfigurableOptions<OpenApiSettingsOptions>(section);
 
-        Penetrates.OpenApiSettings = configuration
-            .GetSection(section)
-            .Get<OpenApiSettingsOptions>()
-            .LoadPostConfigure();
+        Penetrates.OpenApiSettings = configuration.GetSection(section).Get<OpenApiSettingsOptions>().LoadPostConfigure();
 
         return services;
     }

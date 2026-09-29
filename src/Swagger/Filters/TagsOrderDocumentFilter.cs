@@ -19,17 +19,13 @@ internal sealed class TagsOrderDocumentFilter : IDocumentFilter
     /// <inheritdoc />
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        IEnumerable<OpenApiTag> orderedTags = DynamicApplicationContext
-            .ControllerOrderCollection.Where(u => SwaggerDocumentBuilder
-                .GetControllerGroups(u.Value.Item3)
-                .Any(c => c.Group == context.DocumentName))
+        IEnumerable<OpenApiTag> orderedTags = DynamicApplicationContext.ControllerOrderCollection
+            .Where(u => SwaggerDocumentBuilder.GetControllerGroups(u.Value.Item3).Any(c => c.Group == context.DocumentName))
             .OrderByDescending(u => u.Value.Item2)
             .ThenBy(u => u.Key)
             .Select(c => new OpenApiTag
             {
-                Name = c.Value.Item1,
-                Description = swaggerDoc.Tags?.FirstOrDefault(m => m.Name == c.Key)
-                    ?.Description
+                Name = c.Value.Item1, Description = swaggerDoc.Tags?.FirstOrDefault(m => m.Name == c.Key)?.Description
             });
 
         // Microsoft.OpenAPI 2.x 的 Tags 属性使用集合类型

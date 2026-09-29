@@ -50,9 +50,7 @@ public static class DateTimeUtil
     {
         // 以指定月份第一天的结束时刻作为时间范围终点
         var internalDate = Convert.ToDateTime($"{year}-{month}-01 23:59:59");
-        return internalDate
-            .AddMonths(+1)
-            .AddDays(-1);
+        return internalDate.AddMonths(+1).AddDays(-1);
     }
 
     /// <summary>
@@ -65,9 +63,7 @@ public static class DateTimeUtil
     {
         // 以指定月份第一天的结束时刻作为时间范围终点
         var internalDate = new DateTime(year, month, 01, 23, 59, 59);
-        return internalDate
-            .AddMonths(+1)
-            .AddDays(-1);
+        return internalDate.AddMonths(+1).AddDays(-1);
     }
 
     /// <summary>

@@ -41,7 +41,9 @@ internal sealed class NullableIntJsonConverter : JsonConverter<int?>
     {
         // 同时接受 JSON 字符串和数字令牌；空字符串按 null 处理
         if (reader.TokenType != JsonTokenType.String)
+        {
             return reader.GetInt32();
+        }
 
         string intString = reader.GetString();
         if (string.IsNullOrWhiteSpace(intString))
@@ -56,8 +58,12 @@ internal sealed class NullableIntJsonConverter : JsonConverter<int?>
     public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
     {
         if (value == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteNumberValue(value.Value);
+        }
     }
 }

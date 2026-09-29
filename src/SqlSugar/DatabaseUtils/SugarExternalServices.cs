@@ -72,8 +72,8 @@ public partial class SqlSugarDatabaseUtil
                     else
                     {
                         // 引用类型，string 等等
-                        if (new NullabilityInfoContext().Create(propertyInfo)
-                                .WriteState is NullabilityState.Unknown or NullabilityState.Nullable)
+                        if (new NullabilityInfoContext().Create(propertyInfo).WriteState is NullabilityState.Unknown
+                            or NullabilityState.Nullable)
                         {
                             columnInfo.IsNullable = true;
                         }
@@ -116,7 +116,9 @@ public partial class SqlSugarDatabaseUtil
                 // 这里的所有数据库类型，默认是根据 SqlServer 配置的
                 string columnDbType = columnInfo.DataType?.ToLower();
                 if (columnDbType == null)
+                {
                     return;
+                }
 
                 switch (columnDbType)
                 {

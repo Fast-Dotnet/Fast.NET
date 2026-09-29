@@ -22,9 +22,7 @@ public abstract class EventHandlerContext
     /// <param name="properties">共享上下文数据</param>
     /// <param name="handlerMethod">触发的方法</param>
     /// <param name="attribute">订阅特性</param>
-    internal EventHandlerContext(IEventSource eventSource,
-        IDictionary<object, object> properties,
-        MethodInfo handlerMethod,
+    internal EventHandlerContext(IEventSource eventSource, IDictionary<object, object> properties, MethodInfo handlerMethod,
         EventSubscribeAttribute attribute)
     {
         Source = eventSource;

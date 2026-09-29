@@ -49,7 +49,9 @@ public static class VerificationUtil
     public static string IdToCodeByLong(long id)
     {
         if (id < 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(id), "Id 不能为负数。");
+        }
 
         char[] buf = new char[BASE_LEN];
         int charPos = BASE_LEN;
@@ -69,7 +71,10 @@ public static class VerificationUtil
         // 长度不足时使用随机字符补齐到目标长度
         int len = result.Length;
         if (len >= CODE_LEN)
+        {
             return result;
+        }
+
         var sb = new StringBuilder();
         sb.Append(SUFFIX_CHAR);
         // 扣除后缀占位符本身，计算仍需补齐的字符数
@@ -91,7 +96,9 @@ public static class VerificationUtil
     public static long CodeToIdByLong(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
+        {
             throw new ArgumentException("邀请码不能为空。", nameof(code));
+        }
 
         char[] charArray = code.ToCharArray();
         long result = 0L;
@@ -104,7 +111,9 @@ public static class VerificationUtil
 
             int index = Array.IndexOf(BASE, charArray[i]);
             if (index < 0)
+            {
                 throw new FormatException($"邀请码包含无效字符“{charArray[i]}”。");
+            }
 
             result = checked(result * BASE_LEN + index);
         }
@@ -120,7 +129,9 @@ public static class VerificationUtil
     public static string IdToCodeByInt(int id)
     {
         if (id < 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(id), "Id 不能为负数。");
+        }
 
         char[] buf = new char[BASE_LEN];
         int charPos = BASE_LEN;
@@ -140,7 +151,10 @@ public static class VerificationUtil
         // 长度不足时使用随机字符补齐到目标长度
         int len = result.Length;
         if (len >= CODE_LEN)
+        {
             return result;
+        }
+
         var sb = new StringBuilder();
         sb.Append(SUFFIX_CHAR);
         // 扣除后缀占位符本身，计算仍需补齐的字符数
@@ -162,7 +176,9 @@ public static class VerificationUtil
     public static int CodeToIdByInt(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
+        {
             throw new ArgumentException("邀请码不能为空。", nameof(code));
+        }
 
         char[] charArray = code.ToCharArray();
         int result = 0;
@@ -175,7 +191,9 @@ public static class VerificationUtil
 
             int index = Array.IndexOf(BASE, charArray[i]);
             if (index < 0)
+            {
                 throw new FormatException($"邀请码包含无效字符“{charArray[i]}”。");
+            }
 
             result = checked(result * BASE_LEN + index);
         }
@@ -200,19 +218,20 @@ public static class VerificationUtil
         {
             int ascii = item;
             if (ascii >= 48 && ascii <= 57)
+            {
                 number.Append(item);
+            }
             else if (ascii >= 65 && ascii <= 90)
+            {
                 upperCase.Append(item);
+            }
             else if (ascii >= 97 && ascii <= 122)
+            {
                 lowerCase.Append(item);
+            }
         }
 
-        string allStr = upperCase
-            .Append(",")
-            .Append(lowerCase)
-            .Append(",")
-            .Append(number)
-            .ToString();
+        string allStr = upperCase.Append(",").Append(lowerCase).Append(",").Append(number).ToString();
         return $"Count({allStr.Length - 2}):{allStr}";
     }
 
@@ -224,7 +243,9 @@ public static class VerificationUtil
     public static string GenNumVerCode(int len = CODE_LEN)
     {
         if (len <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(len), "验证码长度必须大于 0。");
+        }
 
         var result = new StringBuilder(len);
         result.Append(RandomNumberGenerator.GetInt32(1, 10));
@@ -244,7 +265,9 @@ public static class VerificationUtil
     public static string GenStrVerCode(int len = CODE_LEN)
     {
         if (len <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(len), "验证码长度必须大于 0。");
+        }
 
         var result = new StringBuilder(len);
 
@@ -268,7 +291,9 @@ public static class VerificationUtil
     public static int GenRandomNum(int minVal, int maxVal, bool isInclude = false)
     {
         if (isInclude ? maxVal < minVal : maxVal <= minVal)
+        {
             throw new ArgumentOutOfRangeException(nameof(maxVal), isInclude ? "最大值不能小于最小值。" : "最大值必须大于最小值。");
+        }
 
         return GetRandomInt32(minVal, isInclude ? maxVal : maxVal - 1);
     }

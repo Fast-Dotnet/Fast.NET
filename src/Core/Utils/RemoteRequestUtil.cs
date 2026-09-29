@@ -55,14 +55,10 @@ public static class RemoteRequestUtil
     {
         try
         {
-            using HttpResponseMessage response = await _httpClient
-                .GetAsync(_daySentenceUri)
-                .ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.GetAsync(_daySentenceUri).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
-            string responseBody = await response
-                .Content.ReadAsStringAsync()
-                .ConfigureAwait(false);
+            string responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonSerializer.Deserialize<DaySentenceInfo>(responseBody);
         }
         catch (HttpRequestException ex)
@@ -81,11 +77,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>HTTP Get 请求</returns>
-    public static (T result, HttpResponseHeaders headers) Get<T>(string url,
-        object param = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static (T result, HttpResponseHeaders headers) Get<T>(string url, object param = null,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Get, url, param, null, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -103,11 +96,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>表示异步 HTTP Get 请求的任务，任务结果为 HTTP Get 请求</returns>
-    public static Task<(T result, HttpResponseHeaders headers)> GetAsync<T>(string url,
-        object param = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static Task<(T result, HttpResponseHeaders headers)> GetAsync<T>(string url, object param = null,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Get, url, param, null, headers, paramEncode, timeout);
     }
@@ -121,11 +111,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>HTTP Get 请求</returns>
-    public static (string result, HttpResponseHeaders headers) Get(string url,
-        object param = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static (string result, HttpResponseHeaders headers) Get(string url, object param = null,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Get, url, param, null, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -142,11 +129,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>表示异步 HTTP Get 请求的任务，任务结果为 HTTP Get 请求</returns>
-    public static Task<(string result, HttpResponseHeaders headers)> GetAsync(string url,
-        object param = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static Task<(string result, HttpResponseHeaders headers)> GetAsync(string url, object param = null,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Get, url, param, null, headers, paramEncode, timeout);
     }
@@ -161,11 +145,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>HTTP Post 请求</returns>
-    public static (T result, HttpResponseHeaders headers) Post<T>(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static (T result, HttpResponseHeaders headers) Post<T>(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Post, url, null, data, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -183,11 +164,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>表示异步 HTTP Post 请求的任务，任务结果为 HTTP Post 请求</returns>
-    public static Task<(T result, HttpResponseHeaders headers)> PostAsync<T>(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static Task<(T result, HttpResponseHeaders headers)> PostAsync<T>(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Post, url, null, data, headers, paramEncode, timeout);
     }
@@ -201,11 +179,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>HTTP Post 请求</returns>
-    public static (string result, HttpResponseHeaders headers) Post(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static (string result, HttpResponseHeaders headers) Post(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Post, url, null, data, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -222,11 +197,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>表示异步 HTTP Post 请求的任务，任务结果为 HTTP Post 请求</returns>
-    public static Task<(string result, HttpResponseHeaders headers)> PostAsync(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static Task<(string result, HttpResponseHeaders headers)> PostAsync(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Post, url, null, data, headers, paramEncode, timeout);
     }
@@ -241,11 +213,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>HTTP Put 请求</returns>
-    public static (T result, HttpResponseHeaders headers) Put<T>(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static (T result, HttpResponseHeaders headers) Put<T>(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Put, url, null, data, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -263,11 +232,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>表示异步 HTTP Put 请求的任务，任务结果为 HTTP Put 请求</returns>
-    public static Task<(T result, HttpResponseHeaders headers)> PutAsync<T>(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static Task<(T result, HttpResponseHeaders headers)> PutAsync<T>(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Put, url, null, data, headers, paramEncode, timeout);
     }
@@ -281,11 +247,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>HTTP Put 请求</returns>
-    public static (string result, HttpResponseHeaders headers) Put(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static (string result, HttpResponseHeaders headers) Put(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Put, url, null, data, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -302,11 +265,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>表示异步 HTTP Put 请求的任务，任务结果为 HTTP Put 请求</returns>
-    public static Task<(string result, HttpResponseHeaders headers)> PutAsync(string url,
-        object data,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static Task<(string result, HttpResponseHeaders headers)> PutAsync(string url, object data,
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Put, url, null, data, headers, paramEncode, timeout);
     }
@@ -320,10 +280,8 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>HTTP Delete 请求</returns>
-    public static (T result, HttpResponseHeaders headers) Delete<T>(string url,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+    public static (T result, HttpResponseHeaders headers) Delete<T>(string url, IDictionary<string, string> headers = null,
+        bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Delete, url, null, null, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -341,9 +299,7 @@ public static class RemoteRequestUtil
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>表示异步 HTTP Delete 请求的任务，任务结果为 HTTP Delete 请求</returns>
     public static Task<(T result, HttpResponseHeaders headers)> DeleteAsync<T>(string url,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60) where T : class
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60) where T : class
     {
         return SendAsync<T>(HttpMethod.Delete, url, null, null, headers, paramEncode, timeout);
     }
@@ -356,10 +312,8 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">请求参数使用的文本编码</param>
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>HTTP Delete 请求</returns>
-    public static (string result, HttpResponseHeaders headers) Delete(string url,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+    public static (string result, HttpResponseHeaders headers) Delete(string url, IDictionary<string, string> headers = null,
+        bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Delete, url, null, null, headers, paramEncode, timeout)
             .ConfigureAwait(false)
@@ -376,9 +330,7 @@ public static class RemoteRequestUtil
     /// <param name="timeout">超时时间，单位为毫秒</param>
     /// <returns>表示异步 HTTP Delete 请求的任务，任务结果为 HTTP Delete 请求</returns>
     public static Task<(string result, HttpResponseHeaders headers)> DeleteAsync(string url,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
-        int? timeout = 60)
+        IDictionary<string, string> headers = null, bool paramEncode = false, int? timeout = 60)
     {
         return SendAsync(HttpMethod.Delete, url, null, null, headers, paramEncode, timeout);
     }
@@ -395,17 +347,12 @@ public static class RemoteRequestUtil
     /// <param name="timeout">请求超时时间，默认 60 秒，<see langword="null"/> 则不超时</param>
     /// <typeparam name="T">响应正文反序列化后的模型类型</typeparam>
     /// <returns>表示异步发送请求的任务，任务结果为发送请求</returns>
-    public static async Task<(T result, HttpResponseHeaders headers)> SendAsync<T>(HttpMethod httpMethod,
-        string url,
-        object urlParam = null,
-        object bodyData = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
+    public static async Task<(T result, HttpResponseHeaders headers)> SendAsync<T>(HttpMethod httpMethod, string url,
+        object urlParam = null, object bodyData = null, IDictionary<string, string> headers = null, bool paramEncode = false,
         int? timeout = 60)
     {
         (string responseContent, HttpResponseHeaders responseHeaders) =
-            await SendAsync(httpMethod, url, urlParam, bodyData, headers, paramEncode, timeout)
-                .ConfigureAwait(false);
+            await SendAsync(httpMethod, url, urlParam, bodyData, headers, paramEncode, timeout).ConfigureAwait(false);
 
         return (JsonSerializer.Deserialize<T>(responseContent, _defaultJsonSerializerOptions), responseHeaders);
     }
@@ -421,19 +368,20 @@ public static class RemoteRequestUtil
     /// <param name="paramEncode">是否对 URL 参数进行编码，默认 <see langword="false"/></param>
     /// <param name="timeout">请求超时时间，默认 60 秒，<see langword="null"/> 则不超时</param>
     /// <returns>表示异步发送请求的任务，任务结果为发送请求</returns>
-    public static async Task<(string result, HttpResponseHeaders headers)> SendAsync(HttpMethod httpMethod,
-        string url,
-        object urlParam = null,
-        object bodyData = null,
-        IDictionary<string, string> headers = null,
-        bool paramEncode = false,
+    public static async Task<(string result, HttpResponseHeaders headers)> SendAsync(HttpMethod httpMethod, string url,
+        object urlParam = null, object bodyData = null, IDictionary<string, string> headers = null, bool paramEncode = false,
         int? timeout = 60)
     {
         ArgumentNullException.ThrowIfNull(httpMethod);
         if (string.IsNullOrWhiteSpace(url))
+        {
             throw new ArgumentException("请求 URL 不能为空。", nameof(url));
+        }
+
         if (timeout <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(timeout), "超时时间必须大于 0 秒，或使用 null 表示不超时。");
+        }
 
         headers ??= new Dictionary<string, string>();
 
@@ -459,11 +407,13 @@ public static class RemoteRequestUtil
                     {
                         //query[param.Key.UrlEncode()] = param.Value.ToString()
                         if (paramEncode)
-                            query[param.Key] = param
-                                .Value.ToString()
-                                .UrlEncode();
+                        {
+                            query[param.Key] = param.Value.ToString().UrlEncode();
+                        }
                         else
+                        {
                             query[param.Key] = param.Value.ToString();
+                        }
                     }
                 }
             }
@@ -475,9 +425,13 @@ public static class RemoteRequestUtil
                     {
                         //query[param.Key.UrlEncode()] = param.Value.UrlEncode()
                         if (paramEncode)
+                        {
                             query[param.Key] = param.Value.UrlEncode();
+                        }
                         else
+                        {
                             query[param.Key] = param.Value;
+                        }
                     }
                 }
             }
@@ -489,11 +443,13 @@ public static class RemoteRequestUtil
                     {
                         //query[param.Key.UrlEncode()] = param.Value?.ToString()
                         if (paramEncode)
-                            query[param.Key] = param
-                                .Value.ToString()
-                                .UrlEncode();
+                        {
+                            query[param.Key] = param.Value.ToString().UrlEncode();
+                        }
                         else
+                        {
                             query[param.Key] = param.Value.ToString();
+                        }
                     }
                 }
             }
@@ -554,50 +510,36 @@ public static class RemoteRequestUtil
             if (response.Content.Headers.ContentEncoding.Contains("br"))
             {
                 // Brotli 解压缩
-                byte[] responseBytes = await response
-                    .Content.ReadAsByteArrayAsync()
-                    .ConfigureAwait(false);
+                byte[] responseBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                 using var compressedStream = new MemoryStream(responseBytes);
                 using var decompressedStream = new MemoryStream();
                 await using var brotliStream = new BrotliStream(compressedStream, CompressionMode.Decompress);
-                await brotliStream
-                    .CopyToAsync(decompressedStream, cancellationToken)
-                    .ConfigureAwait(false);
+                await brotliStream.CopyToAsync(decompressedStream, cancellationToken).ConfigureAwait(false);
                 responseContentBytes = decompressedStream.ToArray();
             }
             else if (response.Content.Headers.ContentEncoding.Contains("gzip"))
             {
                 // Gzip 解压缩
-                byte[] responseBytes = await response
-                    .Content.ReadAsByteArrayAsync()
-                    .ConfigureAwait(false);
+                byte[] responseBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                 using var compressedStream = new MemoryStream(responseBytes);
                 using var decompressedStream = new MemoryStream();
                 await using var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
-                await gzipStream
-                    .CopyToAsync(decompressedStream, cancellationToken)
-                    .ConfigureAwait(false);
+                await gzipStream.CopyToAsync(decompressedStream, cancellationToken).ConfigureAwait(false);
                 responseContentBytes = decompressedStream.ToArray();
             }
             else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
             {
                 // Deflate  解压缩
-                byte[] responseBytes = await response
-                    .Content.ReadAsByteArrayAsync()
-                    .ConfigureAwait(false);
+                byte[] responseBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
                 using var compressedStream = new MemoryStream(responseBytes);
                 using var decompressedStream = new MemoryStream();
                 await using var deflateStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
-                await deflateStream
-                    .CopyToAsync(decompressedStream, cancellationToken)
-                    .ConfigureAwait(false);
+                await deflateStream.CopyToAsync(decompressedStream, cancellationToken).ConfigureAwait(false);
                 responseContentBytes = decompressedStream.ToArray();
             }
             else
             {
-                responseContentBytes = await response
-                    .Content.ReadAsByteArrayAsync()
-                    .ConfigureAwait(false);
+                responseContentBytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             }
 
             // 获取 charset 编码
@@ -692,7 +634,9 @@ public static class RemoteRequestUtil
             MethodInfo m = p.GetGetMethod();
 
             if (m == null || !m.IsPublic)
+            {
                 continue;
+            }
 
             object value = m.Invoke(obj, Array.Empty<object>());
             if (value != null || includeNull)
@@ -722,8 +666,7 @@ public static class RemoteRequestUtil
         bool withContentType = response.Content.Headers.TryGetValues("Content-Type", out IEnumerable<string> contentTypes);
         if (withContentType)
         {
-            charset = contentTypes
-                          .First()
+            charset = contentTypes.First()
                           .Split(';', StringSplitOptions.RemoveEmptyEntries)
                           .FirstOrDefault(u => u.Contains("charset", StringComparison.OrdinalIgnoreCase))
                       ?? "charset=UTF-8";
@@ -733,10 +676,7 @@ public static class RemoteRequestUtil
             charset = "charset=UTF-8";
         }
 
-        string encoding = charset
-                              .Split('=', StringSplitOptions.RemoveEmptyEntries)
-                              .LastOrDefault()
-                          ?? "UTF-8";
+        string encoding = charset.Split('=', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "UTF-8";
         return Encoding.GetEncoding(encoding);
     }
 }

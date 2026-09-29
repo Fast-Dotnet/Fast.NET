@@ -46,8 +46,7 @@ public static class AssemblyExtension
     /// <returns>获取到的程序集版本</returns>
     public static Version GetVersion(this Assembly assembly)
     {
-        return assembly.GetName()
-            .Version;
+        return assembly.GetName().Version;
     }
 
     /// <summary>
@@ -57,8 +56,7 @@ public static class AssemblyExtension
     /// <returns>获取到的程序集名称</returns>
     public static string GetAssemblyName(this Assembly assembly)
     {
-        return assembly.GetName()
-            .Name;
+        return assembly.GetName().Name;
     }
 
     /// <summary>

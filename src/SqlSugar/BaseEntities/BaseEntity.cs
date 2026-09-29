@@ -33,7 +33,8 @@ public class BaseEntity : IBaseEntity
     public virtual string CreatedUserName { get; set; }
 
     /// <inheritdoc />
-    [Required, SugarColumn(ColumnDescription = "创建时间", CreateTableFieldSort = 993)]
+    [Required]
+    [SugarColumn(ColumnDescription = "创建时间", CreateTableFieldSort = 993)]
     public virtual DateTime? CreatedTime { get; set; }
 
     /// <inheritdoc />

@@ -28,31 +28,49 @@ public static class ObjectExtension
     public static object ChangeType(this object obj, Type type)
     {
         if (type == null)
+        {
             return obj;
+        }
+
         if (type == typeof(string))
+        {
             return obj?.ToString();
+        }
+
         if (type == typeof(Guid) && obj != null)
+        {
             return Guid.Parse(obj.ToString());
+        }
+
         if (type == typeof(bool) && obj != null && !(obj is bool))
         {
-            string objStr = obj
-                .ToString()
-                ?.ToLower();
+            string objStr = obj.ToString()?.ToLower();
             if (objStr == "1" || objStr == "true" || objStr == "yes" || objStr == "on")
+            {
                 return true;
+            }
+
             return false;
         }
 
         if (obj == null)
+        {
             return type.IsValueType ? Activator.CreateInstance(type) : null;
+        }
 
         Type underlyingType = Nullable.GetUnderlyingType(type);
         if (type.IsInstanceOfType(obj))
+        {
             return obj;
+        }
+
         if ((underlyingType ?? type).IsEnum)
         {
             if (underlyingType != null && string.IsNullOrWhiteSpace(obj.ToString()))
+            {
                 return null;
+            }
+
             return Enum.Parse(underlyingType ?? type, obj.ToString());
         }
         // 将 DateTime 按配置的时区规则转换为 DateTimeOffset
@@ -82,7 +100,9 @@ public static class ObjectExtension
 
         TypeConverter converter = TypeDescriptor.GetConverter(type);
         if (converter.CanConvertFrom(obj.GetType()))
+        {
             return converter.ConvertFrom(obj);
+        }
 
         ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
         if (constructor != null)
@@ -96,11 +116,7 @@ public static class ObjectExtension
                 PropertyInfo p = oldType.GetProperty(property.Name);
                 if (property.CanWrite && p != null && p.CanRead)
                 {
-                    property.SetValue(o,
-                        p
-                            .GetValue(obj, null)
-                            .ChangeType(property.PropertyType),
-                        null);
+                    property.SetValue(o, p.GetValue(obj, null).ChangeType(property.PropertyType), null);
                 }
             }
 
@@ -129,7 +145,9 @@ public static class ObjectExtension
             MethodInfo m = p.GetGetMethod();
 
             if (m == null || !m.IsPublic)
+            {
                 continue;
+            }
 
             object o = m.Invoke(obj, Array.Empty<object>());
             if (o != null || includeNull)
@@ -162,7 +180,9 @@ public static class ObjectExtension
     public static string ToQueryString(this object obj, bool isToLower = false)
     {
         if (obj == null)
+        {
             return string.Empty;
+        }
 
         var dictionary = new Dictionary<string, string>();
 
@@ -175,9 +195,14 @@ public static class ObjectExtension
             MethodInfo m = p.GetGetMethod();
 
             if (m == null || !m.IsPublic)
+            {
                 continue;
+            }
+
             if (m.Invoke(obj, new object[] { }) == null)
+            {
                 continue;
+            }
 
             object value = m.Invoke(obj, new object[] { });
 
@@ -205,19 +230,13 @@ public static class ObjectExtension
                         dictionary.Add($"{(isToLower ? p.Name.FirstCharToLower() : p.Name)}[]", intListVal); // 向字典添加元素
                         break;
                     default:
-                        dictionary.Add(p.Name,
-                            m
-                                .Invoke(obj, new object[] { })
-                                ?.ToString()); // 向字典添加元素
+                        dictionary.Add(p.Name, m.Invoke(obj, new object[] { })?.ToString()); // 向字典添加元素
                         break;
                 }
             }
             else
             {
-                dictionary.Add(p.Name,
-                    m
-                        .Invoke(obj, new object[] { })
-                        ?.ToString()); // 向字典添加元素
+                dictionary.Add(p.Name, m.Invoke(obj, new object[] { })?.ToString()); // 向字典添加元素
             }
         }
 
@@ -256,9 +275,7 @@ public static class ObjectExtension
         }
 
         // 反射查找是否存在 Count 属性
-        PropertyInfo runtimeProperty = obj
-            .GetType()
-            .GetRuntimeProperty("Count");
+        PropertyInfo runtimeProperty = obj.GetType().GetRuntimeProperty("Count");
 
         // 反射获取 Count 属性值
         if (!(runtimeProperty is null) && runtimeProperty.CanRead && runtimeProperty.PropertyType == typeof(int))

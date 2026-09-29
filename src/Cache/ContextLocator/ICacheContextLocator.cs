@@ -16,5 +16,5 @@ public interface ICacheContextLocator
     /// <summary>
     /// 服务名称
     /// </summary>
-    public string ServiceName { get; }
+    string ServiceName { get; }
 }

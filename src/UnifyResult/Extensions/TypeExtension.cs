@@ -21,17 +21,20 @@ internal static class TypeExtension
     public static bool HasImplementedRawGeneric(this Type type, Type generic)
     {
         Type localType = type;
-        bool isTheRawGenericType = type
-            .GetInterfaces()
-            .Any(IsTheRawGenericType);
+        bool isTheRawGenericType = type.GetInterfaces().Any(IsTheRawGenericType);
         if (isTheRawGenericType)
+        {
             return true;
+        }
 
         while (localType != null && localType != typeof(object))
         {
             isTheRawGenericType = IsTheRawGenericType(localType);
             if (isTheRawGenericType)
+            {
                 return true;
+            }
+
             localType = localType.BaseType;
         }
 

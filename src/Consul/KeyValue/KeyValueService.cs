@@ -49,16 +49,14 @@ public class KeyValueService : IKeyValueService
     /// <returns>反序列化后的响应内容</returns>
     private static async Task<T> Get<T>(string requestUri)
     {
-        using HttpResponseMessage response = await _httpClient
-            .GetAsync(requestUri)
-            .ConfigureAwait(false);
-        string responseContent = await response
-            .Content.ReadAsStringAsync()
-            .ConfigureAwait(false);
+        using HttpResponseMessage response = await _httpClient.GetAsync(requestUri).ConfigureAwait(false);
+        string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
         // 优先读取响应正文，使异常能够保留 Consul 返回的具体错误信息
         if (!response.IsSuccessStatusCode)
+        {
             throw new HttpRequestException(responseContent, null, response.StatusCode);
+        }
 
         return JsonSerializer.Deserialize<T>(responseContent, _jsonSerializerOptions);
     }
@@ -72,16 +70,14 @@ public class KeyValueService : IKeyValueService
     private static async Task<string> Put(string requestUri, string data)
     {
         using StringContent content = data == null ? null : new StringContent(data, Encoding.UTF8, "application/json");
-        using HttpResponseMessage response = await _httpClient
-            .PutAsync(requestUri, content)
-            .ConfigureAwait(false);
-        string responseContent = await response
-            .Content.ReadAsStringAsync()
-            .ConfigureAwait(false);
+        using HttpResponseMessage response = await _httpClient.PutAsync(requestUri, content).ConfigureAwait(false);
+        string responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
         // 与 GET 保持一致，失败响应直接携带 Consul 返回的正文
         if (!response.IsSuccessStatusCode)
+        {
             throw new HttpRequestException(responseContent, null, response.StatusCode);
+        }
 
         return responseContent;
     }
@@ -94,7 +90,9 @@ public class KeyValueService : IKeyValueService
             result = await Get<List<ConsulKeyValueResponseDto>>(BuildKeyValueUrl(settingPath, dcName));
 
         if (result == null || result.Count == 0)
+        {
             throw new KeyNotFoundException("未找到指定 Consul 配置！");
+        }
 
         string value = result[0].Value;
 
@@ -109,7 +107,9 @@ public class KeyValueService : IKeyValueService
             result = await Get<List<ConsulKeyValueResponseDto>>(BuildKeyValueUrl(settingPath, dcName));
 
         if (result == null || result.Count == 0)
+        {
             throw new KeyNotFoundException("未找到指定 Consul 配置！");
+        }
 
         string value = result[0].Value;
 
@@ -134,8 +134,13 @@ public class KeyValueService : IKeyValueService
     private static void ValidatePath(string settingPath, string dcName)
     {
         if (string.IsNullOrWhiteSpace(settingPath))
+        {
             throw new ArgumentException("Consul 配置路径不能为空。", nameof(settingPath));
+        }
+
         if (string.IsNullOrWhiteSpace(dcName))
+        {
             throw new ArgumentException("Consul 数据中心名称不能为空。", nameof(dcName));
+        }
     }
 }

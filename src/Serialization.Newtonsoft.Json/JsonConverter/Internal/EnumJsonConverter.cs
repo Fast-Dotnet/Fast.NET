@@ -19,7 +19,9 @@ internal sealed class EnumJsonConverter : JsonConverter
     public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
         if (value == null)
+        {
             writer.WriteNull();
+        }
         else
         {
             // 获取枚举类型
@@ -46,7 +48,9 @@ internal sealed class EnumJsonConverter : JsonConverter
     {
         // 前端传入的 Enum 类型可能为 String 类型，或者 Number 类型
         if (reader.TokenType == JsonToken.Null)
+        {
             return null;
+        }
 
         Type underlyingType = Nullable.GetUnderlyingType(objectType) ?? objectType;
 
@@ -300,9 +304,10 @@ internal sealed class EnumJsonConverter : JsonConverter
     public override bool CanConvert(Type objectType)
     {
         if (objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Nullable<>))
-            return Nullable.GetUnderlyingType(objectType)
-                       ?.IsEnum
-                   == true;
+        {
+            return Nullable.GetUnderlyingType(objectType)?.IsEnum == true;
+        }
+
         return objectType.IsEnum;
     }
 }

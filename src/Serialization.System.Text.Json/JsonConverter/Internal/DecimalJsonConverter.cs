@@ -71,7 +71,9 @@ internal sealed class NullableDecimalJsonConverter : JsonConverter<decimal?>
     {
         // 同时接受 JSON 字符串和数字令牌；空字符串按 null 处理
         if (reader.TokenType != JsonTokenType.String)
+        {
             return reader.GetDecimal();
+        }
 
         string decimalString = reader.GetString();
         if (string.IsNullOrWhiteSpace(decimalString))
@@ -86,8 +88,12 @@ internal sealed class NullableDecimalJsonConverter : JsonConverter<decimal?>
     public override void Write(Utf8JsonWriter writer, decimal? value, JsonSerializerOptions options)
     {
         if (value == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteNumberValue(Places == null ? value.Value : Math.Round(value.Value, Places.Value));
+        }
     }
 }

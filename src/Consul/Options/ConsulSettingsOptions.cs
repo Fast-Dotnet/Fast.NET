@@ -65,19 +65,30 @@ public sealed class ConsulSettingsOptions : IPostConfigure
         HealthCheckTimeout ??= 5;
 
         if (!Uri.TryCreate(Address, UriKind.Absolute, out Uri consulUri) || consulUri.Scheme is not ("http" or "https"))
+        {
             throw new InvalidOperationException("ConsulSettings:Address 必须是有效的 HTTP/HTTPS 绝对地址。");
+        }
 
         if (!string.IsNullOrWhiteSpace(ServiceAddress)
             && (!Uri.TryCreate(ServiceAddress, UriKind.Absolute, out Uri serviceUri)
                 || serviceUri.Scheme is not ("http" or "https")))
+        {
             throw new InvalidOperationException("ConsulSettings:ServiceAddress 必须是有效的 HTTP/HTTPS 绝对地址。");
+        }
 
         if (string.IsNullOrWhiteSpace(HealthCheck))
+        {
             throw new InvalidOperationException("ConsulSettings:HealthCheck 不能为空。");
+        }
+
         if (!HealthCheck.StartsWith('/'))
+        {
             HealthCheck = "/" + HealthCheck;
+        }
 
         if (DeregisterCriticalServiceAfter <= 0 || HealthCheckInterval <= 0 || HealthCheckTimeout <= 0)
+        {
             throw new InvalidOperationException("Consul 健康检查和服务摘除时间必须大于 0 秒。");
+        }
     }
 }

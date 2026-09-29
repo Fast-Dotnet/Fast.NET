@@ -27,18 +27,14 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="section">JSON 配置文件节点的 Key 默认值：SnowflakeSettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddSnowflake(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddSnowflake(this IServiceCollection services, IConfiguration configuration,
         string section = "SnowflakeSettings")
     {
         Debugging.Info("Registering snowflake......");
 
         services.AddConfigurableOptions<SnowflakeSettingsOptions>(section);
 
-        SqlSugarContext.SnowflakeSettings = configuration
-            .GetSection(section)
-            .Get<SnowflakeSettingsOptions>()
-            .LoadPostConfigure();
+        SqlSugarContext.SnowflakeSettings = configuration.GetSection(section).Get<SnowflakeSettingsOptions>().LoadPostConfigure();
 
         // 每个实例必须使用不同的雪花算法 WorkerId，避免生成重复Id
         YitIdHelper.SetIdGenerator(new IdGeneratorOptions {WorkerId = SqlSugarContext.SnowflakeSettings.WorkerId ?? 1});
@@ -53,8 +49,7 @@ public static class IServiceCollectionExtension
     /// <param name="configuration">用于读取模块设置的配置</param>
     /// <param name="optionAction">雪花Id配置操作</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddSnowflake(this IServiceCollection services,
-        IConfiguration configuration,
+    public static IServiceCollection AddSnowflake(this IServiceCollection services, IConfiguration configuration,
         Action<SnowflakeSettingsOptions> optionAction)
     {
         Debugging.Info("Registering snowflake......");
@@ -78,10 +73,8 @@ public static class IServiceCollectionExtension
     /// <param name="hostEnvironment">当前应用的宿主环境</param>
     /// <param name="connectionSection">JSON 配置文件节点的 Key 默认值：ConnectionSettings</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddSqlSugar(this IServiceCollection services,
-        IConfiguration configuration,
-        IHostEnvironment hostEnvironment,
-        string connectionSection = "ConnectionSettings")
+    public static IServiceCollection AddSqlSugar(this IServiceCollection services, IConfiguration configuration,
+        IHostEnvironment hostEnvironment, string connectionSection = "ConnectionSettings")
     {
         Debugging.Info("Registering sql sugar......");
 
@@ -106,10 +99,8 @@ public static class IServiceCollectionExtension
     /// <param name="hostEnvironment">当前应用的宿主环境</param>
     /// <param name="optionAction">数据库连接配置操作</param>
     /// <returns>返回 <paramref name="services"/>，便于链式调用</returns>
-    public static IServiceCollection AddSqlSugar(this IServiceCollection services,
-        IConfiguration configuration,
-        IHostEnvironment hostEnvironment,
-        Action<ConnectionSettingsOptions> optionAction)
+    public static IServiceCollection AddSqlSugar(this IServiceCollection services, IConfiguration configuration,
+        IHostEnvironment hostEnvironment, Action<ConnectionSettingsOptions> optionAction)
     {
         Debugging.Info("Registering sql sugar......");
 
@@ -151,11 +142,9 @@ public static class IServiceCollectionExtension
 
             sqlSugarClient.Ado.CommandTimeOut = SqlSugarContext.ConnectionSettings.CommandTimeOut!.Value;
 
-            SugarEntityFilter.LoadSugarAop(hostEnvironment.IsDevelopment(),
-                sqlSugarClient,
+            SugarEntityFilter.LoadSugarAop(hostEnvironment.IsDevelopment(), sqlSugarClient,
                 SqlSugarContext.ConnectionSettings.SugarSqlExecMaxSeconds!.Value,
-                SqlSugarContext.ConnectionSettings.DiffLog!.Value,
-                SqlSugarContext.ConnectionSettings.DisableAop!.Value,
+                SqlSugarContext.ConnectionSettings.DiffLog!.Value, SqlSugarContext.ConnectionSettings.DisableAop!.Value,
                 sqlSugarEntityHandler);
 
             SugarEntityFilter.LoadSugarFilter(sqlSugarClient, sqlSugarEntityHandler);

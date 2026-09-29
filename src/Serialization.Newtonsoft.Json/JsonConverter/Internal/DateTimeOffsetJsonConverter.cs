@@ -55,23 +55,25 @@ internal sealed class DateTimeOffsetJsonConverter : JsonConverter<DateTimeOffset
         if (Localized)
         {
             if (value.Offset.Equals(TimeSpan.Zero))
+            {
                 formatDateTime = value.UtcDateTime;
+            }
             else if (value.Offset.Equals(TimeZoneInfo.Local.GetUtcOffset(value.Date)))
-                formatDateTime = value.ToLocalTime()
-                    .DateTime;
+            {
+                formatDateTime = value.ToLocalTime().DateTime;
+            }
             else
+            {
                 formatDateTime = value.DateTime;
+            }
         }
 
         writer.WriteValue(formatDateTime.ToString(Format, CultureInfo.InvariantCulture));
     }
 
     /// <inheritdoc />
-    public override DateTimeOffset ReadJson(JsonReader reader,
-        Type objectType,
-        DateTimeOffset existingValue,
-        bool hasExistingValue,
-        JsonSerializer serializer)
+    public override DateTimeOffset ReadJson(JsonReader reader, Type objectType, DateTimeOffset existingValue,
+        bool hasExistingValue, JsonSerializer serializer)
     {
         var jToken = JToken.ReadFrom(reader);
         string value = jToken.Value<string>();
@@ -183,12 +185,17 @@ internal sealed class NullableDateTimeOffsetJsonConverter : JsonConverter<DateTi
             if (Localized)
             {
                 if (value.Value.Offset.Equals(TimeSpan.Zero))
+                {
                     formatDateTime = value.Value.UtcDateTime;
+                }
                 else if (value.Value.Offset.Equals(TimeZoneInfo.Local.GetUtcOffset(value.Value.Date)))
-                    formatDateTime = value.Value.ToLocalTime()
-                        .DateTime;
+                {
+                    formatDateTime = value.Value.ToLocalTime().DateTime;
+                }
                 else
+                {
                     formatDateTime = value.Value.DateTime;
+                }
             }
 
             writer.WriteValue(formatDateTime.ToString(Format, CultureInfo.InvariantCulture));
@@ -196,14 +203,13 @@ internal sealed class NullableDateTimeOffsetJsonConverter : JsonConverter<DateTi
     }
 
     /// <inheritdoc />
-    public override DateTimeOffset? ReadJson(JsonReader reader,
-        Type objectType,
-        DateTimeOffset? existingValue,
-        bool hasExistingValue,
-        JsonSerializer serializer)
+    public override DateTimeOffset? ReadJson(JsonReader reader, Type objectType, DateTimeOffset? existingValue,
+        bool hasExistingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null)
+        {
             return null;
+        }
 
         var jToken = JToken.ReadFrom(reader);
         string value = jToken.Value<string>();

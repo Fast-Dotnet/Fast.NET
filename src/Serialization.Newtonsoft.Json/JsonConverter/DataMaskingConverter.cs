@@ -111,10 +111,7 @@ public class DataMaskingConverter : JsonConverter<string>
     }
 
     /// <inheritdoc />
-    public override string ReadJson(JsonReader reader,
-        Type objectType,
-        string existingValue,
-        bool hasExistingValue,
+    public override string ReadJson(JsonReader reader, Type objectType, string existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         return reader.Value?.ToString();

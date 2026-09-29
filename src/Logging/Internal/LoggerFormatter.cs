@@ -70,9 +70,13 @@ public static class LoggerFormatter
         // 输出异常信息
         writer.WritePropertyName("exception");
         if (logMsg.Exception == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteStringValue(logMsg.Exception.ToString());
+        }
 
         writer.WriteEndObject();
     }

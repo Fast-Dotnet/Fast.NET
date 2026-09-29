@@ -498,9 +498,7 @@ public static class ConvertExtension
                     }
                 case 12:
                     {
-                        var result = DateTime.ParseExact(value,
-                            "yyyyMMddHHmm",
-                            CultureInfo.InvariantCulture,
+                        var result = DateTime.ParseExact(value, "yyyyMMddHHmm", CultureInfo.InvariantCulture,
                             DateTimeStyles.None);
 
                         result = new DateTime(result.Year, result.Month, result.Day, result.Hour, result.Minute, 0);
@@ -508,9 +506,7 @@ public static class ConvertExtension
                     }
                 default:
                     {
-                        var result = DateTime.ParseExact(value,
-                            "yyyyMMddHHmmss",
-                            CultureInfo.InvariantCulture,
+                        var result = DateTime.ParseExact(value, "yyyyMMddHHmmss", CultureInfo.InvariantCulture,
                             DateTimeStyles.None);
 
                         return result;
@@ -535,10 +531,7 @@ public static class ConvertExtension
         {
             case 4:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyy",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         result = new DateTime(result.Year, 1, 1, 0, 0, 0);
@@ -549,10 +542,7 @@ public static class ConvertExtension
                 break;
             case 6:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyyMM",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyyMM", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         result = new DateTime(result.Year, result.Month, 1, 0, 0, 0);
@@ -563,10 +553,7 @@ public static class ConvertExtension
                 break;
             case 8:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyyMMdd",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         result = new DateTime(result.Year, result.Month, result.Day, 0, 0, 0);
@@ -577,10 +564,7 @@ public static class ConvertExtension
                 break;
             case 10:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyyMMddHH",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyyMMddHH", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         result = new DateTime(result.Year, result.Month, result.Day, result.Hour, 0, 0);
@@ -591,10 +575,7 @@ public static class ConvertExtension
                 break;
             case 12:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyyMMddHHmm",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyyMMddHHmm", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         result = new DateTime(result.Year, result.Month, result.Day, result.Hour, result.Minute, 0);
@@ -605,10 +586,7 @@ public static class ConvertExtension
                 break;
             default:
                 {
-                    if (DateTime.TryParseExact(value,
-                            "yyyyMMddHHmmss",
-                            CultureInfo.InvariantCulture,
-                            DateTimeStyles.None,
+                    if (DateTime.TryParseExact(value, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None,
                             out DateTime result))
                     {
                         return result;
@@ -634,8 +612,7 @@ public static class ConvertExtension
 
         if (dateTime.Offset.Equals(TimeZoneInfo.Local.GetUtcOffset(dateTime.DateTime)))
         {
-            return dateTime.ToLocalTime()
-                .DateTime;
+            return dateTime.ToLocalTime().DateTime;
         }
 
         return dateTime.DateTime;

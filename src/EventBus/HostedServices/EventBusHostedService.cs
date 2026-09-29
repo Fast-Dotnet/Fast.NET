@@ -60,10 +60,8 @@ internal sealed class EventBusHostedService : BackgroundService
     /// <param name="serviceProvider">服务提供器</param>
     /// <param name="eventSourceStorer">事件源存储器</param>
     /// <param name="eventSubscribers">事件订阅者集合</param>
-    public EventBusHostedService(ILogger<EventBusService> logger,
-        IServiceProvider serviceProvider,
-        IEventSourceStorer eventSourceStorer,
-        IEnumerable<IEventSubscriber> eventSubscribers)
+    public EventBusHostedService(ILogger<EventBusService> logger, IServiceProvider serviceProvider,
+        IEventSourceStorer eventSourceStorer, IEnumerable<IEventSubscriber> eventSubscribers)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
@@ -78,8 +76,7 @@ internal sealed class EventBusHostedService : BackgroundService
             Type eventSubscriberType = eventSubscriber.GetType();
 
             // 查找所有公开且贴有 [EventSubscribe] 的实例方法
-            IEnumerable<MethodInfo> eventHandlerMethods = eventSubscriberType
-                .GetMethods(bindingAttr)
+            IEnumerable<MethodInfo> eventHandlerMethods = eventSubscriberType.GetMethods(bindingAttr)
                 .Where(u => u.IsDefined(typeof(EventSubscribeAttribute), false));
 
             // 遍历所有事件订阅者处理方法
@@ -87,8 +84,7 @@ internal sealed class EventBusHostedService : BackgroundService
             {
                 // 将方法转换成 Func<EventHandlerExecutingContext, Task> 委托
                 var handler = (Func<EventHandlerExecutingContext, Task>)eventHandlerMethod.CreateDelegate(
-                    typeof(Func<EventHandlerExecutingContext, Task>),
-                    eventSubscriber);
+                    typeof(Func<EventHandlerExecutingContext, Task>), eventSubscriber);
 
                 // 处理同一个事件处理程序支持多个事件Id的情况
                 IEnumerable<EventSubscribeAttribute> eventSubscribeAttributes =
@@ -118,7 +114,7 @@ internal sealed class EventBusHostedService : BackgroundService
     private IEventHandlerMonitor Monitor { get; }
 
     /// <inheritdoc />
-    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         Log(LogLevel.Information, "EventBus hosted service is running.");
 
@@ -161,8 +157,7 @@ internal sealed class EventBusHostedService : BackgroundService
         }
 
         // 查找事件Id匹配的事件处理程序
-        var eventHandlersThatShouldRun = _eventHandlers
-            .Where(t => t.Key.ShouldRun(eventSource.EventId))
+        var eventHandlersThatShouldRun = _eventHandlers.Where(t => t.Key.ShouldRun(eventSource.EventId))
             .OrderByDescending(u => u.Value.Order)
             .Select(u => u.Key)
             .ToList();
@@ -183,16 +178,13 @@ internal sealed class EventBusHostedService : BackgroundService
             CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, eventSource.CancellationToken);
         CancellationToken processingToken = processingTokenSource.Token;
 
-        async Task InvokeAsync(Func<Task> action,
-            int numRetries,
-            int retryTimeout = 1000,
-            bool finalThrow = true,
-            Type[] exceptionTypes = null,
-            Func<Exception, Task> fallbackPolicy = null,
-            Action<int, int> retryAction = null)
+        async Task InvokeAsync(Func<Task> action, int numRetries, int retryTimeout = 1000, bool finalThrow = true,
+            Type[] exceptionTypes = null, Func<Exception, Task> fallbackPolicy = null, Action<int, int> retryAction = null)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
 
             // 未配置重试次数时只执行一次，不进入重试循环
             if (numRetries <= 0)
@@ -224,7 +216,10 @@ internal sealed class EventBusHostedService : BackgroundService
                         if (finalThrow)
                         {
                             if (fallbackPolicy != null)
+                            {
                                 await fallbackPolicy.Invoke(ex);
+                            }
+
                             throw;
                         }
 
@@ -239,7 +234,10 @@ internal sealed class EventBusHostedService : BackgroundService
                         if (finalThrow)
                         {
                             if (fallbackPolicy != null)
+                            {
                                 await fallbackPolicy.Invoke(ex);
+                            }
+
                             throw;
                         }
 
@@ -251,7 +249,9 @@ internal sealed class EventBusHostedService : BackgroundService
 
                     // 仅对允许重试的异常等待指定间隔后重试
                     if (retryTimeout > 0)
+                    {
                         await Task.Delay(retryTimeout, processingToken);
+                    }
                 }
             }
         }
@@ -263,9 +263,7 @@ internal sealed class EventBusHostedService : BackgroundService
 
             // 创建执行前上下文
             var eventHandlerExecutingContext =
-                new EventHandlerExecutingContext(eventSource,
-                    properties,
-                    eventHandlerThatShouldRun.HandlerMethod,
+                new EventHandlerExecutingContext(eventSource, properties, eventHandlerThatShouldRun.HandlerMethod,
                     eventSubscribeAttribute) {ExecutingTime = DateTime.Now};
 
             // 执行异常对象
@@ -288,8 +286,7 @@ internal sealed class EventBusHostedService : BackgroundService
 
                 // 调用事件处理程序并配置出错执行重试
                 await InvokeAsync(() => eventHandlerThatShouldRun.Handler!(eventHandlerExecutingContext),
-                    eventSubscribeAttribute?.NumRetries ?? 0,
-                    eventSubscribeAttribute?.RetryTimeout ?? 1000,
+                    eventSubscribeAttribute?.NumRetries ?? 0, eventSubscribeAttribute?.RetryTimeout ?? 1000,
                     exceptionTypes: eventSubscribeAttribute?.ExceptionTypes,
                     fallbackPolicy: fallbackPolicyService == null
                         ? null
@@ -320,9 +317,7 @@ internal sealed class EventBusHostedService : BackgroundService
                 if (Monitor != null)
                 {
                     var eventHandlerExecutedContext =
-                        new EventHandlerExecutedContext(eventSource,
-                            properties,
-                            eventHandlerThatShouldRun.HandlerMethod,
+                        new EventHandlerExecutedContext(eventSource, properties, eventHandlerThatShouldRun.HandlerMethod,
                             eventSubscribeAttribute) {ExecutedTime = DateTime.Now, Exception = executionException};
 
                     try
@@ -331,10 +326,8 @@ internal sealed class EventBusHostedService : BackgroundService
                     }
                     catch (Exception ex)
                     {
-                        Log(LogLevel.Error,
-                            "Error occurred in event handler monitor for {EventId}.",
-                            new object[] {eventSource.EventId},
-                            ex);
+                        Log(LogLevel.Error, "Error occurred in event handler monitor for {EventId}.",
+                            new object[] {eventSource.EventId}, ex);
                     }
                 }
 
@@ -358,8 +351,10 @@ internal sealed class EventBusHostedService : BackgroundService
 
         // 确保事件订阅Id与传入特性的 EventId 一致
         if (subscribeOperateSource.Attribute != null && subscribeOperateSource.Attribute.EventId != eventId)
+        {
             throw new InvalidOperationException(
                 "Ensure that the <eventId> is consistent with the <EventId> attribute of the EventSubscribeAttribute object.");
+        }
 
         // 处理动态新增
         if (subscribeOperateSource.Operate == EventSubscribeOperates.Append)
@@ -378,8 +373,7 @@ internal sealed class EventBusHostedService : BackgroundService
 
             if (succeeded)
             {
-                Log(LogLevel.Information,
-                    "Subscriber with event ID <{EventId}> was appended successfully.",
+                Log(LogLevel.Information, "Subscriber with event ID <{EventId}> was appended successfully.",
                     new object[] {eventId});
             }
         }
@@ -390,14 +384,17 @@ internal sealed class EventBusHostedService : BackgroundService
             foreach (EventHandlerWrapper wrapper in _eventHandlers.Keys)
             {
                 if (wrapper.EventId != eventId)
+                {
                     continue;
+                }
 
                 bool succeeded = _eventHandlers.TryRemove(wrapper, out _);
                 if (!succeeded)
+                {
                     continue;
+                }
 
-                Log(LogLevel.Warning,
-                    "Subscriber<{Name}> with event ID <{EventId}> was remove.",
+                Log(LogLevel.Warning, "Subscriber<{Name}> with event ID <{EventId}> was remove.",
                     new object[] {wrapper.HandlerMethod?.Name, eventId});
             }
         }
@@ -420,18 +417,21 @@ internal sealed class EventBusHostedService : BackgroundService
     private void TryCollectGarbage(bool enabled)
     {
         if (!enabled)
+        {
             return;
+        }
 
         long nowTicks = DateTime.UtcNow.Ticks;
         long previousTicks = Interlocked.Read(ref _lastGCCollectTicks);
-        if (previousTicks != 0
-            && nowTicks - previousTicks
-            <= TimeSpan.FromSeconds(GC_COLLECT_INTERVAL_SECONDS)
-                .Ticks)
+        if (previousTicks != 0 && nowTicks - previousTicks <= TimeSpan.FromSeconds(GC_COLLECT_INTERVAL_SECONDS).Ticks)
+        {
             return;
+        }
 
         if (Interlocked.CompareExchange(ref _lastGCCollectTicks, nowTicks, previousTicks) == previousTicks)
+        {
             GC.Collect();
+        }
     }
 
     /// <summary>

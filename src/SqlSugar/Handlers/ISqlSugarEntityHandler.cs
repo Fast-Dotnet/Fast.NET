@@ -29,8 +29,7 @@ public interface ISqlSugarEntityHandler
     /// <typeparam name="TEntity">实体类型</typeparam>
     /// <returns>实体使用的数据库连接配置；返回 <see langword="null"/> 时使用全局默认配置</returns>
     Task<ConnectionSettingsOptions> GetConnectionSettings<TEntity>(ISqlSugarClient sqlSugarClient,
-        SugarDbTypeAttribute sugarDbType,
-        Type entityType);
+        SugarDbTypeAttribute sugarDbType, Type entityType);
 
     /// <summary>
     /// 异步处理已执行的 SQL 语句
@@ -54,14 +53,8 @@ public interface ISqlSugarEntityHandler
     /// <param name="handlerSql">要检查或改写的 SQL 文本</param>
     /// <param name="message">要记录或返回的消息</param>
     /// <returns>表示 SQL 超时处理操作的任务</returns>
-    Task ExecuteTimeoutAsync(string fileName,
-        int fileLine,
-        string methodName,
-        string rawSql,
-        SugarParameter[] parameters,
-        TimeSpan executeTime,
-        string handlerSql,
-        string message);
+    Task ExecuteTimeoutAsync(string fileName, int fileLine, string methodName, string rawSql, SugarParameter[] parameters,
+        TimeSpan executeTime, string handlerSql, string message);
 
     /// <summary>
     /// 异步记录 SQL 数据变更差异
@@ -77,16 +70,9 @@ public interface ISqlSugarEntityHandler
     /// <param name="executeTime">操作耗时</param>
     /// <param name="handlerSql">要检查或改写的 SQL 文本</param>
     /// <returns>表示数据变更差异记录操作的任务</returns>
-    Task ExecuteDiffLogAsync(DiffType diffType,
-        string tableName,
-        string tableDescription,
-        object businessData,
-        List<List<DiffLogColumnInfo>> beforeColumnList,
-        List<List<DiffLogColumnInfo>> afterColumnList,
-        string rawSql,
-        SugarParameter[] parameters,
-        TimeSpan? executeTime,
-        string handlerSql);
+    Task ExecuteDiffLogAsync(DiffType diffType, string tableName, string tableDescription, object businessData,
+        List<List<DiffLogColumnInfo>> beforeColumnList, List<List<DiffLogColumnInfo>> afterColumnList, string rawSql,
+        SugarParameter[] parameters, TimeSpan? executeTime, string handlerSql);
 
     /// <summary>
     /// 异步处理 SQL 执行异常
@@ -99,13 +85,8 @@ public interface ISqlSugarEntityHandler
     /// <param name="handlerSql">要检查或改写的 SQL 文本</param>
     /// <param name="exception">SQL 执行期间引发的异常</param>
     /// <returns>表示 SQL 异常处理操作的任务</returns>
-    Task ExecuteErrorAsync(string fileName,
-        int fileLine,
-        string methodName,
-        string rawSql,
-        SugarParameter[] parameters,
-        string handlerSql,
-        SqlSugarException exception);
+    Task ExecuteErrorAsync(string fileName, int fileLine, string methodName, string rawSql, SugarParameter[] parameters,
+        string handlerSql, SqlSugarException exception);
 
     /// <summary>
     /// 是否为超级管理员

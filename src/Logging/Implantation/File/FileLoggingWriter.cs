@@ -96,7 +96,9 @@ internal sealed class FileLoggingWriter : IDisposable
 
         // 如果配置了日志文件名格式化程序，则先处理再返回
         if (_options.FileNameRule != null)
+        {
             fileName = _options.FileNameRule(fileName);
+        }
 
         return fileName;
     }
@@ -121,7 +123,9 @@ internal sealed class FileLoggingWriter : IDisposable
 
             // 如果没有配置文件路径则默认放置根目录
             if (string.IsNullOrEmpty(logDirName))
+            {
                 logDirName = Directory.GetCurrentDirectory();
+            }
 
             // 在当前目录下根据文件通配符查找所有匹配的文件
             string[] logFiles = Directory.Exists(logDirName)
@@ -132,8 +136,7 @@ internal sealed class FileLoggingWriter : IDisposable
             if (logFiles.Length > 0)
             {
                 // 根据文件名和最后更新时间获取最近操作的文件
-                FileInfo lastFileInfo = logFiles
-                    .Select(fName => new FileInfo(fName))
+                FileInfo lastFileInfo = logFiles.Select(fName => new FileInfo(fName))
                     .OrderByDescending(fInfo => fInfo.Name)
                     .ThenByDescending(fInfo => fInfo.LastWriteTime)
                     .First();
@@ -142,10 +145,14 @@ internal sealed class FileLoggingWriter : IDisposable
             }
             // 没有任何匹配的日志文件直接使用当前基础文件名
             else
+            {
                 _fileName = baseFileName;
+            }
         }
         else
+        {
             _fileName = baseFileName;
+        }
     }
 
     /// <summary>
@@ -162,7 +169,9 @@ internal sealed class FileLoggingWriter : IDisposable
         if (!File.Exists(baseFileName)
             || _options.FileSizeLimitBytes <= 0
             || new FileInfo(baseFileName).Length < _options.FileSizeLimitBytes)
+        {
             return baseFileName;
+        }
 
         // 获取日志基础文件名和当前日志文件名
         int currentFileIndex = 0;
@@ -224,7 +233,9 @@ internal sealed class FileLoggingWriter : IDisposable
             }
             // 其他直接抛出异常
             else
+            {
                 throw;
+            }
         }
 
         // 初始化文本写入器（显式指定 UTF-8 编码，跨平台一致）
@@ -240,11 +251,7 @@ internal sealed class FileLoggingWriter : IDisposable
 
             // 创建文件流，允许其他进程读取但不允许写入，避免日志数据竞争
             // 不使用 FileOptions.WriteThrough，在 Linux/macOS 上会映射为 O_SYNC 导致严重性能下降
-            _fileStream = new FileStream(_fileName,
-                FileMode.OpenOrCreate,
-                FileAccess.ReadWrite,
-                FileShare.Read,
-                4096,
+            _fileStream = new FileStream(_fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read, 4096,
                 FileOptions.None);
 
             // 删除超出滚动日志限制的文件
@@ -328,7 +335,9 @@ internal sealed class FileLoggingWriter : IDisposable
     {
         // 判断是否启用滚动文件功能
         if (!_isEnabledRollingFiles)
+        {
             return;
+        }
 
         // 处理 Windows 和 Linux 路径分隔符不一致问题
         string fName = fileInfo.FullName.Replace('\\', '/');
@@ -340,8 +349,8 @@ internal sealed class FileLoggingWriter : IDisposable
         if (succeed && _fileLoggerProvider._rollingFileNames.Count > _options.MaxRollingFiles)
         {
             // 根据最后写入时间删除过时日志
-            IEnumerable<KeyValuePair<string, FileInfo>> dropFiles = _fileLoggerProvider
-                ._rollingFileNames.OrderBy(u => u.Value.LastWriteTimeUtc)
+            IEnumerable<KeyValuePair<string, FileInfo>> dropFiles = _fileLoggerProvider._rollingFileNames
+                .OrderBy(u => u.Value.LastWriteTimeUtc)
                 .Take(_fileLoggerProvider._rollingFileNames.Count - _options.MaxRollingFiles);
 
             // 遍历所有需要删除的文件
@@ -349,13 +358,17 @@ internal sealed class FileLoggingWriter : IDisposable
             {
                 bool removeSucceed = _fileLoggerProvider._rollingFileNames.TryRemove(rollingFile.Key, out _);
                 if (!removeSucceed)
+                {
                     continue;
+                }
 
                 // 当前方法本来就在专用日志线程执行，无需再创建无法观察异常的后台任务
                 try
                 {
                     if (File.Exists(rollingFile.Key))
+                    {
                         File.Delete(rollingFile.Key);
+                    }
                 }
                 catch (IOException)
                 {
@@ -381,19 +394,25 @@ internal sealed class FileLoggingWriter : IDisposable
         {
             TryReopenFile();
             if (_textWriter == null)
+            {
                 return;
+            }
         }
 
         CheckForNewLogFile();
 
         // CheckForNewLogFile 内部 Close() 后若 OpenFile() 失败，_textWriter 可能为 null
         if (_textWriter == null)
+        {
             return;
+        }
 
         _textWriter.WriteLine(logMsg.Message);
 
         if (flush)
+        {
             _textWriter.Flush();
+        }
     }
 
     /// <summary>
@@ -403,7 +422,9 @@ internal sealed class FileLoggingWriter : IDisposable
     {
         // 限制重试频率，避免因持续失败导致性能问题
         if (DateTime.UtcNow - _lastReopenAttempt < _reopenInterval)
+        {
             return;
+        }
 
         _lastReopenAttempt = DateTime.UtcNow;
 
@@ -424,7 +445,9 @@ internal sealed class FileLoggingWriter : IDisposable
     internal void Close()
     {
         if (_textWriter == null && _fileStream == null)
+        {
             return;
+        }
 
         StreamWriter textWriter = _textWriter;
         _textWriter = null;

@@ -69,7 +69,10 @@ public static class StringEncodingExtension
     {
         var strResult = new StringBuilder();
         if (string.IsNullOrEmpty(str))
+        {
             return strResult.ToString();
+        }
+
         foreach (char c in str)
         {
             strResult.Append("\\u");

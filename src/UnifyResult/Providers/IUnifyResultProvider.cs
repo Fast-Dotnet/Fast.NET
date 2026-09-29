@@ -24,9 +24,7 @@ public interface IUnifyResultProvider
     /// <param name="statusCode">HTTP 状态码</param>
     /// <param name="message">要记录或返回的消息</param>
     /// <returns>异常返回值</returns>
-    IActionResult OnException(ExceptionContext context,
-        ExceptionMetadata metadata,
-        int? statusCode = null,
+    IActionResult OnException(ExceptionContext context, ExceptionMetadata metadata, int? statusCode = null,
         string message = null);
 
     /// <summary>

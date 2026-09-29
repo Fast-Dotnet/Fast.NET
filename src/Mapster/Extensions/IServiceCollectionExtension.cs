@@ -35,17 +35,15 @@ public static class IServiceCollectionExtension
 
         // 扫描所有继承  IRegister 接口的对象映射配置
         if (assemblies?.Length > 0)
+        {
             config.Scan(assemblies);
+        }
 
         // 配置默认全局映射（支持覆盖）
-        config
-            .Default.NameMatchingStrategy(NameMatchingStrategy.Flexible)
-            .PreserveReference(true);
+        config.Default.NameMatchingStrategy(NameMatchingStrategy.Flexible).PreserveReference(true);
 
         // 配置默认全局映射（忽略大小写敏感）
-        config
-            .Default.NameMatchingStrategy(NameMatchingStrategy.IgnoreCase)
-            .PreserveReference(true);
+        config.Default.NameMatchingStrategy(NameMatchingStrategy.IgnoreCase).PreserveReference(true);
 
         // 配置支持依赖注入
         services.AddSingleton(config);

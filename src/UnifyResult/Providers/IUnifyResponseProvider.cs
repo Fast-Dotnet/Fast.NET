@@ -22,8 +22,7 @@ public interface IUnifyResponseProvider
     /// <param name="metadata">异常响应使用的元数据</param>
     /// <param name="httpContext">当前请求上下文</param>
     /// <returns>表示异步响应异常处理的任务，任务结果为响应异常处理</returns>
-    Task<(int statusCode, string message)> ResponseExceptionAsync(ExceptionContext context,
-        ExceptionMetadata metadata,
+    Task<(int statusCode, string message)> ResponseExceptionAsync(ExceptionContext context, ExceptionMetadata metadata,
         HttpContext httpContext);
 
     /// <summary>

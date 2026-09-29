@@ -52,16 +52,8 @@ internal sealed class ConsoleFormatterExtend : ConsoleFormatter, IDisposable
 
         // 创建日志消息
         DateTime logDateTime = _formatterOptions.UseUtcTimestamp ? DateTime.UtcNow : DateTime.Now;
-        var logMsg = new LogMessage(logEntry.Category,
-            logEntry.LogLevel,
-            logEntry.EventId,
-            message,
-            logEntry.Exception,
-            null,
-            logEntry.State,
-            logDateTime,
-            Environment.CurrentManagedThreadId,
-            _formatterOptions.UseUtcTimestamp,
+        var logMsg = new LogMessage(logEntry.Category, logEntry.LogLevel, logEntry.EventId, message, logEntry.Exception, null,
+            logEntry.State, logDateTime, Environment.CurrentManagedThreadId, _formatterOptions.UseUtcTimestamp,
             MAppContext.GetTraceId(Penetrates.RootServices, Penetrates.HttpContext));
 
         string standardMessage;
@@ -76,16 +68,14 @@ internal sealed class ConsoleFormatterExtend : ConsoleFormatter, IDisposable
         else
         {
             // 获取标准化日志消息
-            standardMessage = LoggingContext.OutputStandardMessage(logMsg,
-                _formatterOptions.DateFormat,
-                true,
-                _disableColors,
-                _formatterOptions.WithTraceId,
-                _formatterOptions.WithStackFrame);
+            standardMessage = LoggingContext.OutputStandardMessage(logMsg, _formatterOptions.DateFormat, true, _disableColors,
+                _formatterOptions.WithTraceId, _formatterOptions.WithStackFrame);
         }
 
         if (message is null)
+        {
             return;
+        }
 
         // 判断是否自定义了日志格式化程序
         if (_formatterOptions.WriteHandler != null)

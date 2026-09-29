@@ -17,14 +17,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Insert(TEntity entity)
     {
-        IInsertable<TEntity> insertable = Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IInsertable<TEntity> insertable = Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return insertable
-                .SplitTable()
-                .ExecuteCommand();
+            return insertable.SplitTable().ExecuteCommand();
         }
 
         return insertable.ExecuteCommand();
@@ -33,14 +30,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> InsertAsync(TEntity entity)
     {
-        IInsertable<TEntity> insertable = Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IInsertable<TEntity> insertable = Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return insertable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return insertable.SplitTable().ExecuteCommandAsync();
         }
 
         return insertable.ExecuteCommandAsync();
@@ -49,14 +43,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Insert(params TEntity[] entities)
     {
-        IInsertable<TEntity> insertable = Insertable(entities)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IInsertable<TEntity> insertable = Insertable(entities).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return insertable
-                .SplitTable()
-                .ExecuteCommand();
+            return insertable.SplitTable().ExecuteCommand();
         }
 
         return insertable.ExecuteCommand();
@@ -65,14 +56,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> InsertAsync(params TEntity[] entities)
     {
-        IInsertable<TEntity> insertable = Insertable(entities)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IInsertable<TEntity> insertable = Insertable(entities).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return insertable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return insertable.SplitTable().ExecuteCommandAsync();
         }
 
         return insertable.ExecuteCommandAsync();
@@ -84,14 +72,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
         TEntity[] _entities = entities?.ToArray();
         if (_entities?.Length > 0)
         {
-            IInsertable<TEntity> insertable = Insertable(_entities.ToArray())
-                .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+            IInsertable<TEntity> insertable = Insertable(_entities.ToArray()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
             if (IsSplitTable)
             {
-                return insertable
-                    .SplitTable()
-                    .ExecuteCommand();
+                return insertable.SplitTable().ExecuteCommand();
             }
 
             return insertable.ExecuteCommand();
@@ -106,14 +91,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
         TEntity[] _entities = entities?.ToArray();
         if (_entities?.Length > 0)
         {
-            IInsertable<TEntity> insertable = Insertable(_entities.ToArray())
-                .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+            IInsertable<TEntity> insertable = Insertable(_entities.ToArray()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
             if (IsSplitTable)
             {
-                return insertable
-                    .SplitTable()
-                    .ExecuteCommandAsync();
+                return insertable.SplitTable().ExecuteCommandAsync();
             }
 
             return insertable.ExecuteCommandAsync();
@@ -125,48 +107,36 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int InsertReturnIdentity(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnIdentity();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnIdentity();
     }
 
     /// <inheritdoc />
     public Task<int> InsertReturnIdentityAsync(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnIdentityAsync();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnIdentityAsync();
     }
 
     /// <inheritdoc />
     public long ExecuteReturnBigIdentity(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnBigIdentity();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnBigIdentity();
     }
 
     /// <inheritdoc />
     public Task<long> ExecuteReturnBigIdentityAsync(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnBigIdentityAsync();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnBigIdentityAsync();
     }
 
     /// <inheritdoc />
     public TEntity InsertReturnEntity(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnEntity();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnEntity();
     }
 
     /// <inheritdoc />
     public Task<TEntity> InsertReturnEntityAsync(TEntity entity)
     {
-        return Insertable(entity)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value)
-            .ExecuteReturnEntityAsync();
+        return Insertable(entity).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value).ExecuteReturnEntityAsync();
     }
 }

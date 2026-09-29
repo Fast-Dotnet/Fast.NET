@@ -55,50 +55,45 @@ internal sealed class FileLogger : ILogger
     }
 
     /// <inheritdoc />
-    public void Log<TState>(LogLevel logLevel,
-        EventId eventId,
-        TState state,
-        Exception exception,
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
         Func<TState, Exception, string> formatter)
     {
         // 判断日志级别是否有效
         if (!IsEnabled(logLevel))
+        {
             return;
+        }
 
         // 检查日志格式化器
         if (formatter == null)
+        {
             throw new ArgumentNullException(nameof(formatter));
+        }
 
         string message = formatter(state, exception);
 
         DateTime logDateTime = _options.UseUtcTimestamp ? DateTime.UtcNow : DateTime.Now;
-        var logMsg = new LogMessage(_logName,
-            logLevel,
-            eventId,
-            message,
-            exception,
-            null,
-            state,
-            logDateTime,
-            Environment.CurrentManagedThreadId,
-            _options.UseUtcTimestamp,
+        var logMsg = new LogMessage(_logName, logLevel, eventId, message, exception, null, state, logDateTime,
+            Environment.CurrentManagedThreadId, _options.UseUtcTimestamp,
             MAppContext.GetTraceId(Penetrates.RootServices, Penetrates.HttpContext));
 
         logMsg = Penetrates.SetLogContext(_fileLoggerProvider.ScopeProvider, logMsg, _options.IncludeScopes);
 
         // 判断是否自定义了日志筛选器，如果是则检查是否符合条件
         if (_options.WriteFilter?.Invoke(logMsg) == false)
+        {
             return;
+        }
 
         logMsg.Message = _options.MessageFormat != null
             ? _options.MessageFormat(logMsg)
-            : LoggingContext.OutputStandardMessage(logMsg,
-                _options.DateFormat,
-                withTraceId: _options.WithTraceId,
+            : LoggingContext.OutputStandardMessage(logMsg, _options.DateFormat, withTraceId: _options.WithTraceId,
                 withStackFrame: _options.WithStackFrame);
 
         if (logMsg.Message is null)
+        {
             return;
+        }
 
         // 写入日志队列
         _fileLoggerProvider.WriteToQueue(logMsg);

@@ -114,7 +114,6 @@ public static class MethodInfoExtension
     /// <returns>满足条件的项数</returns>
     public static int GetMethodParameterCount(this MethodInfo methodInfo)
     {
-        return methodInfo.GetParameters()
-            .Length;
+        return methodInfo.GetParameters().Length;
     }
 }

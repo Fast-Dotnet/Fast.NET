@@ -21,8 +21,7 @@ internal sealed class ConsulRegister : IConsulRegister
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly ConsulSettingsOptions _consulSettingsOptions;
 
-    public ConsulRegister(IServer server,
-        IWebHostEnvironment webHostEnvironment,
+    public ConsulRegister(IServer server, IWebHostEnvironment webHostEnvironment,
         IOptionsMonitor<ConsulSettingsOptions> consulSettingsOptions)
     {
         _server = server;
@@ -41,19 +40,20 @@ internal sealed class ConsulRegister : IConsulRegister
 
         // 获取当前程序启动的地址
         string startupAddress = string.IsNullOrWhiteSpace(_consulSettingsOptions.ServiceAddress)
-            ? _server
-                .Features.Get<IServerAddressesFeature>()
-                ?.Addresses.FirstOrDefault()
+            ? _server.Features.Get<IServerAddressesFeature>()?.Addresses.FirstOrDefault()
             : _consulSettingsOptions.ServiceAddress;
         if (!Uri.TryCreate(startupAddress, UriKind.Absolute, out Uri startupUri))
+        {
             throw new InvalidOperationException("无法从服务器功能中获取有效的应用监听地址，Consul 服务注册已终止。");
+        }
 
         if (startupUri.Host is "0.0.0.0" or "::" or "[::]")
+        {
             throw new InvalidOperationException("应用监听的是通配地址，无法直接注册到 Consul；请配置 ConsulSettings:ServiceAddress。");
+        }
 
         // 服务名携带入口程序集版本，便于不同版本在 Consul 中并行注册
-        string version = Assembly
-            .GetEntryAssembly()
+        string version = Assembly.GetEntryAssembly()
             ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion;
 
@@ -68,9 +68,7 @@ internal sealed class ConsulRegister : IConsulRegister
         var registration = new AgentServiceRegistration
         {
             // 唯一Id
-            ID = Guid
-                .NewGuid()
-                .ToString("N"),
+            ID = Guid.NewGuid().ToString("N"),
             // 服务名
             Name = _webHostEnvironment.ApplicationName + $"{(string.IsNullOrEmpty(version) ? null : $"_v{version}")}",
             // 服务绑定 IP
@@ -92,8 +90,6 @@ internal sealed class ConsulRegister : IConsulRegister
             }
         };
 
-        await client
-            .Agent.ServiceRegister(registration)
-            .ConfigureAwait(false);
+        await client.Agent.ServiceRegister(registration).ConfigureAwait(false);
     }
 }

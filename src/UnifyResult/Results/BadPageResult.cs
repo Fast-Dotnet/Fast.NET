@@ -123,8 +123,7 @@ public class BadPageResult : StatusCodeResult
             // Stream.Read 不保证一次读满，使用 StreamReader 可避免页面被静默截断
             using var reader = new StreamReader(readStream, Encoding.UTF8, true);
             string content = reader.ReadToEnd();
-            content = content
-                .Replace($"@{{{nameof(Title)}}}", Title)
+            content = content.Replace($"@{{{nameof(Title)}}}", Title)
                 .Replace($"@{{{nameof(Description)}}}", Description)
                 .Replace($"@{{{nameof(StatusCode)}}}", StatusCode.ToString())
                 .Replace($"@{{{nameof(Code)}}}", Code)

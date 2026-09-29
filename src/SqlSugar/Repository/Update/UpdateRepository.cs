@@ -25,12 +25,8 @@ internal sealed partial class SqlSugarRepository<TEntity>
         if (IsSplitTable)
         {
             return SupportsRowVersion
-                ? updateable
-                    .SplitTable()
-                    .ExecuteCommandWithOptLock(true)
-                : updateable
-                    .SplitTable()
-                    .ExecuteCommand();
+                ? updateable.SplitTable().ExecuteCommandWithOptLock(true)
+                : updateable.SplitTable().ExecuteCommand();
         }
 
         return SupportsRowVersion ? updateable.ExecuteCommandWithOptLock(true) : updateable.ExecuteCommand();
@@ -46,12 +42,8 @@ internal sealed partial class SqlSugarRepository<TEntity>
         if (IsSplitTable)
         {
             return SupportsRowVersion
-                ? updateable
-                    .SplitTable()
-                    .ExecuteCommandWithOptLockAsync(true)
-                : updateable
-                    .SplitTable()
-                    .ExecuteCommandAsync();
+                ? updateable.SplitTable().ExecuteCommandWithOptLockAsync(true)
+                : updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return SupportsRowVersion ? updateable.ExecuteCommandWithOptLockAsync(true) : updateable.ExecuteCommandAsync();
@@ -60,14 +52,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Update(params TEntity[] entities)
     {
-        IUpdateable<TEntity> updateable = Updateable(entities)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IUpdateable<TEntity> updateable = Updateable(entities).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommand();
+            return updateable.SplitTable().ExecuteCommand();
         }
 
         return updateable.ExecuteCommand();
@@ -76,14 +65,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> UpdateAsync(params TEntity[] entities)
     {
-        IUpdateable<TEntity> updateable = Updateable(entities)
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IUpdateable<TEntity> updateable = Updateable(entities).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return updateable.ExecuteCommandAsync();
@@ -92,14 +78,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Update(IEnumerable<TEntity> entities)
     {
-        IUpdateable<TEntity> updateable = Updateable(entities.ToArray())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IUpdateable<TEntity> updateable = Updateable(entities.ToArray()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommand();
+            return updateable.SplitTable().ExecuteCommand();
         }
 
         return updateable.ExecuteCommand();
@@ -108,14 +91,11 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public Task<int> UpdateAsync(IEnumerable<TEntity> entities)
     {
-        IUpdateable<TEntity> updateable = Updateable(entities.ToArray())
-            .EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
+        IUpdateable<TEntity> updateable = Updateable(entities.ToArray()).EnableDiffLogEventIF(DatabaseInfo.DiffLog!.Value);
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return updateable.ExecuteCommandAsync();
@@ -130,9 +110,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommand();
+            return updateable.SplitTable().ExecuteCommand();
         }
 
         return updateable.ExecuteCommand();
@@ -147,9 +125,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return updateable.ExecuteCommandAsync();
@@ -164,9 +140,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommand();
+            return updateable.SplitTable().ExecuteCommand();
         }
 
         return updateable.ExecuteCommand();
@@ -181,9 +155,7 @@ internal sealed partial class SqlSugarRepository<TEntity>
 
         if (IsSplitTable)
         {
-            return updateable
-                .SplitTable()
-                .ExecuteCommandAsync();
+            return updateable.SplitTable().ExecuteCommandAsync();
         }
 
         return updateable.ExecuteCommandAsync();

@@ -37,10 +37,7 @@ internal sealed class DoubleJsonConverter : JsonConverter<double>
     }
 
     /// <inheritdoc />
-    public override double ReadJson(JsonReader reader,
-        Type objectType,
-        double existingValue,
-        bool hasExistingValue,
+    public override double ReadJson(JsonReader reader, Type objectType, double existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         // 同时接受 JSON 字符串和数字令牌
@@ -79,29 +76,36 @@ internal sealed class NullableDoubleJsonConverter : JsonConverter<double?>
     public override void WriteJson(JsonWriter writer, double? value, JsonSerializer serializer)
     {
         if (value == null)
+        {
             writer.WriteNull();
+        }
         else
+        {
             writer.WriteValue(Places == null ? value.Value : Math.Round(value.Value, Places.Value));
+        }
     }
 
     /// <inheritdoc />
-    public override double? ReadJson(JsonReader reader,
-        Type objectType,
-        double? existingValue,
-        bool hasExistingValue,
+    public override double? ReadJson(JsonReader reader, Type objectType, double? existingValue, bool hasExistingValue,
         JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null)
+        {
             return null;
+        }
 
         // 同时接受 JSON 字符串和数字令牌；空字符串按 null 处理
         if (reader.TokenType != JsonToken.String)
+        {
             return Convert.ToDouble(reader.Value);
+        }
 
         var jToken = JToken.ReadFrom(reader);
         string value = jToken.Value<string>();
         if (string.IsNullOrWhiteSpace(value))
+        {
             return null;
+        }
 
         return double.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
     }

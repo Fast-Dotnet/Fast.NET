@@ -23,7 +23,9 @@ public static class IConfigurationExtension
     public static IConfiguration Reload(this IConfiguration configuration)
     {
         if (FastContext.RootServices == null)
+        {
             return configuration;
+        }
 
         IConfiguration newConfiguration = FastContext.GetService<IConfiguration>(FastContext.RootServices);
         FastContext.Configuration = newConfiguration;

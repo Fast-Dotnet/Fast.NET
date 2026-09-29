@@ -37,8 +37,7 @@ public static class IDictionaryExtension
     /// <param name="dict">IDictionary{TKey,TValue}</param>
     public static void RemoveEmptyValueItems(this IDictionary<string, string> dict)
     {
-        dict
-            .Where(item => string.IsNullOrEmpty(item.Value))
+        dict.Where(item => string.IsNullOrEmpty(item.Value))
             .Select(item => item.Key)
             .ToList()
             .ForEach(key => { dict.Remove(key); });
@@ -153,9 +152,13 @@ public static class IDictionaryExtension
         foreach ((string key, object value) in dic)
         {
             if (value is int)
+            {
                 xml += "<" + key + ">" + value + "</" + key + ">";
+            }
             else if (value is string)
+            {
                 xml += "<" + key + ">" + "<![CDATA[" + value + "]]></" + key + ">";
+            }
         }
 
         xml += "</xml>";
@@ -202,9 +205,13 @@ public static class IDictionaryExtension
         foreach ((string key, object value) in dic)
         {
             if (value is int)
+            {
                 xml += "<" + key + ">" + value + "</" + key + ">";
+            }
             else if (value is string)
+            {
                 xml += "<" + key + ">" + "<![CDATA[" + value + "]]></" + key + ">";
+            }
         }
 
         xml += "</xml>";

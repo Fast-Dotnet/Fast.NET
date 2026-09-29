@@ -25,12 +25,11 @@ public static class ExpressionExtension
     /// <param name="mergeWay">两个表达式的组合方式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>组合两个表达式</returns>
-    public static Expression<TSource> Compose<TSource>(this Expression<TSource> expression,
-        Expression<TSource> extendExpression,
+    public static Expression<TSource> Compose<TSource>(this Expression<TSource> expression, Expression<TSource> extendExpression,
         Func<Expression, Expression, Expression> mergeWay)
     {
-        var parameterExpressionSetter = expression
-            .Parameters.Select((u, i) => new {u, Parameter = extendExpression.Parameters[i]})
+        var parameterExpressionSetter = expression.Parameters
+            .Select((u, i) => new {u, Parameter = extendExpression.Parameters[i]})
             .ToDictionary(d => d.Parameter, d => d.u);
 
         Expression extendExpressionBody =
@@ -72,8 +71,7 @@ public static class ExpressionExtension
     /// <param name="extendExpression">用于根据条件成立再与操作合并两个表达式的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再与操作合并两个表达式</returns>
-    public static Expression<Func<TSource, bool>> AndIf<TSource>(this Expression<Func<TSource, bool>> expression,
-        bool condition,
+    public static Expression<Func<TSource, bool>> AndIf<TSource>(this Expression<Func<TSource, bool>> expression, bool condition,
         Expression<Func<TSource, bool>> extendExpression)
     {
         return condition ? expression.Compose(extendExpression, Expression.AndAlso) : expression;
@@ -88,8 +86,7 @@ public static class ExpressionExtension
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再与操作合并两个表达式，支持索引器</returns>
     public static Expression<Func<TSource, int, bool>> AndIf<TSource>(this Expression<Func<TSource, int, bool>> expression,
-        bool condition,
-        Expression<Func<TSource, int, bool>> extendExpression)
+        bool condition, Expression<Func<TSource, int, bool>> extendExpression)
     {
         return condition ? expression.Compose(extendExpression, Expression.AndAlso) : expression;
     }
@@ -128,8 +125,7 @@ public static class ExpressionExtension
     /// <param name="extendExpression">用于根据条件成立再或操作合并两个表达式的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再或操作合并两个表达式</returns>
-    public static Expression<Func<TSource, bool>> OrIf<TSource>(this Expression<Func<TSource, bool>> expression,
-        bool condition,
+    public static Expression<Func<TSource, bool>> OrIf<TSource>(this Expression<Func<TSource, bool>> expression, bool condition,
         Expression<Func<TSource, bool>> extendExpression)
     {
         return condition ? expression.Compose(extendExpression, Expression.OrElse) : expression;
@@ -144,8 +140,7 @@ public static class ExpressionExtension
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再或操作合并两个表达式，支持索引器</returns>
     public static Expression<Func<TSource, int, bool>> OrIf<TSource>(this Expression<Func<TSource, int, bool>> expression,
-        bool condition,
-        Expression<Func<TSource, int, bool>> extendExpression)
+        bool condition, Expression<Func<TSource, int, bool>> extendExpression)
     {
         return condition ? expression.Compose(extendExpression, Expression.OrElse) : expression;
     }

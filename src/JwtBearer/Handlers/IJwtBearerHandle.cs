@@ -52,8 +52,7 @@ public interface IJwtBearerHandle
     /// <param name="requirement">Fast 自身的权限要求；不用于代替角色、声明或第三方策略验证</param>
     /// <param name="httpContext">当前请求上下文</param>
     /// <returns>权限检查通过时返回 <see langword="true"/>；返回 <see langword="false"/> 或抛出异常时进入失败处理</returns>
-    Task<bool> PermissionHandle(AuthorizationHandlerContext context,
-        IAuthorizationRequirement requirement,
+    Task<bool> PermissionHandle(AuthorizationHandlerContext context, IAuthorizationRequirement requirement,
         HttpContext httpContext);
 
     /// <summary>
@@ -68,8 +67,6 @@ public interface IJwtBearerHandle
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="exception">权限检查抛出的异常；没有捕获到异常时为 <see langword="null"/></param>
     /// <returns>自定义响应数据；使用默认失败处理时返回 <see langword="null"/></returns>
-    Task<object> PermissionFailHandle(AuthorizationHandlerContext context,
-        IAuthorizationRequirement requirement,
-        HttpContext httpContext,
-        Exception exception);
+    Task<object> PermissionFailHandle(AuthorizationHandlerContext context, IAuthorizationRequirement requirement,
+        HttpContext httpContext, Exception exception);
 }

@@ -41,7 +41,9 @@ internal sealed class NullableLongJsonConverter : JsonConverter<long?>
     {
         // 同时接受 JSON 字符串和数字令牌；空字符串按 null 处理
         if (reader.TokenType != JsonTokenType.String)
+        {
             return reader.GetInt64();
+        }
 
         string longString = reader.GetString();
         if (string.IsNullOrWhiteSpace(longString))
@@ -56,8 +58,12 @@ internal sealed class NullableLongJsonConverter : JsonConverter<long?>
     public override void Write(Utf8JsonWriter writer, long? value, JsonSerializerOptions options)
     {
         if (value == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteStringValue($"{value}");
+        }
     }
 }

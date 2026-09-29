@@ -28,17 +28,20 @@ public static class TypeExtension
     public static bool HasImplementedRawGeneric(this Type type, Type generic)
     {
         Type localType = type;
-        bool isTheRawGenericType = type
-            .GetInterfaces()
-            .Any(IsTheRawGenericType);
+        bool isTheRawGenericType = type.GetInterfaces().Any(IsTheRawGenericType);
         if (isTheRawGenericType)
+        {
             return true;
+        }
 
         while (localType != null && localType != typeof(object))
         {
             isTheRawGenericType = IsTheRawGenericType(localType);
             if (isTheRawGenericType)
+            {
                 return true;
+            }
+
             localType = localType.BaseType;
         }
 
@@ -57,9 +60,7 @@ public static class TypeExtension
     /// <returns>获取到的类型所在程序集名称</returns>
     public static string GetAssemblyName(this Type type)
     {
-        return type
-            .GetTypeInfo()
-            .GetAssemblyName();
+        return type.GetTypeInfo().GetAssemblyName();
     }
 
     /// <summary>
@@ -80,23 +81,26 @@ public static class TypeExtension
     public static bool IsRichPrimitive(this Type type)
     {
         if (type.IsValueTuple())
+        {
             return false;
+        }
 
         // 数组需要按元素类型生成架构，不能仅按数组对象本身判断
         if (type.IsArray)
-            return type
-                       .GetElementType()
-                       ?.IsRichPrimitive()
-                   == true;
+        {
+            return type.GetElementType()?.IsRichPrimitive() == true;
+        }
 
         // 基元、值类型和字符串可直接映射，无需展开成员
         if (type.IsPrimitive || type.IsValueType || type == typeof(string))
+        {
             return true;
+        }
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            return type
-                .GenericTypeArguments[0]
-                .IsRichPrimitive();
+        {
+            return type.GenericTypeArguments[0].IsRichPrimitive();
+        }
 
         return false;
     }
@@ -229,9 +233,7 @@ public static class TypeExtension
                && (!type.IsGenericType
                    || (type.IsGenericType
                        && inheritType.IsGenericType
-                       && type
-                           .GetTypeInfo()
-                           .GenericTypeParameters.SequenceEqual(inheritType.GenericTypeArguments)));
+                       && type.GetTypeInfo().GenericTypeParameters.SequenceEqual(inheritType.GenericTypeArguments)));
     }
 
     /// <summary>
@@ -242,9 +244,7 @@ public static class TypeExtension
     /// <param name="accessibilityBindingFlags">用于筛选成员可见性的绑定标志</param>
     /// <param name="methodInfo">目标方法的反射元数据</param>
     /// <returns>满足条件时返回 <see langword="true"/>；否则返回 <see langword="false"/></returns>
-    public static bool IsDeclarationMethod(this Type type,
-        string name,
-        BindingFlags accessibilityBindingFlags,
+    public static bool IsDeclarationMethod(this Type type, string name, BindingFlags accessibilityBindingFlags,
         out MethodInfo methodInfo)
     {
         if (type is null)
@@ -253,7 +253,9 @@ public static class TypeExtension
         }
 
         if (string.IsNullOrWhiteSpace(name))
+        {
             throw new ArgumentException($"Argument '{name}' cannot be null or whitespace.");
+        }
 
         methodInfo = type.GetMethod(name, accessibilityBindingFlags | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         return methodInfo != null;
@@ -319,9 +321,7 @@ public static class TypeExtension
     {
         // 如果是 IDictionary<,> 类型则直接返回
         if ((type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
-            || type
-                .GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
+            || type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)))
         {
             return true;
         }
@@ -350,10 +350,7 @@ public static class TypeExtension
                 if (type.IsGenericType
                     && type.GenericTypeArguments.Length == 1
                     && type.GenericTypeArguments[0].IsGenericType
-                    && type
-                        .GenericTypeArguments[0]
-                        .GetGenericTypeDefinition()
-                    == typeof(KeyValuePair<,>))
+                    && type.GenericTypeArguments[0].GetGenericTypeDefinition() == typeof(KeyValuePair<,>))
                 {
                     return true;
                 }

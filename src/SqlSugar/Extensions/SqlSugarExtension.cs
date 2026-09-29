@@ -55,13 +55,14 @@ public static class SqlSugarExtension
         var result = new List<DataTable>();
 
         if (list == null || !list.Any())
+        {
             return result;
+        }
 
         Type type = typeof(T);
         if (type.Name == "Object")
         {
-            type = list[0]
-                .GetType();
+            type = list[0].GetType();
         }
 
         PropertyInfo[] properties = type.GetProperties();
@@ -80,8 +81,7 @@ public static class SqlSugarExtension
                 // 泛型
                 if (colType.IsGenericType && colType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 {
-                    colType = colType
-                        .GetGenericArguments()[0];
+                    colType = colType.GetGenericArguments()[0];
                 }
 
                 // 获取 Sugar 列特性

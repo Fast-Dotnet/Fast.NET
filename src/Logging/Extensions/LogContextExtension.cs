@@ -23,12 +23,17 @@ public static class LogContextExtension
     public static LogContext Set(this LogContext logContext, object key, object value)
     {
         if (logContext == null || key == null)
+        {
             return logContext;
+        }
 
         logContext.Properties ??= new Dictionary<object, object>();
 
         if (logContext.Properties.ContainsKey(key))
+        {
             logContext.Properties.Remove(key);
+        }
+
         logContext.Properties.Add(key, value);
         return logContext;
     }
@@ -42,7 +47,9 @@ public static class LogContextExtension
     public static LogContext SetRange(this LogContext logContext, IDictionary<object, object> properties)
     {
         if (logContext == null || properties == null || properties.Count == 0)
+        {
             return logContext;
+        }
 
         foreach ((object key, object value) in properties)
         {
@@ -61,7 +68,9 @@ public static class LogContextExtension
     public static object Get(this LogContext logContext, object key)
     {
         if (logContext == null || key == null || logContext.Properties == null || logContext.Properties.Count == 0)
+        {
             return null;
+        }
 
         bool isExists = logContext.Properties.TryGetValue(key, out object value);
         return isExists ? value : null;

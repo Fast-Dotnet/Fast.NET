@@ -44,9 +44,14 @@ public static class EnumExtension
     public static string GetDescription(this Enum value, Type enumType)
     {
         if (value == null)
+        {
             throw new ArgumentNullException(nameof(value));
+        }
+
         if (enumType == null)
+        {
             throw new ArgumentNullException(nameof(enumType));
+        }
 
         // 检查是否是枚举类型
         if (!enumType.IsEnum)
@@ -76,9 +81,7 @@ public static class EnumExtension
         }
 
         // 获取 [Description] 特性描述
-        return enumField.GetCustomAttribute<DescriptionAttribute>(false)
-                   ?.Description
-               ?? enumName;
+        return enumField.GetCustomAttribute<DescriptionAttribute>(false)?.Description ?? enumName;
     }
 
     /// <summary>
@@ -103,12 +106,13 @@ public static class EnumExtension
         where TProperty : struct, IComparable, IConvertible, IFormattable
     {
         if (!enumType.IsEnum)
+        {
             throw new ArgumentException("Type '" + enumType.Name + "' is not an enum.", nameof(enumType));
+        }
 
         Type propertyType = typeof(TProperty);
 
-        return Enum
-            .GetValues(enumType)
+        return Enum.GetValues(enumType)
             .Cast<Enum>()
             .Select(enumValue => new EnumItem<TProperty>
             {

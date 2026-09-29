@@ -28,18 +28,18 @@ public static class IServiceCollectionExtension
     {
         Debugging.Info("Registering dynamic application......");
 
-        ApplicationPartManager partManager = services.FirstOrDefault(f => f.ServiceType == typeof(ApplicationPartManager))
-                                                 ?.ImplementationInstance as ApplicationPartManager
-                                             ?? throw new InvalidOperationException(
-                                                 "`AddDynamicApplication` must be invoked after `AddControllers` or `AddControllersWithViews`.");
+        ApplicationPartManager partManager =
+            services.FirstOrDefault(f => f.ServiceType == typeof(ApplicationPartManager))?.ImplementationInstance as
+                ApplicationPartManager
+            ?? throw new InvalidOperationException(
+                "`AddDynamicApplication` must be invoked after `AddControllers` or `AddControllersWithViews`.");
 
         DynamicApplicationContext.RoutePrefix = routePrefix;
 
         // 解决项目类型为 <Project Sdk="Microsoft.NET.Sdk"> 不能加载 API 问题，默认支持 <Project Sdk="Microsoft.NET.Sdk.Web">
         foreach (Assembly assembly in MAppContext.Assemblies)
         {
-            string assemblyName = assembly.GetName()
-                .Name;
+            string assemblyName = assembly.GetName().Name;
             if (partManager.ApplicationParts.All(u => !string.Equals(u.Name, assemblyName, StringComparison.Ordinal)))
             {
                 partManager.ApplicationParts.Add(new AssemblyPart(assembly));

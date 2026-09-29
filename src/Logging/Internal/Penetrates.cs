@@ -30,8 +30,7 @@ internal static class Penetrates
     /// 请求上下文
     /// </summary>
     internal static HttpContext HttpContext =>
-        MAppContext.CatchOrDefault(() => RootServices?.GetService<IHttpContextAccessor>()
-            ?.HttpContext);
+        MAppContext.CatchOrDefault(() => RootServices?.GetService<IHttpContextAccessor>()?.HttpContext);
 
     /// <summary>
     /// 控制台默认格式化程序名称
@@ -51,16 +50,19 @@ internal static class Penetrates
         {
             // 解析日志上下文数据
             scopeProvider.ForEachScope<object>((scope, _) =>
+            {
+                if (scope != null && scope is LogContext context)
                 {
-                    if (scope != null && scope is LogContext context)
+                    if (logMsg.Context == null)
                     {
-                        if (logMsg.Context == null)
-                            logMsg.Context = context;
-                        else
-                            logMsg.Context = logMsg.Context.SetRange(context.Properties);
+                        logMsg.Context = context;
                     }
-                },
-                null);
+                    else
+                    {
+                        logMsg.Context = logMsg.Context.SetRange(context.Properties);
+                    }
+                }
+            }, null);
         }
 
         return logMsg;

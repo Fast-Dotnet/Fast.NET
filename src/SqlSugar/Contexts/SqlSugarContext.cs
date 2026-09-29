@@ -42,8 +42,7 @@ public sealed class SqlSugarContext
 
         Type dataBaseEntityType = typeof(IDatabaseEntity);
 
-        SqlSugarEntityList = MAppContext
-            .EffectiveTypes.Where(wh => dataBaseEntityType.IsAssignableFrom(wh) && !wh.IsInterface)
+        SqlSugarEntityList = MAppContext.EffectiveTypes.Where(wh => dataBaseEntityType.IsAssignableFrom(wh) && !wh.IsInterface)
             .Select(sl =>
             {
                 SugarTable sqlSugarTableAttribute = sl.GetSugarTableAttribute();
@@ -133,9 +132,7 @@ public sealed class SqlSugarContext
     /// <param name="emptyList">空对象检测集合</param>
     /// <param name="setValue">要设置的值</param>
     /// <param name="entityInfo">实体信息</param>
-    internal static void SetEntityValue(string fieldName,
-        ICollection<object> emptyList,
-        object setValue,
+    internal static void SetEntityValue(string fieldName, ICollection<object> emptyList, object setValue,
         DataFilterModel entityInfo)
     {
         // 判断属性名称是否等于传入的字段名称

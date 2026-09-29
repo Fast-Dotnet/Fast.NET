@@ -49,7 +49,10 @@ internal sealed class ChannelEventSourceStorer : IEventSourceStorer
         {
             // 处理器等待满队列会与消费者相互等待；保留有界背压，对重入的满队列明确失败而不丢弃事件。
             if (!_channel.Writer.TryWrite(eventSource))
+            {
                 throw new InvalidOperationException("事件处理器不能等待写入同一个已满队列。请在当前处理完成后发布，或显式处理容量不足。");
+            }
+
             return;
         }
 

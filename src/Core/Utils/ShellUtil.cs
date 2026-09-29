@@ -70,12 +70,8 @@ public static class ShellUtil
             }
         }
 
-        string output = stdoutTask
-            .GetAwaiter()
-            .GetResult();
-        string error = stderrTask
-            .GetAwaiter()
-            .GetResult();
+        string output = stdoutTask.GetAwaiter().GetResult();
+        string error = stderrTask.GetAwaiter().GetResult();
 
         if (!string.IsNullOrEmpty(error))
         {
@@ -139,12 +135,8 @@ public static class ShellUtil
             }
         }
 
-        string output = stdoutTask
-            .GetAwaiter()
-            .GetResult();
-        string error = stderrTask
-            .GetAwaiter()
-            .GetResult();
+        string output = stdoutTask.GetAwaiter().GetResult();
+        string error = stderrTask.GetAwaiter().GetResult();
 
         if (!string.IsNullOrEmpty(error))
         {

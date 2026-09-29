@@ -44,41 +44,36 @@ public static class IServiceCollectionExtension
         var namedRegistrations = new List<NamedServiceRegistration>();
 
         // 获取程序集需要依赖注入的类型
-        Type[] injectTypes = MAppContext
-            .EffectiveTypes.Where(wh => dependencyType.IsAssignableFrom(wh) && wh.IsClass && !wh.IsInterface && !wh.IsAbstract)
+        Type[] injectTypes = MAppContext.EffectiveTypes
+            .Where(wh => dependencyType.IsAssignableFrom(wh) && wh.IsClass && !wh.IsInterface && !wh.IsAbstract)
             .OrderBy(value => value.FullName, StringComparer.Ordinal)
             .ToArray();
 
         // 执行依赖注入
         foreach (Type type in injectTypes)
         {
-            Type[] interfaces = type
-                .GetInterfaces()
-                .OrderBy(value => value.FullName, StringComparer.Ordinal)
-                .ToArray();
+            Type[] interfaces = type.GetInterfaces().OrderBy(value => value.FullName, StringComparer.Ordinal).ToArray();
 
             // 获取所有能注册的接口
-            Type[] canInjectInterfaces = interfaces
-                .Where(u => u != typeof(IDisposable)
-                            && u != typeof(IAsyncDisposable)
-                            && u != typeof(IDependency)
-                            && !lifetimeInterfaces.Contains(u)
-                            && assemblies.Contains(u.Assembly)
-                            && (!type.ContainsGenericParameters
-                                || (u.IsGenericType
-                                    && u.ContainsGenericParameters
-                                    && type.GetGenericArguments()
-                                        .Length
-                                    == u.GetGenericArguments()
-                                        .Length)))
+            Type[] canInjectInterfaces = interfaces.Where(u =>
+                    u != typeof(IDisposable)
+                    && u != typeof(IAsyncDisposable)
+                    && u != typeof(IDependency)
+                    && !lifetimeInterfaces.Contains(u)
+                    && assemblies.Contains(u.Assembly)
+                    && (!type.ContainsGenericParameters
+                        || (u.IsGenericType
+                            && u.ContainsGenericParameters
+                            && type.GetGenericArguments().Length == u.GetGenericArguments().Length)))
                 .ToArray();
 
             // 获取生存周期类型
-            Type[] dependencies = interfaces
-                .Where(lifetimeInterfaces.Contains)
-                .ToArray();
+            Type[] dependencies = interfaces.Where(lifetimeInterfaces.Contains).ToArray();
             if (dependencies.Length != 1)
+            {
                 throw new InvalidOperationException($"类型 {type.FullName} 必须声明且只能声明一个生命周期标记。");
+            }
+
             Type lifetimeType = dependencies[0];
 
             // 注册服务
@@ -105,9 +100,7 @@ public static class IServiceCollectionExtension
     /// <param name="dependencyType">用于确定服务生命周期的依赖标记类型</param>
     /// <param name="type">类型</param>
     /// <param name="canInjectInterfaces">能被注册的接口</param>
-    private static void RegisterService(IServiceCollection services,
-        Type dependencyType,
-        Type type,
+    private static void RegisterService(IServiceCollection services, Type dependencyType, Type type,
         IEnumerable<Type> canInjectInterfaces)
     {
         // 立即执行接口筛选，避免重复枚举，并用于判断是否存在可注册的业务接口
@@ -119,7 +112,9 @@ public static class IServiceCollectionExtension
         if (fixedType.ContainsGenericParameters)
         {
             if (interfaces.Length > 1)
+            {
                 throw new InvalidOperationException($"开放泛型 {fixedType.FullName} 实现了多个业务接口，无法在 Microsoft DI 中共享同一实例。");
+            }
 
             if (interfaces.Length == 0)
             {
@@ -183,13 +178,20 @@ public static class IServiceCollectionExtension
     private static void AddNamedAlias(string alias, NamedServiceRegistration registration)
     {
         if (string.IsNullOrWhiteSpace(alias) || AmbiguousNamedAliases.Contains(alias))
+        {
             return;
+        }
 
         if (NamedTypes.TryGetValue(alias, out NamedServiceRegistration existingRegistration)
             && existingRegistration == registration)
+        {
             return;
+        }
+
         if (NamedTypes.TryAdd(alias, registration))
+        {
             return;
+        }
 
         NamedTypes.Remove(alias);
         AmbiguousNamedAliases.Add(alias);
@@ -205,22 +207,26 @@ public static class IServiceCollectionExtension
         ServiceLifetime lifetime = TryGetServiceLifetime(typeof(TDependency));
 
         // 注册命名服务
-        services.Add(ServiceDescriptor.Describe(typeof(Func<string, TDependency, object>),
-            provider =>
+        services.Add(ServiceDescriptor.Describe(typeof(Func<string, TDependency, object>), provider =>
+        {
+            object ResolveService(string named, TDependency _)
             {
-                object ResolveService(string named, TDependency _)
+                if (!NamedTypes.TryGetValue(named, out NamedServiceRegistration registration)
+                    || registration.Dependency != typeof(TDependency))
                 {
-                    if (!NamedTypes.TryGetValue(named, out NamedServiceRegistration registration)
-                        || registration.Dependency != typeof(TDependency))
-                        return null;
-                    if (registration.Implementation.ContainsGenericParameters)
-                        throw new InvalidOperationException("开放泛型命名服务需要明确类型参数，请通过闭合接口解析。");
-                    return provider.GetService(registration.Implementation);
+                    return null;
                 }
 
-                return (Func<string, TDependency, object>)ResolveService;
-            },
-            lifetime));
+                if (registration.Implementation.ContainsGenericParameters)
+                {
+                    throw new InvalidOperationException("开放泛型命名服务需要明确类型参数，请通过闭合接口解析。");
+                }
+
+                return provider.GetService(registration.Implementation);
+            }
+
+            return (Func<string, TDependency, object>)ResolveService;
+        }, lifetime));
     }
 
     /// <summary>

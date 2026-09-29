@@ -113,8 +113,7 @@ internal sealed class FriendlyExceptionFilter : IAsyncExceptionFilter
             }
 
             // 判断是否跳过规范化结果，如果是，则只处理友好异常消息
-            if (UnifyContext.CheckFailedNonUnify(context.HttpContext,
-                    controllerActionDescriptor.MethodInfo,
+            if (UnifyContext.CheckFailedNonUnify(context.HttpContext, controllerActionDescriptor.MethodInfo,
                     out IUnifyResultProvider unifyResult))
             {
                 // 返回 JsonResult
@@ -124,8 +123,7 @@ internal sealed class FriendlyExceptionFilter : IAsyncExceptionFilter
             {
                 int? statusCode = null;
                 string message = null;
-                if (!UnifyContext.CheckResponseNonUnify(context.HttpContext,
-                        controllerActionDescriptor!.MethodInfo,
+                if (!UnifyContext.CheckResponseNonUnify(context.HttpContext, controllerActionDescriptor!.MethodInfo,
                         out IUnifyResponseProvider unifyResponse))
                 {
                     (statusCode, message) =

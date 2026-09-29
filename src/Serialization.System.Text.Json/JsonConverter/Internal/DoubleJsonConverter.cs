@@ -71,7 +71,9 @@ internal sealed class NullableDoubleJsonConverter : JsonConverter<double?>
     {
         // 同时接受 JSON 字符串和数字令牌；空字符串按 null 处理
         if (reader.TokenType != JsonTokenType.String)
+        {
             return reader.GetDouble();
+        }
 
         string doubleString = reader.GetString();
         if (string.IsNullOrWhiteSpace(doubleString))
@@ -86,8 +88,12 @@ internal sealed class NullableDoubleJsonConverter : JsonConverter<double?>
     public override void Write(Utf8JsonWriter writer, double? value, JsonSerializerOptions options)
     {
         if (value == null)
+        {
             writer.WriteNullValue();
+        }
         else
+        {
             writer.WriteNumberValue(Places == null ? value.Value : Math.Round(value.Value, Places.Value));
+        }
     }
 }

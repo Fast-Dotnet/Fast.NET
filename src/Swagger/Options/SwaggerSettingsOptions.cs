@@ -129,16 +129,9 @@ public sealed class SwaggerSettingsOptions : IPostConfigure
         DocExpansionState ??= DocExpansion.List;
 
         // 加载项目注册和模块化/插件注释
-        string frameworkPackageName = GetType()
-            .GetTypeInfo()
-            .Assembly.GetName()
-            .Name;
-        IEnumerable<string> projectXmlComments = MAppContext
-            .Assemblies.Where(u => u.GetName()
-                                       .Name
-                                   != frameworkPackageName)
-            .Select(t => t.GetName()
-                .Name);
+        string frameworkPackageName = GetType().GetTypeInfo().Assembly.GetName().Name;
+        IEnumerable<string> projectXmlComments = MAppContext.Assemblies.Where(u => u.GetName().Name != frameworkPackageName)
+            .Select(t => t.GetName().Name);
         XmlComments ??= projectXmlComments.ToArray();
 
         GroupOpenApiInfos ??= new[] {new SwaggerOpenApiInfo {Group = DefaultGroupName}};

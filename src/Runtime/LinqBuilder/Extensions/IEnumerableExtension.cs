@@ -26,8 +26,7 @@ public static class IEnumerableExtension
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <typeparam name="TKey">泛型类型</typeparam>
     /// <returns>根据条件成立再构建 OrderBy 排序</returns>
-    public static IQueryable<TSource> OrderBy<TSource, TKey>(this IQueryable<TSource> sources,
-        bool condition,
+    public static IQueryable<TSource> OrderBy<TSource, TKey>(this IQueryable<TSource> sources, bool condition,
         Expression<Func<TSource, TKey>> keySelector)
     {
         return condition ? sources.OrderBy(keySelector) : sources;
@@ -42,8 +41,7 @@ public static class IEnumerableExtension
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <typeparam name="TKey">泛型类型</typeparam>
     /// <returns>根据条件成立再构建 OrderByDescending 排序</returns>
-    public static IQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> sources,
-        bool condition,
+    public static IQueryable<TSource> OrderByDescending<TSource, TKey>(this IQueryable<TSource> sources, bool condition,
         Expression<Func<TSource, TKey>> keySelector)
     {
         return condition ? sources.OrderByDescending(keySelector) : sources;
@@ -57,8 +55,7 @@ public static class IEnumerableExtension
     /// <param name="expression">要组合或执行的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再构建 Where 查询</returns>
-    public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> sources,
-        bool condition,
+    public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> sources, bool condition,
         Expression<Func<TSource, bool>> expression)
     {
         return condition ? sources.Where(expression) : sources;
@@ -72,8 +69,7 @@ public static class IEnumerableExtension
     /// <param name="expression">要组合或执行的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再构建 Where 查询，支持索引器</returns>
-    public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> sources,
-        bool condition,
+    public static IQueryable<TSource> Where<TSource>(this IQueryable<TSource> sources, bool condition,
         Expression<Func<TSource, int, bool>> expression)
     {
         return condition ? sources.Where(expression) : sources;
@@ -90,9 +86,14 @@ public static class IEnumerableExtension
         params Expression<Func<TSource, bool>>[] expressions)
     {
         if (expressions == null || !expressions.Any())
+        {
             return sources;
+        }
+
         if (expressions.Length == 1)
+        {
             return sources.Where(expressions[0]);
+        }
 
         Expression<Func<TSource, bool>> expression = LinqExpression.Or<TSource>();
         foreach (Expression<Func<TSource, bool>> _expression in expressions)
@@ -114,9 +115,14 @@ public static class IEnumerableExtension
         params Expression<Func<TSource, int, bool>>[] expressions)
     {
         if (expressions == null || !expressions.Any())
+        {
             return sources;
+        }
+
         if (expressions.Length == 1)
+        {
             return sources.Where(expressions[0]);
+        }
 
         Expression<Func<TSource, int, bool>> expression = LinqExpression.IndexOr<TSource>();
         foreach (Expression<Func<TSource, int, bool>> _expression in expressions)
@@ -141,7 +147,9 @@ public static class IEnumerableExtension
         foreach ((bool condition, Expression<Func<TSource, bool>> expression) in conditionExpressions)
         {
             if (condition)
+            {
                 expressions.Add(expression);
+            }
         }
 
         return sources.Where(expressions.ToArray());
@@ -161,7 +169,9 @@ public static class IEnumerableExtension
         foreach ((bool condition, Expression<Func<TSource, int, bool>> expression) in conditionExpressions)
         {
             if (condition)
+            {
                 expressions.Add(expression);
+            }
         }
 
         return sources.Where(expressions.ToArray());
@@ -175,8 +185,7 @@ public static class IEnumerableExtension
     /// <param name="expression">要组合或执行的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再构建 Where 查询集合</returns>
-    public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> sources,
-        bool condition,
+    public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> sources, bool condition,
         Func<TSource, bool> expression)
     {
         return condition ? sources.Where(expression) : sources;
@@ -190,8 +199,7 @@ public static class IEnumerableExtension
     /// <param name="expression">要组合或执行的表达式</param>
     /// <typeparam name="TSource">源对象类型</typeparam>
     /// <returns>根据条件成立再构建 Where 查询，支持索引器集合</returns>
-    public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> sources,
-        bool condition,
+    public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> sources, bool condition,
         Func<TSource, int, bool> expression)
     {
         return condition ? sources.Where(expression) : sources;

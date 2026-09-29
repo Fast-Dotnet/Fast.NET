@@ -18,17 +18,13 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Count(Expression<Func<TEntity, bool>> whereExpression = null)
     {
-        return Entities
-            .WhereIF(whereExpression != null, whereExpression)
-            .Count();
+        return Entities.WhereIF(whereExpression != null, whereExpression).Count();
     }
 
     /// <inheritdoc />
     public Task<int> CountAsync(Expression<Func<TEntity, bool>> whereExpression = null)
     {
-        return Entities
-            .WhereIF(whereExpression != null, whereExpression)
-            .CountAsync();
+        return Entities.WhereIF(whereExpression != null, whereExpression).CountAsync();
     }
 
     /// <inheritdoc />
@@ -94,38 +90,26 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities
-            .Where(whereExpression)
-            .ToList();
+        return Entities.Where(whereExpression).ToList();
     }
 
     /// <inheritdoc />
     public Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities
-            .Where(whereExpression)
-            .ToListAsync();
+        return Entities.Where(whereExpression).ToListAsync();
     }
 
     /// <inheritdoc />
     public List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression,
-        Expression<Func<TEntity, object>> orderByExpression,
-        OrderByType orderByType = OrderByType.Asc)
+        Expression<Func<TEntity, object>> orderByExpression, OrderByType orderByType = OrderByType.Asc)
     {
-        return Entities
-            .Where(whereExpression)
-            .OrderBy(orderByExpression, orderByType)
-            .ToList();
+        return Entities.Where(whereExpression).OrderBy(orderByExpression, orderByType).ToList();
     }
 
     /// <inheritdoc />
     public Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> whereExpression,
-        Expression<Func<TEntity, object>> orderByExpression,
-        OrderByType orderByType = OrderByType.Asc)
+        Expression<Func<TEntity, object>> orderByExpression, OrderByType orderByType = OrderByType.Asc)
     {
-        return Entities
-            .Where(whereExpression)
-            .OrderBy(orderByExpression, orderByType)
-            .ToListAsync();
+        return Entities.Where(whereExpression).OrderBy(orderByExpression, orderByType).ToListAsync();
     }
 }

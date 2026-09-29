@@ -153,9 +153,7 @@ public static class Base64Extension
     /// <returns>删除 Base64 字符串中的随机数</returns>
     private static string RemoveBase64StrRandomStr(string input)
     {
-        var items = dic
-            .Item.OrderBy(x => x.Index)
-            .ToList();
+        var items = dic.Item.OrderBy(x => x.Index).ToList();
 
         string strResult = $"{input}";
 
