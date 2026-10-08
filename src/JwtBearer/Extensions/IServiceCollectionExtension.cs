@@ -293,6 +293,8 @@ public static class IServiceCollectionExtension
         }
 
         services.AddAuthorization();
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, AppAuthorizationHandler>();
+        services.Configure<MvcOptions>(options => options.Filters.Add<AppAuthorizationHandler>());
         ServiceDescriptor current = services.Last(descriptor => descriptor.ServiceType == typeof(IAuthorizationPolicyProvider)
                                                                 && !descriptor.IsKeyedService);
         if (current.ImplementationType != typeof(AppAuthorizationPolicyProvider))

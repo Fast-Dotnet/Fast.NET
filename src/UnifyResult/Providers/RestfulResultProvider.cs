@@ -74,6 +74,12 @@ internal sealed class RestfulResultProvider : IUnifyResultProvider
     /// <inheritdoc />
     public async Task OnResponseStatusCodes(HttpContext httpContext, int statusCode)
     {
+        // 如果 Response 已经完成输出，则禁止写入
+        if (httpContext.Response.HasStarted)
+        {
+            return;
+        }
+
         JsonSerializerOptions jsonSerializerOptions = httpContext.RequestServices.GetService<IOptions<JsonOptions>>()
             .Value.JsonSerializerOptions;
 

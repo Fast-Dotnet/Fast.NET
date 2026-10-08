@@ -22,7 +22,7 @@ public interface IJwtBearerHandle
     /// <remarks>
     /// 调用此方法前，框架已完成令牌验证和自动刷新。返回 <see langword="false"/> 或抛出异常时
     /// 框架先调用 <see cref="AuthorizationHandlerContext.Fail()"/>，再调用
-    /// <see cref="AuthorizeFailHandle"/> 生成可选的 MVC 响应。
+    /// <see cref="AuthorizeFailHandle"/> 生成可选的 HTTP 401 响应。取消异常直接传播，不进入失败回调。
     /// </remarks>
     /// <param name="context">当前授权处理上下文</param>
     /// <param name="httpContext">当前请求上下文</param>
@@ -33,8 +33,8 @@ public interface IJwtBearerHandle
     /// 创建身份验证失败时的自定义响应数据
     /// </summary>
     /// <remarks>
-    /// 授权始终保持失败。MVC 过滤器上下文可将非 null 结果写为 HTTP 401；
-    /// 普通端点和 SignalR 由各自的授权管线处理拒绝响应，不强行写入 MVC Result。
+    /// 授权始终保持失败。HTTP 端点和 MVC 均通过 Challenge 返回 401，非 null 结果作为响应数据；
+    /// 不依赖 UnifyResult。已建立的 SignalR 连接由框架处理调用拒绝，不再写入 HTTP 响应。
     /// </remarks>
     /// <param name="context">当前授权处理上下文</param>
     /// <param name="httpContext">当前请求上下文</param>
@@ -46,7 +46,8 @@ public interface IJwtBearerHandle
     /// 判断当前请求是否满足指定授权要求
     /// </summary>
     /// <remarks>
-    /// 返回 <see langword="false"/> 或抛出异常时，框架将调用 <see cref="PermissionFailHandle"/>
+    /// 返回 <see langword="false"/> 或抛出异常时，框架将调用 <see cref="PermissionFailHandle"/>，HTTP 返回 403。
+    /// 取消异常直接传播，不进入失败回调。
     /// </remarks>
     /// <param name="context">当前授权处理上下文</param>
     /// <param name="requirement">Fast 自身的权限要求；不用于代替角色、声明或第三方策略验证</param>
@@ -59,8 +60,8 @@ public interface IJwtBearerHandle
     /// 创建权限检查失败时的自定义响应数据
     /// </summary>
     /// <remarks>
-    /// 权限始终保持失败。MVC 过滤器上下文可将非 null 结果写为 HTTP 403；
-    /// 普通端点和 SignalR 由各自的授权管线处理拒绝响应，不强行写入 MVC Result。
+    /// 权限始终保持失败。HTTP 端点和 MVC 均通过 Forbid 返回 403，非 null 结果作为响应数据；
+    /// 不依赖 UnifyResult。已建立的 SignalR 连接由框架处理调用拒绝，不再写入 HTTP 响应。
     /// </remarks>
     /// <param name="context">当前授权处理上下文</param>
     /// <param name="requirement">验证失败的授权要求</param>

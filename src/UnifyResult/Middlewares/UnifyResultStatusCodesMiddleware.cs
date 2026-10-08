@@ -38,7 +38,9 @@ internal sealed class UnifyResultStatusCodesMiddleware
         await _next(httpContext);
 
         // 只有请求错误（短路状态码）和非 WebSocket 才支持规范化处理
-        if (httpContext.WebSockets.IsWebSocketRequest
+        if (httpContext.Response.HasStarted
+            || httpContext.Response.ContentLength > 0
+            || httpContext.WebSockets.IsWebSocketRequest
             || httpContext.Response.StatusCode < 400
             || httpContext.Response.StatusCode == 404)
         {
@@ -47,14 +49,6 @@ internal sealed class UnifyResultStatusCodesMiddleware
 
         if (!UnifyContext.CheckStatusCodeNonUnify(httpContext, out IUnifyResultProvider unifyResult))
         {
-            // 解决刷新 Token 和 Token 时间相近问题
-            if (httpContext.Response.StatusCode == StatusCodes.Status401Unauthorized
-                && httpContext.Response.Headers.ContainsKey("access-token")
-                && httpContext.Response.Headers.ContainsKey("x-access-token"))
-            {
-                httpContext.Response.StatusCode = StatusCodes.Status403Forbidden;
-            }
-
             // 如果 Response 已经完成输出，则禁止写入
             if (httpContext.Response.HasStarted)
             {

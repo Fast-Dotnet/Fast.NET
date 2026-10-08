@@ -8,7 +8,6 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -66,15 +65,6 @@ internal sealed class CoreStartupFilter : IStartupFilter
 
                     // 执行下一个中间件
                     await next.Invoke();
-
-                    // 解决刷新 Token 时间和 Token 时间相近问题
-                    if (!context.Response.HasStarted
-                        && context.Response.StatusCode == StatusCodes.Status401Unauthorized
-                        && context.Response.Headers.ContainsKey("access-token")
-                        && context.Response.Headers.ContainsKey("x-access-token"))
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    }
                 }
             });
 

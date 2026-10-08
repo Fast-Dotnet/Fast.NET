@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 This repository uses independent package versions; each release entry lists the affected packages and their versions. Comparison links require identified release refs. No comparison baseline is recorded for the first dated entry; use the repository history linked below.
 
+## 2026-10-08
+
+- `Fast.JwtBearer` 3.5.43 returns 401 when `AuthorizeHandle` returns false or throws, and 403 when `PermissionHandle` returns false or throws. Cancellation propagates without calling failure callbacks. Endpoint and MVC rejection responses preserve optional callback bodies and Challenge/Forbid semantics independently of UnifyResult. The refresh location and authentication cache remain unchanged.
+- Retain existing Exchange/AutoRefreshToken APIs, refresh cache configuration and JWT ClockSkew. No new rotation store or reuse-window configuration is required. Identity rejection removes pending new-token headers; permission denial does not discard a successful refresh.
+- `Fast.NET.Core` 3.5.40 and `Fast.UnifyResult` 3.5.35 remove token-header-based 401-to-403 conversion. Unified status responses respect started responses and are written once.
+- Update centrally managed dependencies: Mapster and Mapster.DependencyInjection 10.0.12 → 10.0.13, SqlSugarCore 5.1.4.220 → 5.1.4.221, and Swashbuckle.AspNetCore 10.2.3 → 10.3.0.
+- Update Microsoft.AspNetCore.Authentication.JwtBearer and Microsoft.AspNetCore.Mvc.NewtonsoftJson to 8.0.31 / 9.0.20 / 10.0.12 for net8.0 / net9.0 / net10.0 respectively.
+
 ## 2026-09-22
 
 ### Documentation and Tooling

@@ -33,7 +33,8 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
         ActionExecutedContext actionExecutedContext = await next();
 
         // 排除 WebSocket 请求处理
-        if (actionExecutedContext.HttpContext.WebSockets.IsWebSocketRequest)
+        if (actionExecutedContext.HttpContext.Response.HasStarted
+            || actionExecutedContext.HttpContext.WebSockets.IsWebSocketRequest)
         {
             return;
         }
@@ -50,14 +51,6 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
                     HttpContext httpContext = context.HttpContext;
                     int statusCode = statusCodeActionResult.StatusCode.Value;
 
-                    // 解决刷新 Token 时间和 Token 时间相近问题
-                    if (statusCodeActionResult.StatusCode.Value == StatusCodes.Status401Unauthorized
-                        && httpContext.Request.Headers.ContainsKey("access-token")
-                        && httpContext.Request.Headers.ContainsKey("x-access-token"))
-                    {
-                        httpContext.Response.StatusCode = statusCode = StatusCodes.Status403Forbidden;
-                    }
-
                     // 如果 Response 已经完成输出，则禁止写入
                     if (httpContext.Response.HasStarted)
                     {
@@ -65,6 +58,7 @@ internal sealed class SucceededUnifyResultFilter : IAsyncActionFilter, IOrderedF
                     }
 
                     await failUnifyResult.OnResponseStatusCodes(httpContext, statusCode);
+                    actionExecutedContext.Result = new EmptyResult();
                 }
 
                 return;
