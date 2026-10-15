@@ -6,6 +6,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 This repository uses independent package versions; each release entry lists the affected packages and their versions. Comparison links require identified release refs. No comparison baseline is recorded for the first dated entry; use the repository history linked below.
 
+## 2026-10-15
+
+- `Fast.SqlSugar` 4.0.0 introduces `IDepartmentEntity` with `DepartmentId` and `DepartmentName`, and removes these properties from `BaseEntity`, `IBaseEntity`, `BaseRecordEntity`, and `IBaseRecordEntity`. This is a breaking change, including for entities inheriting from `BaseTEntity`. Entities that still require department fields must declare the properties and their `SugarColumn` mappings explicitly, and department-specific consumers must use the new interface or concrete entity contract. Existing database columns are not removed by this source change; review schema changes separately.
+- Department assignment in `SugarEntityFilter` now references `IDepartmentEntity` member names. Assignment still matches property names, fills null/zero IDs and null/empty names on object insertion when a handler is available, and does not require the entity to implement `IDepartmentEntity`. No department query filter is added. `BaseRecordEntity` device and location columns now use `CreateTableFieldSort` values 971 through 976; `PagedOutput.DepartmentName` remains available.
+- `Fast.JwtBearer` 3.5.44 and `Fast.Serialization.Newtonsoft.Json` 3.5.27 update their ASP.NET Core dependencies. Microsoft.AspNetCore.Authentication.JwtBearer and Microsoft.AspNetCore.Mvc.NewtonsoftJson now use 8.0.32 / 9.0.21 / 10.0.13 for net8.0 / net9.0 / net10.0 respectively. Other package versions are unchanged.
+
 ## 2026-10-08
 
 - `Fast.JwtBearer` 3.5.43 returns 401 when `AuthorizeHandle` returns false or throws, and 403 when `PermissionHandle` returns false or throws. Cancellation propagates without calling failure callbacks. Endpoint and MVC rejection responses preserve optional callback bodies and Challenge/Forbid semantics independently of UnifyResult. The refresh location and authentication cache remain unchanged.

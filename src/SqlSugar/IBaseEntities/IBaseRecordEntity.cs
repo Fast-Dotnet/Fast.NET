@@ -46,16 +46,6 @@ public interface IBaseRecordEntity : IDatabaseEntity
     string Ip { get; set; }
 
     /// <summary>
-    /// 部门Id
-    /// </summary>
-    long? DepartmentId { get; set; }
-
-    /// <summary>
-    /// 部门名称
-    /// </summary>
-    string DepartmentName { get; set; }
-
-    /// <summary>
     /// 创建者用户Id
     /// </summary>
     long? CreatedUserId { get; set; }

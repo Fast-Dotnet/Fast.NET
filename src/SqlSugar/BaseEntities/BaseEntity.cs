@@ -17,14 +17,6 @@ namespace Fast.SqlSugar;
 public class BaseEntity : IBaseEntity
 {
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "部门Id", CreateTableFieldSort = 989)]
-    public virtual long? DepartmentId { get; set; }
-
-    /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "部门名称", Length = 20, IsNullable = true, CreateTableFieldSort = 990)]
-    public virtual string DepartmentName { get; set; }
-
-    /// <inheritdoc />
     [SugarColumn(ColumnDescription = "创建者用户Id", CreateTableFieldSort = 991)]
     public virtual long? CreatedUserId { get; set; }
 

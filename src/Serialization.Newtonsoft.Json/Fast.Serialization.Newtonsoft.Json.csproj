@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.26</Version>
+		<Version>3.5.27</Version>
 		<PackageId>Fast.Serialization.Newtonsoft.Json</PackageId>
         <RootNamespace>Fast.Serialization</RootNamespace>
 		<Description>Fast.NET 框架 Newtonsoft.Json 序列化模块库。</Description>

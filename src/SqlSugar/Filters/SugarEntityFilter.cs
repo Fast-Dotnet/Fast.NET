@@ -279,11 +279,11 @@ public static class SugarEntityFilter
                     if (sqlSugarEntityHandler != null)
                     {
                         // 部门Id
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.DepartmentId), [null, 0L],
+                        SqlSugarContext.SetEntityValue(nameof(IDepartmentEntity.DepartmentId), [null, 0L],
                             sqlSugarEntityHandler.AssignDepartmentId(), entityInfo);
 
                         // 部门名称
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.DepartmentName), [null, ""],
+                        SqlSugarContext.SetEntityValue(nameof(IDepartmentEntity.DepartmentName), [null, ""],
                             sqlSugarEntityHandler.AssignDepartmentName(), entityInfo);
 
                         // 创建者Id

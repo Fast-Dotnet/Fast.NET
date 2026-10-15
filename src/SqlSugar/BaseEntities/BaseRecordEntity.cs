@@ -19,36 +19,28 @@ namespace Fast.SqlSugar;
 public class BaseRecordEntity : IBaseRecordEntity
 {
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "设备", Length = 50, IsNullable = true, CreateTableFieldSort = 983)]
+    [SugarColumn(ColumnDescription = "设备", Length = 50, IsNullable = true, CreateTableFieldSort = 971)]
     public virtual string Device { get; set; }
 
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "操作系统（版本）", Length = 50, IsNullable = true, CreateTableFieldSort = 984)]
+    [SugarColumn(ColumnDescription = "操作系统（版本）", Length = 50, IsNullable = true, CreateTableFieldSort = 972)]
     public virtual string OS { get; set; }
 
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "浏览器（版本）", Length = 50, IsNullable = true, CreateTableFieldSort = 985)]
+    [SugarColumn(ColumnDescription = "浏览器（版本）", Length = 50, IsNullable = true, CreateTableFieldSort = 973)]
     public virtual string Browser { get; set; }
 
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "省份", Length = 20, IsNullable = true, CreateTableFieldSort = 986)]
+    [SugarColumn(ColumnDescription = "省份", Length = 20, IsNullable = true, CreateTableFieldSort = 974)]
     public virtual string Province { get; set; }
 
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "城市", Length = 20, IsNullable = true, CreateTableFieldSort = 987)]
+    [SugarColumn(ColumnDescription = "城市", Length = 20, IsNullable = true, CreateTableFieldSort = 975)]
     public virtual string City { get; set; }
 
     /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "Ip", Length = 15, IsNullable = true, CreateTableFieldSort = 988)]
+    [SugarColumn(ColumnDescription = "Ip", Length = 15, IsNullable = true, CreateTableFieldSort = 976)]
     public virtual string Ip { get; set; }
-
-    /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "部门Id", CreateTableFieldSort = 989)]
-    public virtual long? DepartmentId { get; set; }
-
-    /// <inheritdoc />
-    [SugarColumn(ColumnDescription = "部门名称", Length = 20, IsNullable = true, CreateTableFieldSort = 990)]
-    public virtual string DepartmentName { get; set; }
 
     /// <inheritdoc />
     [SugarColumn(ColumnDescription = "创建者用户Id", CreateTableFieldSort = 991)]
