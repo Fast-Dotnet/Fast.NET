@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 This repository uses independent package versions; each release entry lists the affected packages and their versions. Comparison links require identified release refs. No comparison baseline is recorded for the first dated entry; use the repository history linked below.
 
+## 2026-10-16
+
+- `Fast.SqlSugar` 3.5.67 continues the 3.5.x patch release line and carries forward the department-entity changes previously recorded under 4.0.0: `IDepartmentEntity` declares `DepartmentId` and `DepartmentName`, while the general and record entity base types no longer supply them. Consumers requiring those entity fields must declare their properties and mappings explicitly; these public API changes still require migration despite the chosen patch version.
+- `PagedOutput.DepartmentName` remains available in 3.5.67. Department assignment hooks, entity mappings and database columns retain the preceding implementation. Other package versions are unchanged.
+
 ## 2026-10-15
 
 - `Fast.SqlSugar` 4.0.0 introduces `IDepartmentEntity` with `DepartmentId` and `DepartmentName`, and removes these properties from `BaseEntity`, `IBaseEntity`, `BaseRecordEntity`, and `IBaseRecordEntity`. This is a breaking change, including for entities inheriting from `BaseTEntity`. Entities that still require department fields must declare the properties and their `SugarColumn` mappings explicitly, and department-specific consumers must use the new interface or concrete entity contract. Existing database columns are not removed by this source change; review schema changes separately.
