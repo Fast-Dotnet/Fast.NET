@@ -14,11 +14,6 @@ namespace Fast.SqlSugar;
 public class PagedOutput
 {
     /// <summary>
-    /// 部门名称
-    /// </summary>
-    public virtual string DepartmentName { get; set; }
-
-    /// <summary>
     /// 创建者用户名称
     /// </summary>
     public virtual string CreatedUserName { get; set; }

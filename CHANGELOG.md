@@ -8,6 +8,7 @@ This repository uses independent package versions; each release entry lists the 
 
 ## 2026-10-16
 
+- `Fast.SqlSugar` 3.5.68 removes `DepartmentName` from `PagedOutput`, so paging DTOs no longer inherit a department name by default. DTOs that still expose this field must declare it explicitly; replace overrides of the removed base property, update projections and generic member access, and recompile dependent assemblies. Default serialization no longer includes the inherited field unless the concrete DTO declares it. `IDepartmentEntity` and department assignment hooks are unchanged.
 - `Fast.SqlSugar` 3.5.67 continues the 3.5.x patch release line and carries forward the department-entity changes previously recorded under 4.0.0: `IDepartmentEntity` declares `DepartmentId` and `DepartmentName`, while the general and record entity base types no longer supply them. Consumers requiring those entity fields must declare their properties and mappings explicitly; these public API changes still require migration despite the chosen patch version.
 - `PagedOutput.DepartmentName` remains available in 3.5.67. Department assignment hooks, entity mappings and database columns retain the preceding implementation. Other package versions are unchanged.
 
