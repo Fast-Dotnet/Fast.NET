@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 This repository uses independent package versions; each release entry lists the affected packages and their versions. Comparison links require identified release refs. No comparison baseline is recorded for the first dated entry; use the repository history linked below.
 
+## 2026-10-17
+
+- `Fast.SqlSugar` 3.5.69 checks the current entity property name and fill conditions before evaluating audit, department and tenant assignment callbacks. Unrelated properties and populated insert fields no longer invoke those handlers unnecessarily; update user callbacks run only for the matching updater fields.
+- Preserve null-only `CreatedTime` filling on object insertion, retaining caller-supplied creation timestamps. Existing empty-value rules for department, tenant, creator and row-version fields remain in effect; public declarations and dependency versions are unchanged.
+
 ## 2026-10-16
 
 - `Fast.SqlSugar` 3.5.68 removes `DepartmentName` from `PagedOutput`, so paging DTOs no longer inherit a department name by default. DTOs that still expose this field must declare it explicitly; replace overrides of the removed base property, update projections and generic member access, and recompile dependent assemblies. Default serialization no longer includes the inherited field unless the concrete DTO declares it. `IDepartmentEntity` and department assignment hooks are unchanged.

@@ -126,22 +126,20 @@ public sealed class SqlSugarContext
     }
 
     /// <summary>
-    /// 设置 Entity Value
+    /// 检查 Entity Value
     /// </summary>
     /// <param name="fieldName">字段名称</param>
     /// <param name="emptyList">空对象检测集合</param>
-    /// <param name="setValue">要设置的值</param>
     /// <param name="entityInfo">实体信息</param>
-    internal static void SetEntityValue(string fieldName, ICollection<object> emptyList, object setValue,
-        DataFilterModel entityInfo)
+    /// <returns>返回为 <see langword="true"/> 表示可以赋值</returns>
+    internal static bool CheckEntityValue(string fieldName, ICollection<object> emptyList, DataFilterModel entityInfo)
     {
         // 判断属性名称是否等于传入的字段名称
-        if (entityInfo.PropertyName == fieldName)
+        if (entityInfo.PropertyName != fieldName)
         {
-            if (EntityValueCheck(emptyList, entityInfo))
-            {
-                entityInfo.SetValue(setValue);
-            }
+            return false;
         }
+
+        return EntityValueCheck(emptyList, entityInfo);
     }
 }

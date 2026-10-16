@@ -271,49 +271,72 @@ public static class SugarEntityFilter
                     }
 
                     // 更新版本控制字段
-                    SqlSugarContext.SetEntityValue(nameof(IUpdateVersion.RowVersion), [null, 0L], 1L, entityInfo);
+                    if (SqlSugarContext.CheckEntityValue(nameof(IUpdateVersion.RowVersion), [null, 0L], entityInfo))
+                    {
+                        entityInfo.SetValue(1L);
+                    }
 
                     // 创建时间
-                    SqlSugarContext.SetEntityValue(nameof(IBaseEntity.CreatedTime), [null], DateTime.Now, entityInfo);
+                    if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.CreatedTime), [null], entityInfo))
+                    {
+                        entityInfo.SetValue(DateTime.Now);
+                    }
 
                     if (sqlSugarEntityHandler != null)
                     {
                         // 部门Id
-                        SqlSugarContext.SetEntityValue(nameof(IDepartmentEntity.DepartmentId), [null, 0L],
-                            sqlSugarEntityHandler.AssignDepartmentId(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IDepartmentEntity.DepartmentId), [null, 0L], entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignDepartmentId());
+                        }
 
                         // 部门名称
-                        SqlSugarContext.SetEntityValue(nameof(IDepartmentEntity.DepartmentName), [null, ""],
-                            sqlSugarEntityHandler.AssignDepartmentName(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IDepartmentEntity.DepartmentName), [null, ""], entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignDepartmentName());
+                        }
 
                         // 创建者Id
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.CreatedUserId), [null, 0L],
-                            sqlSugarEntityHandler.AssignUserId(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.CreatedUserId), [null, 0L], entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignUserId());
+                        }
 
                         // 创建者名称
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.CreatedUserName), [null, ""],
-                            sqlSugarEntityHandler.AssignUserName(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.CreatedUserName), [null, ""], entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignUserName());
+                        }
 
                         // 租户Id
-                        SqlSugarContext.SetEntityValue(nameof(IBaseTEntity.TenantId), [null, 0L],
-                            sqlSugarEntityHandler.AssignTenantId() ?? 0L, entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IBaseTEntity.TenantId), [null, 0L], entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignTenantId() ?? 0L);
+                        }
                     }
 
                     break;
                 // 更新操作
                 case DataFilterType.UpdateByObject:
                     // 更新时间
-                    SqlSugarContext.SetEntityValue(nameof(IBaseEntity.UpdatedTime), null, DateTime.Now, entityInfo);
+                    if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.UpdatedTime), null, entityInfo))
+                    {
+                        entityInfo.SetValue(DateTime.Now);
+                    }
 
                     if (sqlSugarEntityHandler != null)
                     {
                         // 更新者Id
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.UpdatedUserId), null,
-                            sqlSugarEntityHandler.AssignUserId(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.UpdatedUserId), null, entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignUserId());
+                        }
 
                         // 更新者名称
-                        SqlSugarContext.SetEntityValue(nameof(IBaseEntity.UpdatedUserName), null,
-                            sqlSugarEntityHandler.AssignUserName(), entityInfo);
+                        if (SqlSugarContext.CheckEntityValue(nameof(IBaseEntity.UpdatedUserName), null, entityInfo))
+                        {
+                            entityInfo.SetValue(sqlSugarEntityHandler.AssignUserName());
+                        }
                     }
 
                     break;
