@@ -330,7 +330,7 @@ public static class HttpContextExtension
     /// <summary>
     /// 远程 IPv4 地址信息
     /// </summary>
-    /// <remarks>自带内存缓存，缓存过期时间为 24 小时（注：需要注入内存缓存，如不注入，则默认不走缓存）</remarks>
+    /// <remarks>优先返回 <see cref="HttpContext.Items"/> 中的请求内缓存结果，命中时不检查取消令牌。未命中时检查取消，再查询内存缓存或远程服务；内存缓存需注册服务，过期时间为 24 小时。</remarks>
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="ip">要的 IP 地址信息，默认为 <see langword="null"/>，如果为 <see langword="null"/>，默认获取当前远程的 IPv4 地址</param>
     /// <returns>远程 IPv4 地址信息；当前请求上下文为空时返回 <see langword="null"/></returns>
@@ -342,7 +342,7 @@ public static class HttpContextExtension
     /// <summary>
     /// 远程 IPv4 地址信息
     /// </summary>
-    /// <remarks>自带内存缓存，缓存过期时间为 24 小时（注：需要注入内存缓存，如不注入，则默认不走缓存）</remarks>
+    /// <remarks>优先返回 <see cref="HttpContext.Items"/> 中的请求内缓存结果，命中时不检查取消令牌。未命中时检查取消，再查询内存缓存或远程服务；内存缓存需注册服务，过期时间为 24 小时。</remarks>
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="ip">要的 IP 地址信息，默认为 <see langword="null"/>，如果为 <see langword="null"/>，默认获取当前远程的 IPv4 地址</param>
     /// <param name="cancellationToken">控制锁等待和远程查询的取消令牌；为 <see langword="null"/> 时使用 <see cref="HttpContext.RequestAborted"/>，显式传入时不再与请求取消令牌关联。</param>
@@ -355,9 +355,6 @@ public static class HttpContextExtension
             return null;
         }
 
-        cancellationToken ??= httpContext?.RequestAborted;
-        cancellationToken.Value.ThrowIfCancellationRequested();
-
         // 同一请求内优先复用 HttpContext.Items 中的解析结果
         object wanNetIPInfoObj = httpContext.Items[nameof(Fast) + nameof(WanNetIPInfo)];
 
@@ -365,6 +362,9 @@ public static class HttpContextExtension
         {
             return wanNetIPInfoObj as WanNetIPInfo;
         }
+
+        cancellationToken ??= httpContext?.RequestAborted;
+        cancellationToken.Value.ThrowIfCancellationRequested();
 
         // 判断是否传入 IP 地址
         ip ??= httpContext.RemoteIpv4();

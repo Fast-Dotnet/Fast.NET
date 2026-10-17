@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.41</Version>
+		<Version>3.5.42</Version>
 		<PackageId>Fast.OpenApi</PackageId>
 		<Description>Fast.NET 框架 OpenApi 模块库。</Description>
 	</PropertyGroup>

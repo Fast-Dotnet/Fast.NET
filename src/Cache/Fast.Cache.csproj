@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.35</Version>
+		<Version>3.5.36</Version>
 		<PackageId>Fast.Cache</PackageId>
 		<Description>Fast.NET 框架缓存模块库。</Description>
 	</PropertyGroup>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.30</Version>
+		<Version>3.5.31</Version>
 		<PackageId>Fast.EventBus</PackageId>
 		<Description>Fast.NET 框架事件总线模块库。</Description>
 	</PropertyGroup>

@@ -37,6 +37,29 @@ This repository uses independent package versions; each release entry lists the 
 - Runtime, EventBus and Logging use the standard null-argument helpers without changing their parameter checks. All packages referencing Runtime are rebuilt against Fast.Runtime 3.5.32; DynamicApplication also takes Fast.UnifyResult 3.5.36, and Swagger takes Fast.DynamicApplication 3.5.37. Third-party dependency versions are unchanged.
 - `Fast.IaaS` 3.5.29, `Fast.Serialization.Newtonsoft.Json` 3.5.27 and `Fast.Serialization.System.Text.Json` 3.5.21 remain unchanged because this batch changes neither their source nor their package dependencies.
 
+### Request-local IPv4 cache before cancellation checks
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Runtime | 3.5.32 | 3.5.33 |
+| Fast.EventBus | 3.5.30 | 3.5.31 |
+| Fast.Logging | 3.5.34 | 3.5.35 |
+| Fast.UnifyResult | 3.5.36 | 3.5.37 |
+| Fast.Cache | 3.5.35 | 3.5.36 |
+| Fast.Consul | 3.5.11 | 3.5.12 |
+| Fast.NET.Core | 3.5.41 | 3.5.42 |
+| Fast.DependencyInjection | 3.5.31 | 3.5.32 |
+| Fast.DynamicApplication | 3.5.37 | 3.5.38 |
+| Fast.JwtBearer | 3.5.45 | 3.5.46 |
+| Fast.Mapster | 3.5.29 | 3.5.30 |
+| Fast.OpenApi | 3.5.41 | 3.5.42 |
+| Fast.SqlSugar | 3.5.70 | 3.5.71 |
+| Fast.Swagger | 3.5.36 | 3.5.37 |
+
+- `Fast.Runtime` 3.5.33 returns an existing `HttpContext.Items` IPv4 lookup result before resolving or checking the cancellation token. A request-local cache hit therefore returns even if the default or explicit token is cancelled. On a request-local miss, cancellation is still checked before the shared memory cache, lock waits and remote query. A null context still returns null; token defaults, the three-parameter public declaration and the 24-hour memory-cache lifetime are unchanged from 3.5.32.
+- Increment the Runtime dependency chain on the 3.5.x patch line. All referencing packages target Fast.Runtime 3.5.33; DynamicApplication also takes Fast.UnifyResult 3.5.37, and Swagger takes Fast.DynamicApplication 3.5.38. The other modules' own behavior and third-party dependency versions are unchanged. Fast.IaaS and both standalone serialization package versions remain unchanged.
+- Synchronize bilingual documentation and API comments. This batch was reviewed from source only; no Fast.NET restore, build, pack or tests were run at the user's request. Earlier validation results apply to the preceding batch and do not validate these new versions.
+
 ## 2026-10-16
 
 - `Fast.SqlSugar` 3.5.68 removes `DepartmentName` from `PagedOutput`, so paging DTOs no longer inherit a department name by default. DTOs that still expose this field must declare it explicitly; replace overrides of the removed base property, update projections and generic member access, and recompile dependent assemblies. Default serialization no longer includes the inherited field unless the concrete DTO declares it. `IDepartmentEntity` and department assignment hooks are unchanged.
