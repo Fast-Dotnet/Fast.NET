@@ -181,14 +181,12 @@ internal sealed class EventBusHostedService : BackgroundService
         async Task InvokeAsync(Func<Task> action, int numRetries, int retryTimeout = 1000, bool finalThrow = true,
             Type[] exceptionTypes = null, Func<Exception, Task> fallbackPolicy = null, Action<int, int> retryAction = null)
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
+            ArgumentNullException.ThrowIfNull(action);
 
             // 未配置重试次数时只执行一次，不进入重试循环
             if (numRetries <= 0)
             {
+                processingToken.ThrowIfCancellationRequested();
                 await action();
                 return;
             }
@@ -198,38 +196,27 @@ internal sealed class EventBusHostedService : BackgroundService
 
             while (true)
             {
+                // 每次尝试之前观察取消，包括不等待的立即重试。
+                processingToken.ThrowIfCancellationRequested();
+
                 try
                 {
                     await action();
-                    break;
+                    return;
                 }
                 catch (OperationCanceledException) when (processingToken.IsCancellationRequested)
                 {
-                    // 取消是控制流，不应消耗剩余重试次数或触发失败回调
                     throw;
                 }
                 catch (Exception ex)
                 {
-                    // 如果可重试次数小于或等于 0，则终止重试
-                    if (--numRetries < 0)
-                    {
-                        if (finalThrow)
-                        {
-                            if (fallbackPolicy != null)
-                            {
-                                await fallbackPolicy.Invoke(ex);
-                            }
-
-                            throw;
-                        }
-
-                        return;
-                    }
-
-                    // 如果填写了 exceptionTypes 且异常类型不在 exceptionTypes 之内，则终止重试
-                    if (exceptionTypes != null
-                        && exceptionTypes.Length > 0
-                        && !exceptionTypes.Any(u => u.IsAssignableFrom(ex.GetType())))
+                    // 取消优先于后续重试和失败回调。
+                    processingToken.ThrowIfCancellationRequested();
+                    // 重试次数耗尽，或配置了可重试异常类型但当前异常不匹配时，终止重试。
+                    if (--numRetries < 0
+                        || (exceptionTypes != null
+                            && exceptionTypes.Length > 0
+                            && !exceptionTypes.Any(type => type.IsAssignableFrom(ex.GetType()))))
                     {
                         if (finalThrow)
                         {

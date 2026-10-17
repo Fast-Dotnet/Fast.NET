@@ -345,13 +345,18 @@ public static class HttpContextExtension
     /// <remarks>自带内存缓存，缓存过期时间为 24 小时（注：需要注入内存缓存，如不注入，则默认不走缓存）</remarks>
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="ip">要的 IP 地址信息，默认为 <see langword="null"/>，如果为 <see langword="null"/>，默认获取当前远程的 IPv4 地址</param>
+    /// <param name="cancellationToken">控制锁等待和远程查询的取消令牌；为 <see langword="null"/> 时使用 <see cref="HttpContext.RequestAborted"/>，显式传入时不再与请求取消令牌关联。</param>
     /// <returns>表示异步远程 IPv4 地址信息的任务；当前请求上下文为空时，任务结果为 <see langword="null"/></returns>
-    public static async Task<WanNetIPInfo> RemoteIpv4InfoAsync(this HttpContext httpContext, string ip = null)
+    public static async Task<WanNetIPInfo> RemoteIpv4InfoAsync(this HttpContext httpContext, string ip = null,
+        CancellationToken? cancellationToken = null)
     {
         if (httpContext == null)
         {
             return null;
         }
+
+        cancellationToken ??= httpContext?.RequestAborted;
+        cancellationToken.Value.ThrowIfCancellationRequested();
 
         // 同一请求内优先复用 HttpContext.Items 中的解析结果
         object wanNetIPInfoObj = httpContext.Items[nameof(Fast) + nameof(WanNetIPInfo)];
@@ -367,11 +372,11 @@ public static class HttpContextExtension
         WanNetIPInfo result;
 
         // 获取内存缓存服务
-        IMemoryCache _memoryCache = httpContext.RequestServices.GetService<IMemoryCache>();
+        IMemoryCache memoryCache = httpContext.RequestServices.GetService<IMemoryCache>();
 
-        if (_memoryCache == null)
+        if (memoryCache == null)
         {
-            result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted).ConfigureAwait(false);
+            result = await GetWanNetInfoAsync(ip, cancellationToken.Value).ConfigureAwait(false);
         }
         else
         {
@@ -380,15 +385,15 @@ public static class HttpContextExtension
             // 同一缓存键始终映射到同一锁分片，避免重复回源和按 IP 永久累积锁对象
             SemaphoreSlim semaphoreSlim = GetIpLookupLock(cacheKey);
 
-            await semaphoreSlim.WaitAsync(httpContext.RequestAborted).ConfigureAwait(false);
+            await semaphoreSlim.WaitAsync(cancellationToken.Value).ConfigureAwait(false);
             try
             {
                 // 从缓存中读取
-                if (!_memoryCache.TryGetValue(cacheKey, out result))
+                if (!memoryCache.TryGetValue(cacheKey, out result))
                 {
-                    result = await GetWanNetInfoAsync(ip, httpContext.RequestAborted).ConfigureAwait(false);
+                    result = await GetWanNetInfoAsync(ip, cancellationToken.Value).ConfigureAwait(false);
                     // 放入内存缓存，设置过期时间为 24 个小时
-                    _memoryCache.Set(cacheKey, result, TimeSpan.FromHours(24));
+                    memoryCache.Set(cacheKey, result, TimeSpan.FromHours(24));
                 }
             }
             finally

@@ -257,10 +257,7 @@ public static class MAppContext
     /// <returns>获取到的一段代码执行耗时</returns>
     public static long GetExecutionTime(Action action)
     {
-        if (action == null)
-        {
-            throw new ArgumentNullException(nameof(action));
-        }
+        ArgumentNullException.ThrowIfNull(action);
 
         // 计算接口执行时间
         var timeOperation = Stopwatch.StartNew();

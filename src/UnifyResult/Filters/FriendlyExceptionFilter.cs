@@ -22,6 +22,12 @@ internal sealed class FriendlyExceptionFilter : IAsyncExceptionFilter
     /// <inheritdoc />
     public async Task OnExceptionAsync(ExceptionContext context)
     {
+        // 请求取消交由上层处理，不包装成普通业务错误或 500 响应。
+        if (context is {Exception: OperationCanceledException, HttpContext.RequestAborted.IsCancellationRequested: true})
+        {
+            return;
+        }
+
         bool isUserFriendlyException = false;
         bool isValidationException = false;
 

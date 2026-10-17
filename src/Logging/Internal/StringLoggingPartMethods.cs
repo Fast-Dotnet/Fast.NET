@@ -74,10 +74,7 @@ public sealed partial class StringLoggingPart
         }
 
         (ILogger logger, ILoggerFactory loggerFactory, bool hasException) = GetLogger();
-        if (logger == null)
-        {
-            throw new ArgumentNullException(nameof(logger));
-        }
+        ArgumentNullException.ThrowIfNull(logger);
 
         using IDisposable scope = logger.BeginScope(LogContext);
 

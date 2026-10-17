@@ -65,10 +65,7 @@ internal sealed class FileLogger : ILogger
         }
 
         // 检查日志格式化器
-        if (formatter == null)
-        {
-            throw new ArgumentNullException(nameof(formatter));
-        }
+        ArgumentNullException.ThrowIfNull(formatter);
 
         string message = formatter(state, exception);
 

@@ -32,7 +32,8 @@ public class ApiInfoAttribute : Attribute
     /// <param name="name">接口名称</param>
     public ApiInfoAttribute(string name)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        ArgumentNullException.ThrowIfNull(name);
+        Name = name;
         Action = HttpRequestActionEnum.None;
     }
 
@@ -43,7 +44,8 @@ public class ApiInfoAttribute : Attribute
     /// <param name="action">HttpRequestActionEnum 操作方式</param>
     public ApiInfoAttribute(string name, HttpRequestActionEnum action)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        ArgumentNullException.ThrowIfNull(name);
+        Name = name;
         Action = action;
     }
 }

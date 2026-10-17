@@ -11,6 +11,32 @@ This repository uses independent package versions; each release entry lists the 
 - `Fast.SqlSugar` 3.5.69 checks the current entity property name and fill conditions before evaluating audit, department and tenant assignment callbacks. Unrelated properties and populated insert fields no longer invoke those handlers unnecessarily; update user callbacks run only for the matching updater fields.
 - Preserve null-only `CreatedTime` filling on object insertion, retaining caller-supplied creation timestamps. Existing empty-value rules for department, tenant, creator and row-version fields remain in effect; public declarations and dependency versions are unchanged.
 
+### Request cancellation and Runtime dependency alignment
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Runtime | 3.5.31 | 3.5.32 |
+| Fast.EventBus | 3.5.29 | 3.5.30 |
+| Fast.Logging | 3.5.33 | 3.5.34 |
+| Fast.UnifyResult | 3.5.35 | 3.5.36 |
+| Fast.Cache | 3.5.34 | 3.5.35 |
+| Fast.Consul | 3.5.10 | 3.5.11 |
+| Fast.NET.Core | 3.5.40 | 3.5.41 |
+| Fast.DependencyInjection | 3.5.30 | 3.5.31 |
+| Fast.DynamicApplication | 3.5.36 | 3.5.37 |
+| Fast.JwtBearer | 3.5.44 | 3.5.45 |
+| Fast.Mapster | 3.5.28 | 3.5.29 |
+| Fast.OpenApi | 3.5.40 | 3.5.41 |
+| Fast.SqlSugar | 3.5.69 | 3.5.70 |
+| Fast.Swagger | 3.5.35 | 3.5.36 |
+
+- `Fast.Runtime` adds an optional cancellation token to `RemoteIpv4InfoAsync(HttpContext, string, CancellationToken?)`. A null token uses `HttpContext.RequestAborted`; an explicitly supplied token replaces that default rather than linking both tokens. Cancellation is checked before request-local cache access and propagated to lock waits and remote queries. A null HttpContext still returns null.
+- The new three-parameter declaration replaces the previous two-parameter method. Ordinary calls can omit the new argument after recompilation, but previously compiled consumers must be rebuilt; method-group bindings and reflection calls must be reviewed. This compatibility change remains on the requested 3.5.x patch line.
+- `Fast.EventBus` observes cancellation before the initial attempt, before each retry, and before retry/fallback handling after a failure, including immediate retries without a delay. Cancellation suppresses subsequent retries and fallback callbacks. Retry exhaustion and exception-type rejection share the existing failure path.
+- `Fast.UnifyResult` leaves OperationCanceledException unhandled when RequestAborted is cancelled, allowing the upper pipeline to handle request cancellation instead of producing a normal business-error or 500 response. Other exception handling is unchanged.
+- Runtime, EventBus and Logging use the standard null-argument helpers without changing their parameter checks. All packages referencing Runtime are rebuilt against Fast.Runtime 3.5.32; DynamicApplication also takes Fast.UnifyResult 3.5.36, and Swagger takes Fast.DynamicApplication 3.5.37. Third-party dependency versions are unchanged.
+- `Fast.IaaS` 3.5.29, `Fast.Serialization.Newtonsoft.Json` 3.5.27 and `Fast.Serialization.System.Text.Json` 3.5.21 remain unchanged because this batch changes neither their source nor their package dependencies.
+
 ## 2026-10-16
 
 - `Fast.SqlSugar` 3.5.68 removes `DepartmentName` from `PagedOutput`, so paging DTOs no longer inherit a department name by default. DTOs that still expose this field must declare it explicitly; replace overrides of the removed base property, update projections and generic member access, and recompile dependent assemblies. Default serialization no longer includes the inherited field unless the concrete DTO declares it. `IDepartmentEntity` and department assignment hooks are unchanged.

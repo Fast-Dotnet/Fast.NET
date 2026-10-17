@@ -39,10 +39,7 @@ internal sealed class ChannelEventSourceStorer : IEventSourceStorer
     /// <inheritdoc />
     public async ValueTask WriteAsync(IEventSource eventSource, CancellationToken cancellationToken)
     {
-        if (eventSource == null)
-        {
-            throw new ArgumentNullException(nameof(eventSource));
-        }
+        ArgumentNullException.ThrowIfNull(eventSource);
 
         cancellationToken.ThrowIfCancellationRequested();
         if (EventDispatchScope.IsDispatching(this))
