@@ -14,7 +14,7 @@
 
 A modular infrastructure SDK for modern .NET applications, composed through independent NuGet packages.
 
-**[Documentation](http://docs.fastdotnet.cn/en-US/backend/fast-net/) · [Official website](http://fastdotnet.com)**
+**[Documentation](https://docs.fastdotnet.cn/en-US/backend/fast-net/) · [Official website](https://fastdotnet.com)**
 
 ## Why Fast.NET
 
@@ -179,8 +179,8 @@ Builds don't implicitly create packages. `UploadNuget.bat` explicitly restores, 
 
 ## Documentation and collaboration
 
-- [Getting started](http://docs.fastdotnet.cn/en-US/backend/fast-net/guide)
-- [Module catalog](http://docs.fastdotnet.cn/en-US/backend/fast-net/modules/)
+- [Getting started](https://docs.fastdotnet.cn/en-US/backend/fast-net/guide)
+- [Module catalog](https://docs.fastdotnet.cn/en-US/backend/fast-net/modules/)
 - [Architecture guide](docs/ARCHITECTURE.md)
 - [Comments and public API documentation](docs/COMMENTING_GUIDE.md)
 - [Release guide](docs/RELEASING.md)

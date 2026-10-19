@@ -14,7 +14,7 @@
 
 面向现代 .NET 应用的模块化基础设施 SDK，以独立 NuGet 包按需组合。
 
-**[使用文档](http://docs.fastdotnet.cn/zh-CN/backend/fast-net/) · [官方网站](http://fastdotnet.com)**
+**[使用文档](https://docs.fastdotnet.cn/zh-CN/backend/fast-net/) · [官方网站](https://fastdotnet.com)**
 
 ## 为什么选择 Fast.NET
 
@@ -179,8 +179,8 @@ dotnet pack Fast.NET.sln -c Release --no-build --no-restore -p:WarnOnPackingNonP
 
 ## 文档与协作
 
-- [快速开始](http://docs.fastdotnet.cn/zh-CN/backend/fast-net/guide)
-- [模块目录](http://docs.fastdotnet.cn/zh-CN/backend/fast-net/modules/)
+- [快速开始](https://docs.fastdotnet.cn/zh-CN/backend/fast-net/guide)
+- [模块目录](https://docs.fastdotnet.cn/zh-CN/backend/fast-net/modules/)
 - [架构说明](docs/ARCHITECTURE.zh.md)
 - [注释与公共 API 文档规范](docs/COMMENTING_GUIDE.zh.md)
 - [发布指南](docs/RELEASING.zh.md)

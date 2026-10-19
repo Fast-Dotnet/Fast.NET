@@ -14,7 +14,7 @@
         <Description>面向 ASP.NET Core 的模块化 .NET SDK。</Description>
         <PackageTags>Fast.NET;ASP.NET Core;.NET;SDK;Cross Platform</PackageTags>
         <Copyright>版权所有 © 2018-Now 小方</Copyright>
-        <PackageProjectUrl>http://fastdotnet.com</PackageProjectUrl>
+        <PackageProjectUrl>https://fastdotnet.com</PackageProjectUrl>
         <RepositoryUrl>https://gitee.com/FastDotnet/Fast.NET</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
