@@ -22,139 +22,145 @@ public enum AppEnvironmentEnum : long
     /// Web
     /// </summary>
     [Description("Web")]
-    Web = 1,
+    Web = 1L << 0,
 
     /// <summary>
     /// Windows
     /// </summary>
     [Description("Windows")]
-    Windows = 2,
+    Windows = 1L << 1,
 
     /// <summary>
     /// Mac
     /// </summary>
     [Description("Mac")]
-    Mac = 4,
+    Mac = 1L << 2,
 
     /// <summary>
     /// Linux
     /// </summary>
     [Description("Linux")]
-    Linux = 8,
+    Linux = 1L << 3,
 
     /// <summary>
     /// Android
     /// </summary>
     [Description("Android")]
-    Android = 32,
+    Android = 1L << 5,
+
+    /// <summary>
+    /// 鸿蒙
+    /// </summary>
+    [Description("鸿蒙")]
+    HarmonyOS = 1L << 6,
 
     /// <summary>
     /// IOS
     /// </summary>
     [Description("IOS")]
-    IOS = 64,
+    IOS = 1L << 7,
 
     /// <summary>
     /// 快应用
     /// </summary>
     [Description("快应用")]
-    QuickApp = 128,
+    QuickApp = 1L << 8,
 
     /// <summary>
     /// 微信小程序
     /// </summary>
     [Description("微信小程序")]
-    WeChatMiniProgram = 256,
+    WeChatMiniProgram = 1L << 9,
 
     /// <summary>
     /// 微信公众号
     /// </summary>
     [Description("微信公众号")]
-    WeChatOfficialAccount = 512,
+    WeChatOfficialAccount = 1L << 10,
 
     /// <summary>
     /// 微信服务号
     /// </summary>
     [Description("微信服务号")]
-    WeChatServiceAccount = 1024,
+    WeChatServiceAccount = 1L << 11,
 
     /// <summary>
     /// 微信开放平台
     /// </summary>
     [Description("微信开放平台")]
-    WeChatOpenPlatform = 2048,
+    WeChatOpenPlatform = 1L << 12,
 
     /// <summary>
     /// 企业微信
     /// </summary>
     [Description("企业微信")]
-    WorkWeChat = 4096,
+    WorkWeChat = 1L << 13,
 
     /// <summary>
     /// 支付宝小程序
     /// </summary>
     [Description("支付宝小程序")]
-    AlipayMiniProgram = 8192,
+    AlipayMiniProgram = 1L << 14,
 
     /// <summary>
     /// 抖音小程序
     /// </summary>
     [Description("抖音小程序")]
-    TiktokMiniProgram = 16384,
+    TiktokMiniProgram = 1L << 15,
 
     /// <summary>
     /// 钉钉小程序
     /// </summary>
     [Description("钉钉小程序")]
-    DingTalkMiniProgram = 32768,
+    DingTalkMiniProgram = 1L << 16,
 
     /// <summary>
     /// 飞书小程序
     /// </summary>
     [Description("飞书小程序")]
-    FeiShuMiniProgram = 65536,
+    FeiShuMiniProgram = 1L << 17,
 
     /// <summary>
     /// QQ 小程序
     /// </summary>
     [Description("QQ小程序")]
-    QQMiniProgram = 131072,
+    QQMiniProgram = 1L << 18,
 
     /// <summary>
     /// 百度小程序
     /// </summary>
     [Description("百度小程序")]
-    BaiduMiniProgram = 262144,
+    BaiduMiniProgram = 1L << 19,
 
     /// <summary>
     /// 快手小程序
     /// </summary>
     [Description("快手小程序")]
-    KuaiShouMiniProgram = 524288,
+    KuaiShouMiniProgram = 1L << 20,
 
     /// <summary>
     /// 小红书小程序
     /// </summary>
     [Description("小红书小程序")]
-    XiaoHongShuMiniProgram = 1048576,
+    XiaoHongShuMiniProgram = 1L << 21,
 
     /// <summary>
     /// 京东小程序
     /// </summary>
     [Description("京东小程序")]
-    JDMiniProgram = 2097152,
+    JDMiniProgram = 1L << 22,
 
     /// <summary>
     /// API
     /// </summary>
     [Description("Api")]
-    Api = 2147483648,
+    Api = 1L << 32,
 
     /// <summary>
     /// 其他
     /// </summary>
     [Description("其他")]
-    Other = 4294967296,
+    Other = 1L << 33,
 
     /// <summary>
     /// 桌面端
@@ -166,13 +172,7 @@ public enum AppEnvironmentEnum : long
     /// 移动端
     /// </summary>
     [Description("移动端")]
-    Mobile = Android | IOS,
-
-    /// <summary>
-    /// 移动端（三端）
-    /// </summary>
-    [Description("移动端（三端）")]
-    MobileThree = Android | IOS | MiniProgram,
+    Mobile = Android | HarmonyOS | IOS,
 
     /// <summary>
     /// 小程序
@@ -188,5 +188,11 @@ public enum AppEnvironmentEnum : long
                   | BaiduMiniProgram
                   | KuaiShouMiniProgram
                   | XiaoHongShuMiniProgram
-                  | JDMiniProgram
+                  | JDMiniProgram,
+
+    /// <summary>
+    /// 移动端（三端）
+    /// </summary>
+    [Description("移动端（三端）")]
+    MobileThree = Mobile | MiniProgram
 }

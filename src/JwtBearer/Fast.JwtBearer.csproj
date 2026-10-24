@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.46</Version>
+		<Version>3.5.47</Version>
 		<PackageId>Fast.JwtBearer</PackageId>
 		<Description>Fast.NET 框架 JwtBearer 模块库。</Description>
 	</PropertyGroup>

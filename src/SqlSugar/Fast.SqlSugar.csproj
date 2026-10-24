@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.71</Version>
+		<Version>3.5.72</Version>
 		<PackageId>Fast.SqlSugar</PackageId>
 		<Description>Fast.NET 框架 SqlSugar 模块库。</Description>
 	</PropertyGroup>
@@ -12,8 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="SqlSugarCore" />
-		<!-- 覆盖 SqlSugarCore 的传递依赖，固定到已修复安全问题的 2.1.x 原生 SQLite 包。 -->
-		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
+        <PackageReference Include="System.Security.Cryptography.Pkcs" />
 		<PackageReference Include="UAParser" />
 		<PackageReference Include="Yitter.IdGenerator" />
 	</ItemGroup>

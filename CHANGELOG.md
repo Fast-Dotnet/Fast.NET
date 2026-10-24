@@ -6,6 +6,38 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 This repository uses independent package versions; each release entry lists the affected packages and their versions. Comparison links require identified release refs. No comparison baseline is recorded for the first dated entry; use the repository history linked below.
 
+## Unreleased
+
+### 2026-10-24 package versions and dependencies
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Cache | 3.5.36 | 3.5.37 |
+| Fast.Consul | 3.5.12 | 3.5.13 |
+| Fast.NET.Core | 3.5.42 | 3.5.43 |
+| Fast.DependencyInjection | 3.5.32 | 3.5.33 |
+| Fast.DynamicApplication | 3.5.38 | 3.5.39 |
+| Fast.EventBus | 3.5.31 | 3.5.32 |
+| Fast.JwtBearer | 3.5.46 | 3.5.47 |
+| Fast.Logging | 3.5.35 | 3.5.36 |
+| Fast.Mapster | 3.5.30 | 3.5.31 |
+| Fast.OpenApi | 3.5.42 | 3.5.43 |
+| Fast.Runtime | 3.5.33 | 3.5.34 |
+| Fast.SqlSugar | 3.5.71 | 3.5.72 |
+| Fast.Swagger | 3.5.37 | 3.5.38 |
+| Fast.UnifyResult | 3.5.37 | 3.5.38 |
+
+- Increment Runtime and its dependent packages once within 3.5.x so their package dependency chain follows Runtime 3.5.34. IaaS and both standalone serialization packages are unchanged.
+- `Fast.SqlSugar` 3.5.72 explicitly references `System.Security.Cryptography.Pkcs` 8.0.2 / 9.0.21 / 10.0.13 for net8.0 / net9.0 / net10.0 respectively. Remove the explicit `SQLitePCLRaw.bundle_e_sqlite3` reference and central 3.0.5 override; SQLite dependencies are resolved transitively through the unchanged SqlSugarCore 5.1.4.221 dependency. This update does not verify the resulting restored dependency graph or runtime behavior.
+- `Fast.Swagger` 3.5.38 updates Swashbuckle.AspNetCore from 10.3.0 to 10.3.1; module implementation and public declarations are unchanged.
+- These are unpublished source versions. Tests were skipped at the user's request; no restore, build, pack or consumer runtime validation was performed for this version update.
+
+### Breaking changes
+
+- `Fast.Runtime` 3.5.34: add `AppEnvironmentEnum.HarmonyOS = 64`. Keep Web, Windows, Mac, Linux and Android unchanged; shift each existing independent flag from IOS onward left by one bit, including Api and Other. IOS is now 128, QuickApp is 256, Api is 4294967296, and Other is 8589934592.
+- Include HarmonyOS in Mobile (224) and MobileThree (8373216); MiniProgram is now 8372992 and Desktop remains 14. Existing persisted numeric values, combined masks and numeric request values must be migrated by their old member meanings. Recompile consumers and regenerate client enums together; replacing the DLL alone is insufficient because enum constants can be embedded in compiled code. Do not reinterpret old IOS=64 as HarmonyOS or blindly double complete masks, since lower flags remain unchanged.
+- This breaking change retains the requested 3.5.x patch versioning. Adding the platform identifier does not implement HarmonyOS package upload, installation or hot-update support in consuming applications.
+
 ## 2026-10-17
 
 - `Fast.SqlSugar` 3.5.69 checks the current entity property name and fill conditions before evaluating audit, department and tenant assignment callbacks. Unrelated properties and populated insert fields no longer invoke those handlers unnecessarily; update user callbacks run only for the matching updater fields.
