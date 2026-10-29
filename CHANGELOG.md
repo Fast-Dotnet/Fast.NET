@@ -8,6 +8,32 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-10-30 SqlSugar connection and public API migration
+
+- Keep `Fast.SqlSugar` at the requested, unpublished 3.5.73 version. This update also carries breaking public API changes; its patch version does not imply source or binary compatibility.
+- Remove `DbConnectionInfo`. `ConnectionSettingsOptions` now implements `IPostConfigure` directly, while `SlaveConnectionInfo` is an independent class without `PostConfigure` or `CustomConnectionStr`. Several previously virtual configuration members are no longer virtual; update inheritance, overrides and ORM mappings in consumers.
+- Make `SqlSugarDatabaseUtil` internal and remove `ISqlSugarRepository<TEntity>.Entities`; build repository queries through `Queryable<TEntity>()`. Use `SqlSugarContext.GetConnectionConfig(ConnectionSettingsOptions)` for the public connection-config entry point.
+- Restrict `SugarDbType` to MySql=1, SqlServer=2, Sqlite=3, Oracle=4, PostgreSQL=5 and MongoDb=6. Their previous values were 0, 1, 2, 3, 4 and 32 respectively. Other members are removed, and both conversion extensions reject unsupported values. Migrate persisted numeric values and generated clients by member meaning, and rebuild consumers; the separate `SqlSugar.DbType` configuration enum is unchanged.
+- Add configurable pool limits to automatically generated MySql/MySqlConnector, SqlServer and PostgreSQL connection strings for primary and replica connections, with a fallback of 100. A nonblank `CustomConnectionStr` bypasses generated primary connection fields and suppresses configured replicas. Slave `CommandTimeOut` is not applied as a separate replica timeout.
+- Document the current defaults and AOP fallbacks, and synchronize bilingual guides and generated API references. No database initialization, migration or data operation is required for this documentation update.
+
+### 2026-10-30 dependency patch updates
+
+| PackageId | Previous version | New version | Updated dependency |
+| --- | --- | --- | --- |
+| Fast.JwtBearer | 3.5.47 | 3.5.48 | Microsoft.AspNetCore.Authentication.JwtBearer |
+| Fast.Serialization.Newtonsoft.Json | 3.5.27 | 3.5.28 | Microsoft.AspNetCore.Mvc.NewtonsoftJson |
+| Fast.SqlSugar | 3.5.72 | 3.5.73 | System.Security.Cryptography.Pkcs |
+
+- Keep the current central dependency versions: both ASP.NET Core packages specify 8.0.33 / 9.0.22 / 10.0.14 for net8.0 / net9.0 / net10.0. Pkcs retains 8.0.2 for net8.0 and updates to 9.0.22 / 10.0.14 for net9.0 / net10.0. Declared versions and the restored graph must be distinguished; restore and package validation results are recorded in the corresponding Fast.Docs module guides.
+- Increment only the three directly affected packages on the requested patch release line. This dependency update does not modify module implementations or public declarations. Fast.Runtime remains at 3.5.34, and Fast.NET.Core retains the separate 3.5.44 static-file update below. No packages have been published as part of this update.
+
+### 2026-10-30 configurable static-file MIME mappings
+
+- Increment `Fast.NET.Core` from 3.5.43 to 3.5.44 on the requested patch release line.
+- Add `UseStaticFiles(IApplicationBuilder, IConfiguration, string section = "StaticFileSettings")` to enable static-file middleware with MIME mappings from configuration. Keys are file extensions including the leading dot; values are MIME types. Configured entries supplement or override the default mappings, while other default mappings remain available.
+- Clarify the XML documentation and synchronize the bilingual Fast.Docs guide and generated API reference. This source version has not been published; the existing `Fast.Runtime` 3.5.34 dependency is unchanged.
+
 ### 2026-10-24 package versions and dependencies
 
 | PackageId | Previous version | New version |

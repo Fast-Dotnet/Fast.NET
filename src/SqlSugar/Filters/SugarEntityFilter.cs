@@ -28,7 +28,7 @@ public static class SugarEntityFilter
     public static void LoadSugarAop(bool isDevelopment, ISqlSugarClient _db, int? sugarSqlExecMaxSeconds = null,
         bool diffLog = false, bool disableAop = true, ISqlSugarEntityHandler sqlSugarEntityHandler = null)
     {
-        sugarSqlExecMaxSeconds ??= SqlSugarContext.ConnectionSettings?.SugarSqlExecMaxSeconds!.Value;
+        sugarSqlExecMaxSeconds ??= SqlSugarContext.ConnectionSettings?.SugarSqlExecMaxSeconds.GetValueOrDefault(30);
         _db.Aop.OnLogExecuted = (rawSql, pars) =>
         {
             if (isDevelopment)

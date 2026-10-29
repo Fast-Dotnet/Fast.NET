@@ -33,11 +33,6 @@ public partial interface ISqlSugarRepository<TEntity> : ISqlSugarClient where TE
     bool IsSplitTable { get; }
 
     /// <summary>
-    /// 实体集合
-    /// </summary>
-    ISugarQueryable<TEntity> Entities { get; }
-
-    /// <summary>
     /// 当前仓储的数据库信息
     /// </summary>
     ConnectionSettingsOptions DatabaseInfo { get; }

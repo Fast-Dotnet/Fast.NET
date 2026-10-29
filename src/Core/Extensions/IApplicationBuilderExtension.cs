@@ -9,6 +9,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Configuration;
 
 namespace Fast.NET.Core;
 
@@ -62,6 +64,33 @@ public static class IApplicationBuilderExtension
                 }
             }
         });
+
+        return app;
+    }
+
+    /// <summary>
+    /// 启用静态文件中间件，并从指定配置节补充或覆盖文件扩展名与 MIME 类型的映射。
+    /// </summary>
+    /// <remarks>
+    /// 配置节以包含前导点的文件扩展名（如 <c>.pdf</c>）为键，以 MIME 类型（如 <c>application/pdf</c>）为值。
+    /// 未在配置中指定的扩展名保留默认映射。
+    /// </remarks>
+    /// <param name="app">要配置的应用管道</param>
+    /// <param name="configuration">提供静态文件 MIME 类型映射的配置源</param>
+    /// <param name="section">MIME 类型映射所在的配置节路径，默认为 <c>StaticFileSettings</c></param>
+    /// <returns>返回 <paramref name="app"/>，便于链式调用</returns>
+    public static IApplicationBuilder UseStaticFiles(this IApplicationBuilder app, IConfiguration configuration,
+        string section = "StaticFileSettings")
+    {
+        var provider = new FileExtensionContentTypeProvider();
+        Dictionary<string, string> mappings = configuration.GetSection(section).Get<Dictionary<string, string>>() ?? [];
+
+        foreach ((string extension, string contentType) in mappings)
+        {
+            provider.Mappings[extension] = contentType;
+        }
+
+        app.UseStaticFiles(new StaticFileOptions {ContentTypeProvider = provider});
 
         return app;
     }

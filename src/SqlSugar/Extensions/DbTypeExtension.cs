@@ -20,6 +20,7 @@ public static class DbTypeExtension
     /// </summary>
     /// <param name="sugarDbType">sugar Db 类型</param>
     /// <returns>将 SugarDbType 转换为 DbType</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="sugarDbType"/> 不是当前支持的六种数据库类型之一。</exception>
     public static DbType ToDbType(this SugarDbType sugarDbType)
     {
         return sugarDbType switch
@@ -29,35 +30,7 @@ public static class DbTypeExtension
             SugarDbType.Sqlite => DbType.Sqlite,
             SugarDbType.Oracle => DbType.Oracle,
             SugarDbType.PostgreSQL => DbType.PostgreSQL,
-            SugarDbType.Dm => DbType.Dm,
-            SugarDbType.Kdbndp => DbType.Kdbndp,
-            SugarDbType.Oscar => DbType.Oscar,
-            SugarDbType.MySqlConnector => DbType.MySqlConnector,
-            SugarDbType.Access => DbType.Access,
-            SugarDbType.OpenGauss => DbType.OpenGauss,
-            SugarDbType.QuestDB => DbType.QuestDB,
-            SugarDbType.HG => DbType.HG,
-            SugarDbType.ClickHouse => DbType.ClickHouse,
-            SugarDbType.GBase => DbType.GBase,
-            SugarDbType.Odbc => DbType.Odbc,
-            SugarDbType.OceanBaseForOracle => DbType.OceanBaseForOracle,
-            SugarDbType.TDengine => DbType.TDengine,
-            SugarDbType.GaussDB => DbType.GaussDB,
-            SugarDbType.OceanBase => DbType.OceanBase,
-            SugarDbType.Tidb => DbType.Tidb,
-            SugarDbType.Vastbase => DbType.Vastbase,
-            SugarDbType.PolarDB => DbType.PolarDB,
-            SugarDbType.Doris => DbType.Doris,
-            SugarDbType.Xugu => DbType.Xugu,
-            SugarDbType.GoldenDB => DbType.GoldenDB,
-            SugarDbType.TDSQLForPGODBC => DbType.TDSQLForPGODBC,
-            SugarDbType.TDSQL => DbType.TDSQL,
-            SugarDbType.HANA => DbType.HANA,
-            SugarDbType.DB2 => DbType.DB2,
-            SugarDbType.GaussDBNative => DbType.GaussDBNative,
-            SugarDbType.DuckDB => DbType.DuckDB,
             SugarDbType.MongoDb => DbType.MongoDb,
-            SugarDbType.Custom => DbType.Custom,
             _ => throw new ArgumentOutOfRangeException(nameof(sugarDbType), sugarDbType, "不支持的数据库类型")
         };
     }
@@ -67,6 +40,7 @@ public static class DbTypeExtension
     /// </summary>
     /// <param name="dbType">数据库类型</param>
     /// <returns>将 DbType 转换为 SugarDbType</returns>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="dbType"/> 不属于 MySql、SqlServer、Sqlite、Oracle、PostgreSQL 或 MongoDb。</exception>
     public static SugarDbType ToSugarDbType(this DbType dbType)
     {
         return dbType switch
@@ -76,35 +50,7 @@ public static class DbTypeExtension
             DbType.Sqlite => SugarDbType.Sqlite,
             DbType.Oracle => SugarDbType.Oracle,
             DbType.PostgreSQL => SugarDbType.PostgreSQL,
-            DbType.Dm => SugarDbType.Dm,
-            DbType.Kdbndp => SugarDbType.Kdbndp,
-            DbType.Oscar => SugarDbType.Oscar,
-            DbType.MySqlConnector => SugarDbType.MySqlConnector,
-            DbType.Access => SugarDbType.Access,
-            DbType.OpenGauss => SugarDbType.OpenGauss,
-            DbType.QuestDB => SugarDbType.QuestDB,
-            DbType.HG => SugarDbType.HG,
-            DbType.ClickHouse => SugarDbType.ClickHouse,
-            DbType.GBase => SugarDbType.GBase,
-            DbType.Odbc => SugarDbType.Odbc,
-            DbType.OceanBaseForOracle => SugarDbType.OceanBaseForOracle,
-            DbType.TDengine => SugarDbType.TDengine,
-            DbType.GaussDB => SugarDbType.GaussDB,
-            DbType.OceanBase => SugarDbType.OceanBase,
-            DbType.Tidb => SugarDbType.Tidb,
-            DbType.Vastbase => SugarDbType.Vastbase,
-            DbType.PolarDB => SugarDbType.PolarDB,
-            DbType.Doris => SugarDbType.Doris,
-            DbType.Xugu => SugarDbType.Xugu,
-            DbType.GoldenDB => SugarDbType.GoldenDB,
-            DbType.TDSQLForPGODBC => SugarDbType.TDSQLForPGODBC,
-            DbType.TDSQL => SugarDbType.TDSQL,
-            DbType.HANA => SugarDbType.HANA,
-            DbType.DB2 => SugarDbType.DB2,
-            DbType.GaussDBNative => SugarDbType.GaussDBNative,
-            DbType.DuckDB => SugarDbType.DuckDB,
             DbType.MongoDb => SugarDbType.MongoDb,
-            DbType.Custom => SugarDbType.Custom,
             _ => throw new ArgumentOutOfRangeException(nameof(dbType), dbType, "不支持的数据库类型")
         };
     }

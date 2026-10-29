@@ -80,11 +80,6 @@ internal sealed partial class SqlSugarRepository<TEntity> : SqlSugarClient, ISql
     /// <inheritdoc />
     public bool IsSplitTable { get; }
 
-    /// <summary>
-    /// 实体集合
-    /// </summary>
-    public ISugarQueryable<TEntity> Entities => Queryable<TEntity>();
-
     /// <inheritdoc />
     public ConnectionSettingsOptions DatabaseInfo { get; set; }
 

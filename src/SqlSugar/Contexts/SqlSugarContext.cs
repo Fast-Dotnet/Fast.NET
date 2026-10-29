@@ -46,9 +46,7 @@ public sealed class SqlSugarContext
             .Select(sl =>
             {
                 SugarTable sqlSugarTableAttribute = sl.GetSugarTableAttribute();
-
                 SplitTableAttribute splitTableAttribute = sl.GetCustomAttribute<SplitTableAttribute>(true);
-
                 SugarDbTypeAttribute sugarDbTypeAttribute = sl.GetCustomAttribute<SugarDbTypeAttribute>(true);
 
                 return new SqlSugarEntityInfo
@@ -74,9 +72,9 @@ public sealed class SqlSugarContext
         string connectionStr = SqlSugarDatabaseUtil.GetConnectionStr(connectionSettings.DbType!.Value, connectionSettings);
 
         var slaveConnectionList = new List<SlaveConnectionConfig>();
-
-        // 判断是否存在从库信息
-        if (connectionSettings.SlaveConnectionList is {Count: > 0})
+        // 判断是否存在从库信息，存在自定义连接字符串默认不配置从库
+        if (string.IsNullOrWhiteSpace(connectionSettings.CustomConnectionStr)
+            && connectionSettings.SlaveConnectionList is {Count: > 0})
         {
             foreach (SlaveConnectionInfo slaveConnectionInfo in connectionSettings.SlaveConnectionList)
             {

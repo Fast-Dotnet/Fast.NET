@@ -15,7 +15,7 @@ namespace Fast.SqlSugar;
 /// <summary>
 /// SugarExternalServices 工具类
 /// </summary>
-public partial class SqlSugarDatabaseUtil
+internal partial class SqlSugarDatabaseUtil
 {
     /// <summary>
     /// 目前只验证了 SQL Server 和 MySql

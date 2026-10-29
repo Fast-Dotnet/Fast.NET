@@ -18,98 +18,98 @@ internal sealed partial class SqlSugarRepository<TEntity>
     /// <inheritdoc />
     public int Count(Expression<Func<TEntity, bool>> whereExpression = null)
     {
-        return Entities.WhereIF(whereExpression != null, whereExpression).Count();
+        return Queryable<TEntity>().WhereIF(whereExpression != null, whereExpression).Count();
     }
 
     /// <inheritdoc />
     public Task<int> CountAsync(Expression<Func<TEntity, bool>> whereExpression = null)
     {
-        return Entities.WhereIF(whereExpression != null, whereExpression).CountAsync();
+        return Queryable<TEntity>().WhereIF(whereExpression != null, whereExpression).CountAsync();
     }
 
     /// <inheritdoc />
     public bool Any(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.Any(whereExpression);
+        return Queryable<TEntity>().Any(whereExpression);
     }
 
     /// <inheritdoc />
     public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return await Entities.AnyAsync(whereExpression);
+        return await Queryable<TEntity>().AnyAsync(whereExpression);
     }
 
     /// <inheritdoc />
     public TEntity SingleOrDefault(object Id)
     {
-        return Entities.InSingle(Id);
+        return Queryable<TEntity>().InSingle(Id);
     }
 
     /// <inheritdoc />
     public Task<TEntity> SingleOrDefaultAsync(object Id)
     {
-        return Entities.InSingleAsync(Id);
+        return Queryable<TEntity>().InSingleAsync(Id);
     }
 
     /// <inheritdoc />
     public TEntity SingleOrDefault(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.Single(whereExpression);
+        return Queryable<TEntity>().Single(whereExpression);
     }
 
     /// <inheritdoc />
     public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.SingleAsync(whereExpression);
+        return Queryable<TEntity>().SingleAsync(whereExpression);
     }
 
     /// <inheritdoc />
     public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.First(whereExpression);
+        return Queryable<TEntity>().First(whereExpression);
     }
 
     /// <inheritdoc />
     public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return await Entities.FirstAsync(whereExpression);
+        return await Queryable<TEntity>().FirstAsync(whereExpression);
     }
 
     /// <inheritdoc />
     public List<TEntity> ToList()
     {
-        return Entities.ToList();
+        return Queryable<TEntity>().ToList();
     }
 
     /// <inheritdoc />
     public Task<List<TEntity>> ToListAsync()
     {
-        return Entities.ToListAsync();
+        return Queryable<TEntity>().ToListAsync();
     }
 
     /// <inheritdoc />
     public List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.Where(whereExpression).ToList();
+        return Queryable<TEntity>().Where(whereExpression).ToList();
     }
 
     /// <inheritdoc />
     public Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> whereExpression)
     {
-        return Entities.Where(whereExpression).ToListAsync();
+        return Queryable<TEntity>().Where(whereExpression).ToListAsync();
     }
 
     /// <inheritdoc />
     public List<TEntity> ToList(Expression<Func<TEntity, bool>> whereExpression,
         Expression<Func<TEntity, object>> orderByExpression, OrderByType orderByType = OrderByType.Asc)
     {
-        return Entities.Where(whereExpression).OrderBy(orderByExpression, orderByType).ToList();
+        return Queryable<TEntity>().Where(whereExpression).OrderBy(orderByExpression, orderByType).ToList();
     }
 
     /// <inheritdoc />
     public Task<List<TEntity>> ToListAsync(Expression<Func<TEntity, bool>> whereExpression,
         Expression<Func<TEntity, object>> orderByExpression, OrderByType orderByType = OrderByType.Asc)
     {
-        return Entities.Where(whereExpression).OrderBy(orderByExpression, orderByType).ToListAsync();
+        return Queryable<TEntity>().Where(whereExpression).OrderBy(orderByExpression, orderByType).ToListAsync();
     }
 }

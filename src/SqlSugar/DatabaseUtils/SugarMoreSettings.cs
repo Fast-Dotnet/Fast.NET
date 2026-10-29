@@ -12,7 +12,7 @@ namespace Fast.SqlSugar;
 /// <summary>
 /// SugarMoreSettings 工具类
 /// </summary>
-public partial class SqlSugarDatabaseUtil
+internal partial class SqlSugarDatabaseUtil
 {
     /// <summary>
     /// 获取配置

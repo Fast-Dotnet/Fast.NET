@@ -12,7 +12,7 @@ namespace Fast.SqlSugar;
 /// <summary>
 /// 数据库字段类型映射工具类
 /// </summary>
-public partial class SqlSugarDatabaseUtil
+internal partial class SqlSugarDatabaseUtil
 {
     /// <summary>
     /// 设置 <see cref="long"/> 类型

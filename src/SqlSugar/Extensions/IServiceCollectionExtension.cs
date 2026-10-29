@@ -143,9 +143,9 @@ public static class IServiceCollectionExtension
             sqlSugarClient.Ado.CommandTimeOut = SqlSugarContext.ConnectionSettings.CommandTimeOut!.Value;
 
             SugarEntityFilter.LoadSugarAop(hostEnvironment.IsDevelopment(), sqlSugarClient,
-                SqlSugarContext.ConnectionSettings.SugarSqlExecMaxSeconds!.Value,
-                SqlSugarContext.ConnectionSettings.DiffLog!.Value, SqlSugarContext.ConnectionSettings.DisableAop!.Value,
-                sqlSugarEntityHandler);
+                SqlSugarContext.ConnectionSettings.SugarSqlExecMaxSeconds.GetValueOrDefault(30),
+                SqlSugarContext.ConnectionSettings.DiffLog.GetValueOrDefault(false),
+                SqlSugarContext.ConnectionSettings.DisableAop.GetValueOrDefault(true), sqlSugarEntityHandler);
 
             SugarEntityFilter.LoadSugarFilter(sqlSugarClient, sqlSugarEntityHandler);
 

@@ -12,7 +12,7 @@ namespace Fast.SqlSugar;
 /// <summary>
 /// 连接字符串工具类
 /// </summary>
-public partial class SqlSugarDatabaseUtil
+internal partial class SqlSugarDatabaseUtil
 {
     /// <summary>
     /// 得到数据库连接字符串
@@ -20,7 +20,33 @@ public partial class SqlSugarDatabaseUtil
     /// <param name="dbType">数据库类型</param>
     /// <param name="dbInfo">数据库连接与类型信息</param>
     /// <returns>得到数据库连接字符串</returns>
-    public static string GetConnectionStr(DbType dbType, DbConnectionInfo dbInfo)
+    internal static string GetConnectionStr(DbType dbType, SlaveConnectionInfo dbInfo)
+    {
+        return dbType switch
+        {
+            DbType.MySql or DbType.MySqlConnector =>
+                $"Server={dbInfo.ServiceIp};Port={dbInfo.Port ?? 3306};Database={dbInfo.DbName};User ID={dbInfo.DbUser};Password={dbInfo.DbPwd};CharSet=utf8;SslMode=none;Pooling=true;Convert Zero Datetime=True;Allow Zero Datetime=True;Max Pool Size={dbInfo.MaxPoolSize ?? 100};",
+            DbType.SqlServer =>
+                $"Server={dbInfo.ServiceIp},{dbInfo.Port ?? 1433};Database={dbInfo.DbName};User={dbInfo.DbUser};Password={dbInfo.DbPwd};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True;Max Pool Size={dbInfo.MaxPoolSize ?? 100};",
+            DbType.Sqlite => $"Data Source={dbInfo.DbName};",
+            DbType.Oracle =>
+                $"Data Source={dbInfo.ServiceIp}:{dbInfo.Port ?? 1521}/{dbInfo.DbName};User ID={dbInfo.DbUser};Password={dbInfo.DbPwd};",
+            DbType.PostgreSQL =>
+                $"Host={dbInfo.ServiceIp};Port={dbInfo.Port ?? 5432};Database={dbInfo.DbName};Username={dbInfo.DbUser};Password={dbInfo.DbPwd};Pooling=true;MaxPoolSize={dbInfo.MaxPoolSize ?? 100};",
+            DbType.Access => $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={dbInfo.DbName};Persist Security Info=False;",
+            DbType.MongoDb =>
+                $"mongodb://{dbInfo.DbUser}:{dbInfo.DbPwd}@{dbInfo.ServiceIp}:{dbInfo.Port ?? 27017}/{dbInfo.DbName}",
+            _ => throw new SqlSugarException("暂不支持此数据库类型连接字符串配置！")
+        };
+    }
+
+    /// <summary>
+    /// 得到数据库连接字符串
+    /// </summary>
+    /// <param name="dbType">数据库类型</param>
+    /// <param name="dbInfo">数据库连接与类型信息</param>
+    /// <returns>得到数据库连接字符串</returns>
+    internal static string GetConnectionStr(DbType dbType, ConnectionSettingsOptions dbInfo)
     {
         string connectionStr;
         if (!string.IsNullOrWhiteSpace(dbInfo.CustomConnectionStr))
@@ -32,18 +58,18 @@ public partial class SqlSugarDatabaseUtil
             connectionStr = dbType switch
             {
                 DbType.MySql or DbType.MySqlConnector =>
-                    $"Server={dbInfo.ServiceIp};Port={dbInfo.Port ?? 3306};Database={dbInfo.DbName};User ID={dbInfo.DbUser};Password={dbInfo.DbPwd};CharSet=utf8;SslMode=none;Pooling=true;Convert Zero Datetime=True;Allow Zero Datetime=True;Max Pool Size=100;",
+                    $"Server={dbInfo.ServiceIp};Port={dbInfo.Port ?? 3306};Database={dbInfo.DbName};User ID={dbInfo.DbUser};Password={dbInfo.DbPwd};CharSet=utf8;SslMode=none;Pooling=true;Convert Zero Datetime=True;Allow Zero Datetime=True;Max Pool Size={dbInfo.MaxPoolSize ?? 100};",
                 DbType.SqlServer =>
-                    $"Server={dbInfo.ServiceIp},{dbInfo.Port ?? 1433};Database={dbInfo.DbName};User={dbInfo.DbUser};Password={dbInfo.DbPwd};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True;Max Pool Size=100;",
+                    $"Server={dbInfo.ServiceIp},{dbInfo.Port ?? 1433};Database={dbInfo.DbName};User={dbInfo.DbUser};Password={dbInfo.DbPwd};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=True;Max Pool Size={dbInfo.MaxPoolSize ?? 100};",
                 DbType.Sqlite => $"Data Source={dbInfo.DbName};",
                 DbType.Oracle =>
                     $"Data Source={dbInfo.ServiceIp}:{dbInfo.Port ?? 1521}/{dbInfo.DbName};User ID={dbInfo.DbUser};Password={dbInfo.DbPwd};",
                 DbType.PostgreSQL =>
-                    $"Host={dbInfo.ServiceIp};Port={dbInfo.Port ?? 5432};Database={dbInfo.DbName};Username={dbInfo.DbUser};Password={dbInfo.DbPwd};Pooling=true;MaxPoolSize=100;",
+                    $"Host={dbInfo.ServiceIp};Port={dbInfo.Port ?? 5432};Database={dbInfo.DbName};Username={dbInfo.DbUser};Password={dbInfo.DbPwd};Pooling=true;MaxPoolSize={dbInfo.MaxPoolSize ?? 100};",
                 DbType.Access => $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={dbInfo.DbName};Persist Security Info=False;",
                 DbType.MongoDb =>
                     $"mongodb://{dbInfo.DbUser}:{dbInfo.DbPwd}@{dbInfo.ServiceIp}:{dbInfo.Port ?? 27017}/{dbInfo.DbName}",
-                _ => throw new SqlSugarException("数据库类型配置异常！")
+                _ => throw new SqlSugarException("暂不支持此数据库类型连接字符串配置！")
             };
         }
 
