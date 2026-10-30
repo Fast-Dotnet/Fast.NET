@@ -8,6 +8,31 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-10-30 continuous Runtime platform flags
+
+- Increment Runtime and all 13 packages that reference it by one patch version so their NuGet dependencies resolve to `Fast.Runtime` 3.5.35. IaaS and the two independent serialization packages are outside this dependency chain; external dependency versions remain unchanged.
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Cache | 3.5.37 | 3.5.38 |
+| Fast.Consul | 3.5.13 | 3.5.14 |
+| Fast.NET.Core | 3.5.44 | 3.5.45 |
+| Fast.DependencyInjection | 3.5.33 | 3.5.34 |
+| Fast.DynamicApplication | 3.5.39 | 3.5.40 |
+| Fast.EventBus | 3.5.32 | 3.5.33 |
+| Fast.JwtBearer | 3.5.48 | 3.5.49 |
+| Fast.Logging | 3.5.36 | 3.5.37 |
+| Fast.Mapster | 3.5.31 | 3.5.32 |
+| Fast.OpenApi | 3.5.43 | 3.5.44 |
+| Fast.Runtime | 3.5.34 | 3.5.35 |
+| Fast.SqlSugar | 3.5.73 | 3.5.74 |
+| Fast.Swagger | 3.5.38 | 3.5.39 |
+| Fast.UnifyResult | 3.5.38 | 3.5.39 |
+
+- Make all 24 independent `AppEnvironmentEnum` flags contiguous from bit 0 through bit 23. Android starts at `1L << 4`, followed by HarmonyOS at bit 5 and IOS at bit 6, through JDMiniProgram at bit 21, Api at bit 22 and Other at bit 23. Web, Windows, Mac and Linux retain their values.
+- This is a breaking numeric-contract change despite the patch version. Compared with 3.5.34, Android through JDMiniProgram shift right one bit; Api changes from 4294967296 to 4194304 and Other from 8589934592 to 8388608. Mobile is now 112, MiniProgram is 4186496, MobileThree is 4186608 and Desktop remains 14.
+- Migrate persisted values, numeric protocols and combined masks by member meaning using the source version's mapping; do not shift entire masks because lower flags and Api/Other have different offsets. Recompile consumers and regenerate client enums; replacing the Runtime DLL alone is insufficient. See the bilingual Runtime guide for the complete 3.5.34-to-3.5.35 mapping. This update does not perform a database migration or package publication.
+
 ### 2026-10-30 SqlSugar connection and public API migration
 
 - Keep `Fast.SqlSugar` at the requested, unpublished 3.5.73 version. This update also carries breaking public API changes; its patch version does not imply source or binary compatibility.
