@@ -8,6 +8,31 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-10-31 remove Runtime composite enum members
+
+- Increment Runtime and all 13 referencing packages by one patch version so the internal dependency chain follows `Fast.Runtime` 3.5.36. IaaS, the two independent serialization packages and external dependency versions are unchanged.
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Cache | 3.5.38 | 3.5.39 |
+| Fast.Consul | 3.5.14 | 3.5.15 |
+| Fast.NET.Core | 3.5.45 | 3.5.46 |
+| Fast.DependencyInjection | 3.5.34 | 3.5.35 |
+| Fast.DynamicApplication | 3.5.40 | 3.5.41 |
+| Fast.EventBus | 3.5.33 | 3.5.34 |
+| Fast.JwtBearer | 3.5.49 | 3.5.50 |
+| Fast.Logging | 3.5.37 | 3.5.38 |
+| Fast.Mapster | 3.5.32 | 3.5.33 |
+| Fast.OpenApi | 3.5.44 | 3.5.45 |
+| Fast.Runtime | 3.5.35 | 3.5.36 |
+| Fast.SqlSugar | 3.5.74 | 3.5.75 |
+| Fast.Swagger | 3.5.39 | 3.5.40 |
+| Fast.UnifyResult | 3.5.39 | 3.5.40 |
+
+- Remove `AppEnvironmentEnum.Desktop`, `Mobile`, `MiniProgram` and `MobileThree`. Keep all 24 independent flags, their numeric values, the `long` underlying type and `[Flags]` unchanged.
+- This is a breaking public API change despite retaining the requested 3.5.x patch cadence. Replace removed member references with explicit bitwise-OR masks in consumers and regenerate client enums. Former numeric masks retain their meaning when upgrading from 3.5.35; migrations from older versions must still follow the earlier numeric mapping.
+- Review enum-name parsing, string serialization, display names and reflection: removed names are no longer declared, and combined values can format as constituent names. Compiled numeric constants may continue to work because they can be inlined; they do not preserve removed declaration names. No application, database migration or package publication is performed by this update.
+
 ### 2026-10-30 continuous Runtime platform flags
 
 - Increment Runtime and all 13 packages that reference it by one patch version so their NuGet dependencies resolve to `Fast.Runtime` 3.5.35. IaaS and the two independent serialization packages are outside this dependency chain; external dependency versions remain unchanged.

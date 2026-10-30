@@ -160,39 +160,5 @@ public enum AppEnvironmentEnum : long
     /// 其他
     /// </summary>
     [Description("其他")]
-    Other = 1L << 23,
-
-    /// <summary>
-    /// 桌面端
-    /// </summary>
-    [Description("桌面端")]
-    Desktop = Windows | Mac | Linux,
-
-    /// <summary>
-    /// 移动端
-    /// </summary>
-    [Description("移动端")]
-    Mobile = Android | HarmonyOS | IOS,
-
-    /// <summary>
-    /// 小程序
-    /// </summary>
-    [Description("小程序")]
-    MiniProgram = QuickApp
-                  | WeChatMiniProgram
-                  | AlipayMiniProgram
-                  | TiktokMiniProgram
-                  | DingTalkMiniProgram
-                  | FeiShuMiniProgram
-                  | QQMiniProgram
-                  | BaiduMiniProgram
-                  | KuaiShouMiniProgram
-                  | XiaoHongShuMiniProgram
-                  | JDMiniProgram,
-
-    /// <summary>
-    /// 移动端（三端）
-    /// </summary>
-    [Description("移动端（三端）")]
-    MobileThree = Mobile | MiniProgram
+    Other = 1L << 23
 }

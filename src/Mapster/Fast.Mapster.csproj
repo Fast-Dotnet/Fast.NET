@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>3.5.32</Version>
+		<Version>3.5.33</Version>
 		<PackageId>Fast.Mapster</PackageId>
 		<Description>Fast.NET 框架对象映射模块库。</Description>
 	</PropertyGroup>
