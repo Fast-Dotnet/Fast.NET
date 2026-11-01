@@ -8,6 +8,30 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-11-02 add mobile H5 and shift following platform flags
+
+- Add `AppEnvironmentEnum.H5 = 1L << 4` (16) for mobile H5 pages, distinct from Web. Shift every existing independent flag from Android onward left one bit, maintaining 25 unique flags at contiguous bits 0 through 24.
+- Android is now 32, HarmonyOS is 64, IOS is 128, Api is 8388608 and Other is 16777216. Web, Windows, Mac and Linux retain their values. The four former composite declarations remain removed.
+- This is a breaking numeric-contract change on the requested patch cadence. Migrate old numeric values and masks by their 3.5.36 member meanings, keeping lower bits unchanged; do not multiply entire masks by two. Old Android=16 now identifies H5. Do not automatically add H5 to migrated mobile masks; callers must explicitly choose that scope. Recompile consumers and regenerate client enums.
+- Increment Runtime and all 13 referencing packages by one patch version. DynamicApplication follows UnifyResult 3.5.41, Swagger follows DynamicApplication 3.5.42 and the complete chain follows Runtime 3.5.37. IaaS, both independent serialization packages and external dependencies retain their versions.
+
+| PackageId | Previous version | New version |
+| --- | --- | --- |
+| Fast.Cache | 3.5.39 | 3.5.40 |
+| Fast.Consul | 3.5.15 | 3.5.16 |
+| Fast.NET.Core | 3.5.46 | 3.5.47 |
+| Fast.DependencyInjection | 3.5.35 | 3.5.36 |
+| Fast.DynamicApplication | 3.5.41 | 3.5.42 |
+| Fast.EventBus | 3.5.34 | 3.5.35 |
+| Fast.JwtBearer | 3.5.50 | 3.5.51 |
+| Fast.Logging | 3.5.38 | 3.5.39 |
+| Fast.Mapster | 3.5.33 | 3.5.34 |
+| Fast.OpenApi | 3.5.45 | 3.5.46 |
+| Fast.Runtime | 3.5.36 | 3.5.37 |
+| Fast.SqlSugar | 3.5.75 | 3.5.76 |
+| Fast.Swagger | 3.5.40 | 3.5.41 |
+| Fast.UnifyResult | 3.5.40 | 3.5.41 |
+
 ### 2026-10-31 remove Runtime composite enum members
 
 - Increment Runtime and all 13 referencing packages by one patch version so the internal dependency chain follows `Fast.Runtime` 3.5.36. IaaS, the two independent serialization packages and external dependency versions are unchanged.

@@ -43,122 +43,129 @@ public enum AppEnvironmentEnum : long
     Linux = 1L << 3,
 
     /// <summary>
+    /// H5
+    /// </summary>
+    /// <remarks>表示移动端 H5 页面，与 <see cref="Web"/> 平台标识区分。</remarks>
+    [Description("H5")]
+    H5 = 1L << 4,
+
+    /// <summary>
     /// Android
     /// </summary>
     [Description("Android")]
-    Android = 1L << 4,
+    Android = 1L << 5,
 
     /// <summary>
     /// 鸿蒙
     /// </summary>
     [Description("鸿蒙")]
-    HarmonyOS = 1L << 5,
+    HarmonyOS = 1L << 6,
 
     /// <summary>
     /// IOS
     /// </summary>
     [Description("IOS")]
-    IOS = 1L << 6,
+    IOS = 1L << 7,
 
     /// <summary>
     /// 快应用
     /// </summary>
     [Description("快应用")]
-    QuickApp = 1L << 7,
+    QuickApp = 1L << 8,
 
     /// <summary>
     /// 微信小程序
     /// </summary>
     [Description("微信小程序")]
-    WeChatMiniProgram = 1L << 8,
+    WeChatMiniProgram = 1L << 9,
 
     /// <summary>
     /// 微信公众号
     /// </summary>
     [Description("微信公众号")]
-    WeChatOfficialAccount = 1L << 9,
+    WeChatOfficialAccount = 1L << 10,
 
     /// <summary>
     /// 微信服务号
     /// </summary>
     [Description("微信服务号")]
-    WeChatServiceAccount = 1L << 10,
+    WeChatServiceAccount = 1L << 11,
 
     /// <summary>
     /// 微信开放平台
     /// </summary>
     [Description("微信开放平台")]
-    WeChatOpenPlatform = 1L << 11,
+    WeChatOpenPlatform = 1L << 12,
 
     /// <summary>
     /// 企业微信
     /// </summary>
     [Description("企业微信")]
-    WorkWeChat = 1L << 12,
+    WorkWeChat = 1L << 13,
 
     /// <summary>
     /// 支付宝小程序
     /// </summary>
     [Description("支付宝小程序")]
-    AlipayMiniProgram = 1L << 13,
+    AlipayMiniProgram = 1L << 14,
 
     /// <summary>
     /// 抖音小程序
     /// </summary>
     [Description("抖音小程序")]
-    TiktokMiniProgram = 1L << 14,
+    TiktokMiniProgram = 1L << 15,
 
     /// <summary>
     /// 钉钉小程序
     /// </summary>
     [Description("钉钉小程序")]
-    DingTalkMiniProgram = 1L << 15,
+    DingTalkMiniProgram = 1L << 16,
 
     /// <summary>
     /// 飞书小程序
     /// </summary>
     [Description("飞书小程序")]
-    FeiShuMiniProgram = 1L << 16,
+    FeiShuMiniProgram = 1L << 17,
 
     /// <summary>
     /// QQ 小程序
     /// </summary>
     [Description("QQ小程序")]
-    QQMiniProgram = 1L << 17,
+    QQMiniProgram = 1L << 18,
 
     /// <summary>
     /// 百度小程序
     /// </summary>
     [Description("百度小程序")]
-    BaiduMiniProgram = 1L << 18,
+    BaiduMiniProgram = 1L << 19,
 
     /// <summary>
     /// 快手小程序
     /// </summary>
     [Description("快手小程序")]
-    KuaiShouMiniProgram = 1L << 19,
+    KuaiShouMiniProgram = 1L << 20,
 
     /// <summary>
     /// 小红书小程序
     /// </summary>
     [Description("小红书小程序")]
-    XiaoHongShuMiniProgram = 1L << 20,
+    XiaoHongShuMiniProgram = 1L << 21,
 
     /// <summary>
     /// 京东小程序
     /// </summary>
     [Description("京东小程序")]
-    JDMiniProgram = 1L << 21,
+    JDMiniProgram = 1L << 22,
 
     /// <summary>
     /// API
     /// </summary>
     [Description("Api")]
-    Api = 1L << 22,
+    Api = 1L << 23,
 
     /// <summary>
     /// 其他
     /// </summary>
     [Description("其他")]
-    Other = 1L << 23
+    Other = 1L << 24
 }
