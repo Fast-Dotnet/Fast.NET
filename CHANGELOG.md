@@ -8,6 +8,12 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-11-12 Fast.OpenApi 3.5.47
+
+- Increment `Fast.OpenApi` from `3.5.46` to `3.5.47`.
+- Add `isOrderBy` to the default `PagedSchemaProperties`. Generated TypeScript DTOs extend `PagedInput` when the schema contains every configured pagination field. The generator omits those fields from individual declarations by name.
+- To retain `PagedInput` inheritance for legacy schemas without `isOrderBy`, explicitly configure `PagedSchemaProperties` to match their fields.
+
 ### 2026-11-02 add mobile H5 and shift following platform flags
 
 - Add `AppEnvironmentEnum.H5 = 1L << 4` (16) for mobile H5 pages, distinct from Web. Shift every existing independent flag from Android onward left one bit, maintaining 25 unique flags at contiguous bits 0 through 24.

@@ -222,7 +222,8 @@ public class OpenApiSettingsOptions : IPostConfigure
             "searchTimeList",
             "searchList",
             "sortList",
-            "enablePaged"
+            "enablePaged",
+            "isOrderBy"
         ];
         BaseTypeMappings ??= new Dictionary<string, string>
         {
