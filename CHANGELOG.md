@@ -8,6 +8,9 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+- Increment `Fast.OpenApi` from `3.5.48` to `3.5.49`.
+- Name the event argument inside generated TypeScript upload, download, and export progress callback types `event`. Generated methods still accept `onUploadProgress` or `onDownloadProgress` in the same position.
+
 ### 2026-11-14 Fast.OpenApi 3.5.48
 
 - Increment `Fast.OpenApi` from `3.5.47` to `3.5.48`.

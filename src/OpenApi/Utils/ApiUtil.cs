@@ -264,7 +264,7 @@ public static partial class OpenApiUtil
                         if (isFormData)
                         {
                             contentSb.Append(scriptLanguage == ScriptLanguageEnum.TypeScript
-                                ? ", onUploadProgress?: (progressEvent: AxiosProgressEvent) => void"
+                                ? ", onUploadProgress?: (event: AxiosProgressEvent) => void"
                                 : ", onUploadProgress");
                         }
                     }
@@ -277,7 +277,7 @@ public static partial class OpenApiUtil
                         }
 
                         contentSb.Append(scriptLanguage == ScriptLanguageEnum.TypeScript
-                            ? "autoDownloadFile = true, onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void"
+                            ? "autoDownloadFile = true, onDownloadProgress?: (event: AxiosProgressEvent) => void"
                             : "autoDownloadFile = true, onDownloadProgress");
                     }
 
