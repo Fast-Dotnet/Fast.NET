@@ -104,9 +104,9 @@ public static partial class OpenApiUtil
                 var contentSb = new StringBuilder();
                 // 引用声明
                 var refSchemas = new HashSet<string>();
-                // 仅在当前模块包含上传接口时生成 Axios 上传进度类型导入。
+                // 当前模块是否包含上传接口
                 bool hasUpload = false;
-                // 仅在当前模块包含下载或导出接口时生成 Axios 响应类型导入。
+                // 当前模块是否包含下载或导出接口
                 bool hasFileDownload = false;
 
                 for (int i = 0; i < curPaths.Count; i++)
@@ -132,10 +132,11 @@ public static partial class OpenApiUtil
                     // 获取请求类型
                     HttpRequestActionEnum apiActionEnum = apiInfoAttribute?.Action ?? HttpRequestActionEnum.Other;
                     string apiAction = DisposeRequestAction(apiActionEnum);
+                    bool isFileDownload = apiActionEnum is HttpRequestActionEnum.Download or HttpRequestActionEnum.Export;
 
                     // 响应数据类型
                     string responseType = DisposeSchemaType(apiInfo.Method.Responses?.Code200?.Content?.Json?.Schema, refSchemas);
-                    if (apiActionEnum is HttpRequestActionEnum.Download or HttpRequestActionEnum.Export)
+                    if (isFileDownload)
                     {
                         responseType = hasWeb ? "AxiosResponse<Blob>" : "AxiosResponse<Blob | ArrayBuffer | string>";
                         hasFileDownload = true;
@@ -216,7 +217,10 @@ public static partial class OpenApiUtil
                             requestParam = requestParam.TrimEnd(' ').TrimEnd(',');
                         }
 
-                        contentSb.Append(requestParam);
+                        if (!isMobileUpload)
+                        {
+                            contentSb.Append(requestParam);
+                        }
                     }
 
                     if (!string.IsNullOrWhiteSpace(requestDataType))
@@ -226,8 +230,7 @@ public static partial class OpenApiUtil
                             case ScriptLanguageEnum.JavaScript:
                                 if (isMobileUpload)
                                 {
-                                    // 移动端使用 filePath 参数，并按字符串处理
-                                    contentSb.Append("filePath");
+                                    contentSb.Append("filePath, formData");
                                 }
                                 else
                                 {
@@ -238,8 +241,10 @@ public static partial class OpenApiUtil
                             case ScriptLanguageEnum.TypeScript:
                                 if (isMobileUpload)
                                 {
-                                    // 移动端使用 filePath 参数，并按字符串处理
-                                    contentSb.Append("filePath: string");
+                                    // 有必填 URL 参数时，调用方可传入 undefined 跳过表单字段。
+                                    contentSb.Append(requestParam.Length > 0
+                                        ? "filePath: string, formData: Record<string, any> | undefined"
+                                        : "filePath: string, formData?: Record<string, any>");
                                 }
                                 else
                                 {
@@ -251,6 +256,11 @@ public static partial class OpenApiUtil
                                 throw new ArgumentOutOfRangeException(nameof(scriptLanguage), scriptLanguage, null);
                         }
 
+                        if (isMobileUpload && requestParam.Length > 0)
+                        {
+                            contentSb.Append($", {requestParam.TrimEnd(' ').TrimEnd(',')}");
+                        }
+
                         if (isFormData)
                         {
                             contentSb.Append(scriptLanguage == ScriptLanguageEnum.TypeScript
@@ -259,14 +269,16 @@ public static partial class OpenApiUtil
                         }
                     }
 
-                    if (apiActionEnum is HttpRequestActionEnum.Download or HttpRequestActionEnum.Export)
+                    if (isFileDownload)
                     {
                         if (methodInfo?.Parameters?.Count > 0 || !string.IsNullOrWhiteSpace(requestDataType))
                         {
                             contentSb.Append(", ");
                         }
 
-                        contentSb.Append("autoDownloadFile = true");
+                        contentSb.Append(scriptLanguage == ScriptLanguageEnum.TypeScript
+                            ? "autoDownloadFile = true, onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void"
+                            : "autoDownloadFile = true, onDownloadProgress");
                     }
 
                     contentSb.Append(scriptLanguage == ScriptLanguageEnum.TypeScript
@@ -320,12 +332,13 @@ public static partial class OpenApiUtil
                     {
                         if (isMobileUpload)
                         {
-                            // 移动端使用 filePath 参数，并按字符串处理
                             contentSb.Append("""
                                                    name: "file",
                                              """);
                             contentSb.Append(Environment.NewLine);
                             contentSb.Append("      filePath,");
+                            contentSb.Append(Environment.NewLine);
+                            contentSb.Append("      formData,");
                             contentSb.Append(Environment.NewLine);
                         }
                         else
@@ -342,11 +355,12 @@ public static partial class OpenApiUtil
                     }
 
                     // 处理下载和导出
-                    if (apiActionEnum is HttpRequestActionEnum.Download or HttpRequestActionEnum.Export)
+                    if (isFileDownload)
                     {
                         contentSb.Append("""
                                                responseType: "blob",
                                                autoDownloadFile,
+                                               onDownloadProgress,
                                          """);
                         contentSb.Append(Environment.NewLine);
                     }
@@ -408,7 +422,7 @@ public static partial class OpenApiUtil
 
                         var imports = new List<string> {"import { axiosUtil } from \"@fast-china/axios\";"};
                         var axiosTypeImports = new List<string>();
-                        if (hasUpload)
+                        if (hasUpload || hasFileDownload)
                         {
                             axiosTypeImports.Add("AxiosProgressEvent");
                         }

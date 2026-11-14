@@ -8,6 +8,12 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+### 2026-11-14 Fast.OpenApi 3.5.48
+
+- Increment `Fast.OpenApi` from `3.5.47` to `3.5.48`.
+- Generated mobile multipart uploads accept `formData` immediately after `filePath` and pass it directly to Axios. Regenerate clients and move the existing query arguments and upload progress callback after `formData`. Pass `undefined` when a required query argument follows and there are no extra form fields.
+- Generated Web and mobile download and export methods accept an optional `onDownloadProgress` callback after `autoDownloadFile` and pass it to Axios. Progress events depend on the request adapter.
+
 ### 2026-11-12 Fast.OpenApi 3.5.47
 
 - Increment `Fast.OpenApi` from `3.5.46` to `3.5.47`.
