@@ -264,7 +264,7 @@ public static class JwtBearerUtil
     }
 
     /// <summary>
-    /// 消费 RefreshToken，防止同一个令牌被重复换取新令牌
+    /// 记录刷新令牌的首次消费时间，并校验后续请求是否仍在宽限窗口内。
     /// </summary>
     /// <param name="distributedCache">用于保存令牌状态的分布式缓存</param>
     /// <param name="refreshToken">刷新令牌</param>
@@ -275,12 +275,6 @@ public static class JwtBearerUtil
     private static async Task<bool> TryConsumeRefreshTokenAsync(IDistributedCache distributedCache, string refreshToken,
         DateTimeOffset absoluteExpiration, long reuseLeewaySeconds, CancellationToken cancellationToken = default)
     {
-        DateTimeOffset nowTime = DateTimeOffset.UtcNow;
-        if (absoluteExpiration <= nowTime)
-        {
-            return false;
-        }
-
         string cacheKey = CreateTokenCacheKey(RefreshTokenBlacklistCacheKeyPrefix, refreshToken);
         int lockIndex = (int)((uint)StringComparer.Ordinal.GetHashCode(cacheKey) % _refreshTokenLocks.Length);
         SemaphoreSlim refreshTokenLock = _refreshTokenLocks[lockIndex];
@@ -291,9 +285,15 @@ public static class JwtBearerUtil
             string cachedValue = await GetTokenCacheValueAsync(distributedCache,
                     RefreshTokenBlacklistCacheKeyPrefix, refreshToken, cancellationToken)
                 .ConfigureAwait(false);
+            // 在等待锁和缓存读取完成后取样，避免并发请求的取样时间早于首次消费。
+            DateTimeOffset nowTime = DateTimeOffset.UtcNow;
+            if (absoluteExpiration <= nowTime)
+            {
+                return false;
+            }
+
             if (!string.IsNullOrWhiteSpace(cachedValue))
             {
-                // 默认不允许重放；仅保留显式传入容差值时的兼容行为
                 if (reuseLeewaySeconds <= 0 || !long.TryParse(cachedValue, out long refreshTicks))
                 {
                     return false;
@@ -450,7 +450,7 @@ public static class JwtBearerUtil
     /// <param name="expiredToken">已过期但签名仍需验证的访问令牌</param>
     /// <param name="refreshToken">刷新令牌</param>
     /// <param name="expiredTime">令牌过期时间</param>
-    /// <param name="clockSkew">允许同一刷新令牌重复提交的兼容容差（秒）；默认 0，禁止重放。</param>
+    /// <param name="clockSkew">同一刷新令牌首次消费后允许重复提交的秒数。未传时使用 JWTSettings.ClockSkew，默认 5 秒。传入 0 可禁用重复提交。</param>
     /// <returns>通过过期 Token 和 刷新 Token 换取新的 Token</returns>
     public static string Exchange(HttpContext httpContext, string expiredToken, string refreshToken, long? expiredTime = null,
         long? clockSkew = null)
@@ -468,7 +468,7 @@ public static class JwtBearerUtil
     /// <param name="expiredToken">已过期但签名仍需验证的访问令牌</param>
     /// <param name="refreshToken">刷新令牌</param>
     /// <param name="expiredTime">令牌过期时间</param>
-    /// <param name="clockSkew">允许同一刷新令牌重复提交的兼容容差（秒）；默认 0，禁止重放。</param>
+    /// <param name="clockSkew">同一刷新令牌首次消费后允许重复提交的秒数。未传时使用 JWTSettings.ClockSkew，默认 5 秒。传入 0 可禁用重复提交。</param>
     /// <returns>表示异步使用过期 Token 和刷新 Token 换取新的 Token 的任务，任务结果为使用过期 Token 和刷新 Token 换取新的 Token</returns>
     public static async Task<string> ExchangeAsync(HttpContext httpContext, string expiredToken, string refreshToken,
         long? expiredTime = null, long? clockSkew = null)
@@ -538,7 +538,8 @@ public static class JwtBearerUtil
             }
         }
         else if (!await TryConsumeRefreshTokenAsync(distributedCache, refreshToken,
-                         DateTimeOffset.FromUnixTimeSeconds(refreshExpiresAt), Math.Max(0, clockSkew ?? 0),
+                         DateTimeOffset.FromUnixTimeSeconds(refreshExpiresAt),
+                         Math.Max(0, clockSkew ?? Penetrates.JWTSettings.ClockSkew ?? 5),
                          httpContext.RequestAborted)
                      .ConfigureAwait(false))
         {
@@ -622,7 +623,7 @@ public static class JwtBearerUtil
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="expiredTime">令牌过期时间</param>
     /// <param name="tokenPrefix">请求头中位于令牌之前的前缀</param>
-    /// <param name="clockSkew">允许同一刷新 Token 重复提交的兼容容差（秒），默认 0（禁止重放）</param>
+    /// <param name="clockSkew">同一刷新令牌首次消费后允许重复提交的秒数。未传时使用 JWTSettings.ClockSkew，默认 5 秒。传入 0 可禁用重复提交。</param>
     /// <returns>当前身份有效、允许匿名或刷新成功时返回 <see langword="true"/>，表示可以继续后续授权；身份校验或刷新失败时返回 <see langword="false"/></returns>
     public static bool AutoRefreshToken(AuthorizationHandlerContext context, HttpContext httpContext, long? expiredTime = null,
         string tokenPrefix = "Bearer ", long? clockSkew = null)
@@ -640,7 +641,7 @@ public static class JwtBearerUtil
     /// <param name="httpContext">当前请求上下文</param>
     /// <param name="expiredTime">令牌过期时间</param>
     /// <param name="tokenPrefix">请求头中位于令牌之前的前缀</param>
-    /// <param name="clockSkew">允许同一刷新令牌重复提交的兼容容差（秒）；默认 0，禁止重放。</param>
+    /// <param name="clockSkew">同一刷新令牌首次消费后允许重复提交的秒数。未传时使用 JWTSettings.ClockSkew，默认 5 秒。传入 0 可禁用重复提交。</param>
     /// <returns>当前身份有效、允许匿名或刷新成功时返回 <see langword="true"/>，表示可以继续后续授权；身份校验或刷新失败时返回 <see langword="false"/></returns>
     public static async Task<bool> AutoRefreshTokenAsync(AuthorizationHandlerContext context, HttpContext httpContext,
         long? expiredTime = null, string tokenPrefix = "Bearer ", long? clockSkew = null)

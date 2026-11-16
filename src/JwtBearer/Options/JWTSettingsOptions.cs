@@ -64,9 +64,9 @@ public sealed class JWTSettingsOptions : IPostConfigure
     public bool? ValidateAccessToken { get; set; }
 
     /// <summary>
-    /// 过期时间容错值，解决服务器端时间不同步问题（秒）
+    /// JWT 生命周期校验容差（秒）
     /// </summary>
-    /// <remarks>默认 5 秒</remarks>
+    /// <remarks>默认 5 秒。刷新工具未显式指定容差时，也使用此值作为刷新令牌的复用宽限时长。</remarks>
     public long? ClockSkew { get; set; }
 
     /// <summary>

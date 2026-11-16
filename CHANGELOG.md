@@ -8,6 +8,9 @@ This repository uses independent package versions; each release entry lists the 
 
 ## Unreleased
 
+- Increment Fast.JwtBearer from 3.5.51 to 3.5.52.
+- Restore the default refresh token reuse window from JWTSettings.ClockSkew (five seconds when omitted). Explicit clockSkew overrides the setting, and zero disables reuse. The window starts at first consumption and does not extend on subsequent exchanges.
+
 - Increment `Fast.OpenApi` from `3.5.48` to `3.5.49`.
 - Name the event argument inside generated TypeScript upload, download, and export progress callback types `event`. Generated methods still accept `onUploadProgress` or `onDownloadProgress` in the same position.
 
